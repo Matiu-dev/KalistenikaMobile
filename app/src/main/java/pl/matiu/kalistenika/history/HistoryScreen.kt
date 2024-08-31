@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.ZielonyNapis
 
@@ -18,8 +19,11 @@ import pl.matiu.kalistenika.ui.theme.ZielonyNapis
 fun HistoryScreen() {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.White,
+        color = InsideLevel1,
     ) {
+
+        //TODO https://m3.material.io/components/date-pickers/overview
+        //https://developer.android.com/develop/ui/compose/components/snackbar po dodaniu nowego treningu
 //        Column(modifier = Modifier.fillMaxWidth()) {
 //            Text(
 //                text = "Historia",

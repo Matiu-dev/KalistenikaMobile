@@ -9,6 +9,7 @@ import java.io.File
 //https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
 class TrainingInternalStorageService {
 
+    //TODO do otestowania
     val TRENINGS_FILE_NAME: String = "TreningList"
 
     fun saveTrainingToInternalStorage(
@@ -32,6 +33,23 @@ class TrainingInternalStorageService {
         trainingList.add(TrainingModel(trainingList.size, trainingName))
 
         file.writeText(gson.toJson(trainingList))
+    }
+
+    fun getTrainingNameById(context: Context, trainingId: Int?): String {
+        var file = File(context.getExternalFilesDir(null),
+            TRENINGS_FILE_NAME)
+
+        val gson = Gson()
+        val itemType = object : TypeToken<List<TrainingModel>>() {}.type
+
+        var trainingList: MutableList<TrainingModel> = if (file.exists()) {
+            val fileContent = file.readText()
+            gson.fromJson(fileContent, itemType) ?: mutableListOf()
+        } else {
+            mutableListOf()
+        }
+
+        return trainingList.find { it.trainingId == trainingId }?.name ?: "none"
     }
 
     fun loadTrainingToInternalStorage(context: Context): List<TrainingModel> {

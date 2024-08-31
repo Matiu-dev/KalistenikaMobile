@@ -2,11 +2,13 @@ package pl.matiu.kalistenika.training
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,58 +41,67 @@ fun CreateTraining(navController: NavController, context: Context) {
     var trainingName by remember { mutableStateOf("") }
 
     Surface(
-//        color = InsideLevel1,
         modifier = Modifier
             .fillMaxSize(),
-        color = InsideLevel0Background
+        color = InsideLevel1
     ) {
-        Column() {
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .border(1.dp, Smola, RoundedCornerShape(8.dp)).fillMaxWidth(),
+        ) {
 
-            Surface(modifier = Modifier.padding(vertical = 5.dp)) {
-                Column(Modifier.background(InsideLevel1)) {
-                    Row(modifier = Modifier.padding(vertical = 5.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
 
-                        Text(
-                            text = "Nazwa treningu",
-                            color = Smola,
-                            modifier = Modifier.padding(horizontal = 5.dp)
+            ) {
+
+                Text(
+                    text = "Nazwa treningu",
+                    color = Smola,
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
+
+                TextField(
+                    value = trainingName,
+                    onValueChange = { trainingName = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        cursorColor = Smola,
+                        focusedIndicatorColor = Smola,
+                        unfocusedIndicatorColor = Smola,
+                        focusedTextColor = Smola,
+                        unfocusedTextColor = Smola
+                    ),
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
+
+            }
+
+            Row(
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Button(
+                    onClick = {
+                        TrainingInternalStorageService().saveTrainingToInternalStorage(
+                            context = context,
+                            trainingName
                         )
-
-                        TextField(
-                            value = trainingName,
-                            onValueChange = { trainingName = it },
-                            colors = TextFieldDefaults.textFieldColors(
-                                containerColor = Color.Transparent,
-                                cursorColor = Smola,
-                                focusedIndicatorColor = Smola,
-                                unfocusedIndicatorColor = Smola,
-                                focusedTextColor = Smola,
-                                unfocusedTextColor = Smola
-                            ),
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        )
-
-                    }
-
-                    Row(modifier = Modifier.padding(vertical = 5.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
-
-                        Button(
-                            onClick = {
-                                TrainingInternalStorageService().saveTrainingToInternalStorage(context = context, trainingName)
-                                navController.navigate(Training.route)
-                            },
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
-                        ) {
-                            Text(text = "Dodaj trening", color = Smola)
-                        }
-
-                    }
+                        navController.navigate(Training.route)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 5.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
+                ) {
+                    Text(text = "Dodaj trening", color = Smola)
                 }
 
             }
+
 
         }
     }

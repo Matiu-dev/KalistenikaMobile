@@ -23,3 +23,6 @@ val Wheat = Color(0xFFA0522D)
 val InsideLevel0Background = Color.White
 val InsideLevel1 = Color(0xFFEED5B7)
 val InsideLevel2 = Color(0xFF8B4513)
+
+val MainScreenColor = Color(0xFFD4A373)
+val MainScreenColor2 = Color(0xFFFFE4C4)

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.ZielonyNapis
 
@@ -18,7 +19,7 @@ import pl.matiu.kalistenika.ui.theme.ZielonyNapis
 fun UserProfileScreen() {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color.White,
+        color = InsideLevel1,
     ) {
 //        Column(modifier = Modifier.fillMaxWidth()) {
 //            Text(

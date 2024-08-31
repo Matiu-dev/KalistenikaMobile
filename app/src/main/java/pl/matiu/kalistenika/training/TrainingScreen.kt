@@ -48,7 +48,7 @@ fun TrainingScreen(navController: NavController) {
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = InsideLevel0Background
+        color = InsideLevel1
     ) {
         Column {
             Row {

@@ -1,9 +1,9 @@
 package pl.matiu.kalistenika.training
 
 import StartRepetitionSeries
-import android.content.Context
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import android.annotation.SuppressLint
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -24,236 +25,292 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.getSeries
-import pl.matiu.kalistenika.internalStorage.ExerciseInternalStorageService
+import kotlinx.coroutines.launch
+import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
+import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
 import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
 import pl.matiu.kalistenika.navigation.Training
 import pl.matiu.kalistenika.training.model.RepetitionExercise
 import pl.matiu.kalistenika.training.model.SeriesInterface
 import pl.matiu.kalistenika.training.timeExercise.StartTimeSeries
 import pl.matiu.kalistenika.training.model.TimeExercise
-import pl.matiu.kalistenika.training.model.TrainingModel
-import pl.matiu.kalistenika.ui.theme.Beige
-import pl.matiu.kalistenika.ui.theme.InsideLevel0Background
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 
 //progression indicator do linii miedzy kulkami
 //bottom albo side sheets - do menu dolnego lub boczbnego
+@OptIn(ExperimentalFoundationApi::class)
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun SeriesScreen(navController: NavController,
-                 trainingId: Int?) {
-
+fun SeriesScreen(
+    navController: NavController,
+    trainingId: Int?
+) {
     var addTraining by rememberSaveable { mutableStateOf(false) }
     var actualTraining by rememberSaveable { mutableIntStateOf(0) }
     var startStop by rememberSaveable { mutableStateOf(false) }
 
-    val exerciseInternalStorageService: ExerciseInternalStorageService = ExerciseInternalStorageService()
+    val timeExerciseInternalStorage: TimeExerciseInternalStorage = TimeExerciseInternalStorage()
+    val repetitionExerciseInternalStorage: RepetitionExerciseInternalStorage = RepetitionExerciseInternalStorage()
+
     var timeExerciseList: List<SeriesInterface> =
-        exerciseInternalStorageService.loadTimeExerciseToInternalStorage(LocalContext.current).filter { v -> v.trainingId == trainingId }
+        timeExerciseInternalStorage.loadTimeExerciseFromInternalStorage(LocalContext.current,
+            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId))
+            .filter { v -> v.trainingId == trainingId }
 
     var repetitionExerciseList: List<SeriesInterface> =
-        exerciseInternalStorageService.loadRepetitionExerciseToInternalStorage(LocalContext.current).filter { v -> v.trainingId == trainingId }
+        repetitionExerciseInternalStorage.loadRepetitionExerciseFromInternalStorage(LocalContext.current,
+            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId))
+            .filter { v -> v.trainingId == trainingId }
 
-    var exerciseList: List<SeriesInterface> = timeExerciseList + repetitionExerciseList
+    var exerciseList: List<SeriesInterface> = (timeExerciseList + repetitionExerciseList ).sortedBy { it.positionInTraining }
 //    var showBottomSheet by remember { mutableStateOf(true) }
+
+    val pagerState = rememberPagerState(
+        pageCount = {
+            exerciseList.size
+        }
+    )
+
+    var endOfSeries by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = InsideLevel0Background,
+        color = InsideLevel1,
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 5.dp))
-        {
-
-
+                .padding(horizontal = 10.dp, vertical = 5.dp),
+        ) {
             if (!addTraining) {
-
-//                TopBar(navController = navController,
-//                    trainingId = trainingId,
-//                    addTraining = addTraining,
-//                    onAddTrainingChange = { addTraining = it }
-//                )
 
                 //buttons
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(InsideLevel1),
+//                        .border(1.dp, Smola, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
                     horizontalArrangement = Arrangement.Center,
                 ) {
 
-                    Button(
-                        onClick = { if (actualTraining != 0) actualTraining-- },
-                        modifier = Modifier.padding(horizontal = 2.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowLeft),
-                            contentDescription = "before",
-                            tint = Smola
-                        )
+                    Row(modifier = Modifier.padding(vertical = 5.dp)) {
+                        Button(
+                            onClick = {
+                                if (actualTraining != 0) {
+                                    actualTraining--
+                                }
 
-                    }
-
-                    Button(
-                        onClick = { startStop = !startStop },
-                        modifier = Modifier.padding(horizontal = 2.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
-                    ) {
-                        if (!startStop) {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                }
+                            },
+                            modifier = Modifier.padding(horizontal = 2.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
+                        ) {
                             Icon(
-                                painter = rememberVectorPainter(image = Icons.Filled.PlayArrow),
-                                contentDescription = "play",
+                                painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowLeft),
+                                contentDescription = "before",
                                 tint = Smola
                             )
-                        } else {
+
+                        }
+
+                        Button(
+                            onClick = { startStop = !startStop },
+                            modifier = Modifier.padding(horizontal = 2.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
+                        ) {
+                            if (!startStop) {
+                                Icon(
+                                    painter = rememberVectorPainter(image = Icons.Filled.PlayArrow),
+                                    contentDescription = "play",
+                                    tint = Smola
+                                )
+                            } else {
+                                Icon(
+                                    painter = rememberVectorPainter(image = Icons.Filled.Menu),
+                                    contentDescription = "play",
+                                    tint = Smola
+                                )
+                            }
+
+                        }
+
+                        Button(
+                            onClick = {
+                                if (actualTraining != exerciseList.size - 1) {
+                                    actualTraining++
+                                }
+
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            },
+                            modifier = Modifier.padding(horizontal = 2.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
+                        ) {
                             Icon(
-                                painter = rememberVectorPainter(image = Icons.Filled.Menu),
-                                contentDescription = "play",
+                                painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowRight),
+                                contentDescription = "next",
                                 tint = Smola
                             )
                         }
-
                     }
-
-                    Button(
-                        onClick = { if (actualTraining != exerciseList.size - 1) actualTraining++ },
-                        modifier = Modifier.padding(horizontal = 2.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
-                    ) {
-                        Icon(
-                            painter = rememberVectorPainter(image = Icons.Filled.KeyboardArrowRight),
-                            contentDescription = "next",
-                            tint = Smola
-                        )
-                    }
-
                 }
 
-                //items
-                LazyColumn(
+                Row {
+                    Divider(
+                        color = Smola,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .width(1.dp)
+                    )
+                }
+
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 5.dp),
+//                        .border(1.dp, Smola, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
                 ) {
-                    itemsIndexed( timeExerciseList + repetitionExerciseList ) { index, series ->
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 5.dp)
-                                .background(InsideLevel1),
-                            verticalAlignment = Alignment.CenterVertically,
+                    VerticalPager(
+                        state = pagerState
+                    ) { index ->
 
-                        ) {
-
-                            //przycisk - lewo
-
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                        //gora
+                        Column(
+//                            modifier = Modifier.weight(2f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
 
                             ) {
 
-                                if (index == actualTraining) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(20.dp)
-                                            .clip(CircleShape)
-                                            .background(Smola)
-                                            .border(BorderStroke(2.dp, Smola))
-                                    )
-                                } else {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(20.dp)
-                                            .clip(CircleShape)
-                                            .background(Color.Transparent)
-                                            .border(2.dp, Smola, CircleShape)
-                                            .padding(1.dp)
+                            if (index == actualTraining) {
+                                when (exerciseList[index]) {
+
+                                    is RepetitionExercise -> StartRepetitionSeries(
+                                        exercise = exerciseList[index] as RepetitionExercise,
+                                        startStop = startStop,
+                                        onStarStopChange = { startStop = it },
+                                        navController = navController,
+                                        context = LocalContext.current,
+
+                                        endOfSeries = endOfSeries
+                                    ) { endOfSeries = it }
+
+                                    is TimeExercise -> StartTimeSeries(
+                                        context = LocalContext.current,
+                                        exercise = exerciseList[index] as TimeExercise,
+                                        startStop = startStop,
+                                        onStarStopChange = { startStop = it },
+                                        navController = navController,
+                                        endOfSeries = endOfSeries,
+                                        onEndOfSeriesChange = { endOfSeries = it }
                                     )
                                 }
+                            } else {
+                                when (exerciseList[index]) {
+                                    //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
+                                    is RepetitionExercise -> StartRepetitionSeries(
+                                        exercise = exerciseList[index] as RepetitionExercise,
+                                        startStop = false,
+                                        onStarStopChange = { false },
+                                        navController = navController,
+                                        context = LocalContext.current,
+                                        endOfSeries = endOfSeries
+                                    ) { endOfSeries = it }
 
-                            }
-
-                            //prawo
-                            Column(
-                                modifier = Modifier.weight(2f),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                if (index == actualTraining) {
-                                    when (series) {
-
-                                        is RepetitionExercise -> StartRepetitionSeries(
-                                            exercise = series,
-                                            startStop = startStop,
-                                            onStarStopChange = { startStop = it },
-                                            navController = navController,
-                                            context = LocalContext.current
-                                        )
-
-                                        is TimeExercise -> StartTimeSeries(
-                                            context = LocalContext.current,
-                                            exercise = series,
-                                            startStop = startStop,
-                                            onStarStopChange = { startStop = it },
-                                            navController = navController
-                                        )
-                                    }
-                                } else {
-                                    when (series) {
-                                        //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
-                                        is RepetitionExercise -> StartRepetitionSeries(
-                                            exercise = series,
-                                            startStop = false,
-                                            onStarStopChange = { false },
-                                            navController = navController,
-                                            context = LocalContext.current
-                                        )
-
-                                        is TimeExercise -> StartTimeSeries(
-                                            context = LocalContext.current,
-                                            exercise = series,
-                                            false,
-                                            { false },
-                                            navController = navController)
-                                    }
+                                    is TimeExercise -> StartTimeSeries(
+                                        context = LocalContext.current,
+                                        exercise = exerciseList[index] as TimeExercise,
+                                        false,
+                                        { false },
+                                        navController = navController,
+                                        endOfSeries = endOfSeries,
+                                        onEndOfSeriesChange = { endOfSeries = it }
+                                    )
                                 }
-
                             }
+
+                            StepProgressBar(
+                                numberOfSteps = exerciseList.indices,
+                                actualTraining = actualTraining
+                            )
                         }
+
                     }
+
                 }
+
 
             } else {
                 navController.navigate(Training.route + "/${trainingId}" + "/createSeries")
             }
         }
     }
+}
+
+@Composable
+fun StepProgressBar(numberOfSteps: IntRange, actualTraining: Int) {
+
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(vertical = 5.dp, horizontal = 5.dp)
+    ) {
+        for (i in numberOfSteps) {
+
+            Box(modifier = Modifier.weight(1f)) {
+
+                Divider(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    color = Smola,
+                    thickness = 2.dp
+                )
+
+                Canvas(
+                    modifier = Modifier
+                        .size(15.dp)
+                        .align(Alignment.CenterEnd)
+                        .border(
+                            shape = CircleShape,
+                            width = 2.dp,
+                            color = Smola
+                        ),
+                    onDraw = {
+                        drawCircle(
+                            color = if (i < actualTraining) Smola
+                            else if (i > actualTraining) InsideLevel1
+                            else Color.Gray
+                        )
+                    })
+            }
+        }
+    }
+
 }
 
 @Composable
@@ -269,69 +326,4 @@ fun AddExerciseButton(
     }
 }
 
-//@Composable
-//fun TopBar(
-//    navController: NavController,
-//    trainingId: Int?,
-//    addTraining: Boolean,
-//    onAddTrainingChange: (Boolean) -> Unit
-//) {
-//
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//
-//    if (showBottomSheet) {
-////        SeriesBottomSheet(
-////            showBottomSheet = showBottomSheet,
-////            addTraining = addTraining,
-////
-////            onShowBottomSheetChange = { showBottomSheet = it },
-////            onAddTrainingChange = onAddTrainingChange
-////        )
-//    }
-//
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Beige),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//
-//        TextButton(
-//            onClick = { navController.navigate(Training.route) },
-//        ) {
-//            Icon(
-//                painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
-//                contentDescription = "play",
-//                tint = Smola,
-//            )
-//        }
-//
-//        Text(
-//            text = "Trening $trainingId",
-//            fontSize = 50.sp,
-//            color = Wheat,
-//            textAlign = TextAlign.Center,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .weight(1f)
-//        )
-//
-//        TextButton(
-//            onClick = { showBottomSheet = !showBottomSheet }
-//        ) {
-//            Icon(
-//                painter = rememberVectorPainter(image = Icons.Filled.AddCircle),
-//                contentDescription = "play",
-//                tint = Smola
-//            )
-//        }
-//    }
-//}
 
-//to-do
-//                                Divider(
-//                                    color = Smola,
-//                                    modifier = Modifier
-//                                        .fillMaxHeight()
-//                                        .width(1.dp)
-//                                )

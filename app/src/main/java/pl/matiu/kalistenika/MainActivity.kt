@@ -34,18 +34,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import pl.matiu.kalistenika.history.HistoryScreen
-import pl.matiu.kalistenika.internalStorage.ExerciseInternalStorageService
+import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
+import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
+import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
 import pl.matiu.kalistenika.navigation.History
 import pl.matiu.kalistenika.navigation.Training
 import pl.matiu.kalistenika.navigation.UserProfile
 import pl.matiu.kalistenika.training.SeriesScreen
-import pl.matiu.kalistenika.ui.theme.Beige
 import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
 import pl.matiu.kalistenika.profile.UserProfileScreen
 import pl.matiu.kalistenika.training.AddExerciseButton
@@ -55,7 +55,7 @@ import pl.matiu.kalistenika.training.CreateTraining
 import pl.matiu.kalistenika.training.RepetitionExerciseEditScreen
 import pl.matiu.kalistenika.training.TimeExerciseEditScreen
 import pl.matiu.kalistenika.training.TrainingScreen
-import pl.matiu.kalistenika.ui.theme.InsideLevel1
+import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.Wheat
 
@@ -90,7 +90,7 @@ fun KalistenikaApp() {
             topBar = {
                 CenterAlignedTopAppBar(
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = InsideLevel1
+                        containerColor = MainScreenColor
                     ),
                     title = {
                         Text(
@@ -134,13 +134,18 @@ fun KalistenikaApp() {
             },
             bottomBar = {
                 BottomAppBar(
-                    containerColor = InsideLevel1,
-                    contentColor = InsideLevel1,
+                    containerColor = MainScreenColor,
+                    contentColor = MainScreenColor,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = InsideLevel1)
+                        .background(color = MainScreenColor)
                 ) {
                     Row() {
+                        //TODO https://developer.android.com/develop/ui/compose/components/fab
+//                        ExtendedFloatingActionButton(onClick = { /*TODO*/ }) {
+//
+//                        }
+
                         ElevatedButton(
                             modifier = Modifier
                                 .padding(5.dp)
@@ -195,13 +200,13 @@ fun KalistenikaApp() {
             },
             floatingActionButton = {
 
-                if(addButton == "AddTraining") {
+                if (addButton == "AddTraining") {
                     AddTrainingButton { navController.navigate(Training.route + "/createTraining") }
 //                    AddTrainingButton(navController = navController)
 
                 }
 
-                if(addButton == "AddExercise") {
+                if (addButton == "AddExercise") {
                     AddExerciseButton { navController.navigate(Training.route + "/$trainingId" + "/createSeries") }
                 }
             }
@@ -258,7 +263,11 @@ fun KalistenikaApp() {
                     CreateSeries(
                         navController = navController,
                         trainingId = trainingId,
-                        LocalContext.current
+                        LocalContext.current,
+                        TimeExerciseInternalStorage().getNumberOfExerciseForTrainingId(
+                            LocalContext.current, trainingId,
+                            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId)
+                        )
                     )
                 }
 
@@ -270,8 +279,20 @@ fun KalistenikaApp() {
                     topBarPreviewScreen = Training.route + "/${trainingId}"
                     isNavigationIcon = true
                     addButton = ""
-                    
-                    RepetitionExerciseEditScreen(navigator = navController, context = LocalContext.current, exercise = ExerciseInternalStorageService().findRepetitionExerciseById(LocalContext.current, exerciseId), trainingId)
+
+                    RepetitionExerciseEditScreen(
+                        navigator = navController,
+                        context = LocalContext.current,
+                        exercise = RepetitionExerciseInternalStorage().findRepetitionExerciseById(
+                            LocalContext.current,
+                            exerciseId,
+                            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId)
+                        ), trainingId,
+                        TimeExerciseInternalStorage().getNumberOfExerciseForTrainingId(
+                            LocalContext.current, trainingId,
+                            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId)
+                        )
+                    )
                 }
 
                 composable(route = Training.route + "/{trainingId}" + "/editTimeExercise" + "/{exerciseId}") { backStackEntry ->
@@ -283,7 +304,19 @@ fun KalistenikaApp() {
                     isNavigationIcon = true
                     addButton = ""
 
-                    TimeExerciseEditScreen(navigator = navController, context = LocalContext.current, exercise = ExerciseInternalStorageService().findTimeExerciseById(LocalContext.current, exerciseId), trainingId)
+                    TimeExerciseEditScreen(
+                        navigator = navController,
+                        context = LocalContext.current,
+                        exercise = TimeExerciseInternalStorage().findTimeExerciseById(
+                            LocalContext.current,
+                            exerciseId,
+                            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId)
+                        ), trainingId,
+                        TimeExerciseInternalStorage().getNumberOfExerciseForTrainingId(
+                            LocalContext.current, trainingId,
+                            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId)
+                        )
+                    )
                 }
 
                 composable(route = History.route) {
