@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -67,34 +68,39 @@ fun SeriesScreen(
     trainingId: Int?
 ) {
     var addTraining by rememberSaveable { mutableStateOf(false) }
-    var actualTraining by rememberSaveable { mutableIntStateOf(0) }
     var startStop by rememberSaveable { mutableStateOf(false) }
-
-    val timeExerciseInternalStorage: TimeExerciseInternalStorage = TimeExerciseInternalStorage()
-    val repetitionExerciseInternalStorage: RepetitionExerciseInternalStorage = RepetitionExerciseInternalStorage()
+    var endOfSeries by rememberSaveable { mutableStateOf(false) }
 
     var timeExerciseList: List<SeriesInterface> =
-        timeExerciseInternalStorage.loadTimeExerciseFromInternalStorage(LocalContext.current,
+        TimeExerciseInternalStorage().loadTimeExerciseFromInternalStorage(LocalContext.current,
             TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId))
             .filter { v -> v.trainingId == trainingId }
 
     var repetitionExerciseList: List<SeriesInterface> =
-        repetitionExerciseInternalStorage.loadRepetitionExerciseFromInternalStorage(LocalContext.current,
+        RepetitionExerciseInternalStorage().loadRepetitionExerciseFromInternalStorage(LocalContext.current,
             TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId))
             .filter { v -> v.trainingId == trainingId }
 
-    var exerciseList: List<SeriesInterface> = (timeExerciseList + repetitionExerciseList ).sortedBy { it.positionInTraining }
+    var exerciseList: List<SeriesInterface> = ( timeExerciseList + repetitionExerciseList ).sortedBy { it.positionInTraining }
 //    var showBottomSheet by remember { mutableStateOf(true) }
 
-    val pagerState = rememberPagerState(
+    var pagerState = rememberPagerState(
         pageCount = {
             exerciseList.size
         }
     )
 
-    var endOfSeries by remember { mutableStateOf(false) }
-
     val coroutineScope = rememberCoroutineScope()
+
+    //jesli skonczy sie seria to ten fragment kodu powoduje przejscie do kolejnego cwiczenia
+    if(endOfSeries) {
+
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+        }
+
+        endOfSeries = false
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -119,10 +125,6 @@ fun SeriesScreen(
                     Row(modifier = Modifier.padding(vertical = 5.dp)) {
                         Button(
                             onClick = {
-                                if (actualTraining != 0) {
-                                    actualTraining--
-                                }
-
                                 coroutineScope.launch {
                                     pagerState.animateScrollToPage(pagerState.currentPage - 1)
                                 }
@@ -161,10 +163,6 @@ fun SeriesScreen(
 
                         Button(
                             onClick = {
-                                if (actualTraining != exerciseList.size - 1) {
-                                    actualTraining++
-                                }
-
                                 coroutineScope.launch {
                                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
                                 }
@@ -208,18 +206,20 @@ fun SeriesScreen(
 
                             ) {
 
-                            if (index == actualTraining) {
+                            if (index == pagerState.currentPage) {
                                 when (exerciseList[index]) {
 
                                     is RepetitionExercise -> StartRepetitionSeries(
+                                        context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
                                         startStop = startStop,
                                         onStarStopChange = { startStop = it },
                                         navController = navController,
-                                        context = LocalContext.current,
+                                        pagerState = pagerState,
+                                        endOfSeries = endOfSeries,
+                                        onEndOfSeriesChange = { endOfSeries = it },
+                                    )
 
-                                        endOfSeries = endOfSeries
-                                    ) { endOfSeries = it }
 
                                     is TimeExercise -> StartTimeSeries(
                                         context = LocalContext.current,
@@ -227,37 +227,42 @@ fun SeriesScreen(
                                         startStop = startStop,
                                         onStarStopChange = { startStop = it },
                                         navController = navController,
+                                        pagerState = pagerState,
                                         endOfSeries = endOfSeries,
-                                        onEndOfSeriesChange = { endOfSeries = it }
+                                        onEndOfSeriesChange = { endOfSeries = it },
                                     )
                                 }
                             } else {
                                 when (exerciseList[index]) {
                                     //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
                                     is RepetitionExercise -> StartRepetitionSeries(
+                                        context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
                                         startStop = false,
                                         onStarStopChange = { false },
                                         navController = navController,
-                                        context = LocalContext.current,
-                                        endOfSeries = endOfSeries
-                                    ) { endOfSeries = it }
+                                        pagerState = pagerState,
+                                        endOfSeries = endOfSeries,
+                                        onEndOfSeriesChange = { endOfSeries = it },
+                                    )
+
 
                                     is TimeExercise -> StartTimeSeries(
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as TimeExercise,
-                                        false,
-                                        { false },
+                                        startStop = false,
+                                        onStarStopChange = { false },
                                         navController = navController,
+                                        pagerState = pagerState,
                                         endOfSeries = endOfSeries,
-                                        onEndOfSeriesChange = { endOfSeries = it }
+                                        onEndOfSeriesChange = { endOfSeries = it },
                                     )
                                 }
                             }
 
                             StepProgressBar(
                                 numberOfSteps = exerciseList.indices,
-                                actualTraining = actualTraining
+                                pagerState = pagerState
                             )
                         }
 
@@ -273,8 +278,10 @@ fun SeriesScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun StepProgressBar(numberOfSteps: IntRange, actualTraining: Int) {
+fun StepProgressBar(numberOfSteps: IntRange, pagerState: PagerState) {
+
 
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -302,8 +309,8 @@ fun StepProgressBar(numberOfSteps: IntRange, actualTraining: Int) {
                         ),
                     onDraw = {
                         drawCircle(
-                            color = if (i < actualTraining) Smola
-                            else if (i > actualTraining) InsideLevel1
+                            color = if (i < pagerState.currentPage) Smola
+                            else if (i > pagerState.currentPage) InsideLevel1
                             else Color.Gray
                         )
                     })

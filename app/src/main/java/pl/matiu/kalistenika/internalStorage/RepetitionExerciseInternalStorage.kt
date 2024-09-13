@@ -33,8 +33,6 @@ class RepetitionExerciseInternalStorage {
             (timeExercisesList + repetitionExercisesList).sortedBy { it.positionInTraining }
                 .toMutableList()
 
-        //
-
         // Aktualizacja pozycji elementów, aby zrobić miejsce dla nowego ćwiczenia
         for (i in exerciseList.indices) {
             if (exerciseList[i].positionInTraining!! >= exercise.positionInTraining!!) {
