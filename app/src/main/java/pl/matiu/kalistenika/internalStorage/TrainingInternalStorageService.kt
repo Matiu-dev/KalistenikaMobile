@@ -3,7 +3,7 @@ package pl.matiu.kalistenika.internalStorage
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import pl.matiu.kalistenika.training.model.TrainingModel
+import pl.matiu.kalistenika.trainingModel.TrainingModel
 import java.io.File
 
 //https://developer.android.com/reference/android/content/Context#getExternalFilesDir(java.lang.String)
@@ -88,6 +88,23 @@ class TrainingInternalStorageService {
         trainingList.removeAt(trainingId)
 
         file.writeText(gson.toJson(trainingList))
+    }
+
+    fun getTrainingById(context: Context, trainingId: Int): String {
+        var file = File(context.getExternalFilesDir(null),
+            TRENINGS_FILE_NAME)
+
+        val gson = Gson()
+        val itemType = object : TypeToken<List<TrainingModel>>() {}.type
+
+        var trainingList: MutableList<TrainingModel> = if (file.exists()) {
+            val fileContent = file.readText()
+            gson.fromJson(fileContent, itemType) ?: mutableListOf()
+        } else {
+            mutableListOf()
+        }
+
+        return trainingList.find { it.trainingId == trainingId }?.name ?: ""
     }
 
     //TODO dodanie funkcji modyfikacji treningu

@@ -3,7 +3,7 @@ package pl.matiu.kalistenika.internalStorage
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import pl.matiu.kalistenika.training.model.RepetitionExercise
+import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import java.io.File
 
 class RepetitionExerciseInternalStorage {
@@ -13,10 +13,10 @@ class RepetitionExerciseInternalStorage {
 //TODO mozna sprobowac tworzyc nowy plik cwiczen dla kazdego cwiczenia i potem usuwac przy usunieciu treningu
     //TODO nazwa pliku to np nazwa treningu + time lub rep
     fun saveRepetitionExerciseToInternalStorage(
-        context: Context,
-        exercise: RepetitionExercise,//TODO sprawdzic czy jak tutaj dam training id i dostosuje do TimeExerciseInternalStorage().loadTimeExerciseFromInternalStorage(context) to czy to starczy aby prawidlo
+    context: Context,
+    exercise: RepetitionExercise,//TODO sprawdzic czy jak tutaj dam training id i dostosuje do TimeExerciseInternalStorage().loadTimeExerciseFromInternalStorage(context) to czy to starczy aby prawidlo
         //wo sie aktualizowaly dane
-        trainingName: String
+    trainingName: String
     ) {
 
         var file = File(

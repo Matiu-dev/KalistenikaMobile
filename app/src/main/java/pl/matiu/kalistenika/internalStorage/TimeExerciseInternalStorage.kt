@@ -3,9 +3,8 @@ package pl.matiu.kalistenika.internalStorage
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import pl.matiu.kalistenika.training.model.RepetitionExercise
-import pl.matiu.kalistenika.training.model.TimeExercise
-import pl.matiu.kalistenika.training.model.TrainingModel
+import pl.matiu.kalistenika.trainingModel.RepetitionExercise
+import pl.matiu.kalistenika.trainingModel.TimeExercise
 import java.io.File
 
 class TimeExerciseInternalStorage {

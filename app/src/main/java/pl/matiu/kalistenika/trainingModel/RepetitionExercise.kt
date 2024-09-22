@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.training.model
+package pl.matiu.kalistenika.trainingModel
 
 data class RepetitionExercise(
     var exerciseId: Int, val exerciseName: String, val numberOfSeries: Int,

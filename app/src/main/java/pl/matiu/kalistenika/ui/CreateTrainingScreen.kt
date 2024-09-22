@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.training
+package pl.matiu.kalistenika.ui
 
 import android.content.Context
 import androidx.compose.foundation.background

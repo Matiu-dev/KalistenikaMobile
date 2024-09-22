@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.training
+package pl.matiu.kalistenika.ui
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -36,12 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.getTrainingNameById
 import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
 import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
 import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
-import pl.matiu.kalistenika.training.model.RepetitionExercise
-import pl.matiu.kalistenika.training.model.TimeExercise
+import pl.matiu.kalistenika.trainingModel.RepetitionExercise
+import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola

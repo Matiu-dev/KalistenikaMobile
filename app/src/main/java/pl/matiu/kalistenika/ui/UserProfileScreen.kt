@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.profile
+package pl.matiu.kalistenika.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

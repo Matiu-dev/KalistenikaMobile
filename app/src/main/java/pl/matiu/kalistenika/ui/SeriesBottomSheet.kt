@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.training
+package pl.matiu.kalistenika.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

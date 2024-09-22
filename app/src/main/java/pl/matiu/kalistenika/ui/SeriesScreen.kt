@@ -1,9 +1,11 @@
-package pl.matiu.kalistenika.training
+package pl.matiu.kalistenika.ui
 
 import StartRepetitionSeries
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,11 +32,12 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -42,47 +45,85 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
-import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
+import pl.matiu.kalistenika.R
+import pl.matiu.kalistenika.myViewModel.SeriesViewModel
 import pl.matiu.kalistenika.navigation.Training
-import pl.matiu.kalistenika.training.model.RepetitionExercise
-import pl.matiu.kalistenika.training.model.SeriesInterface
-import pl.matiu.kalistenika.training.timeExercise.StartTimeSeries
-import pl.matiu.kalistenika.training.model.TimeExercise
+import pl.matiu.kalistenika.trainingModel.RepetitionExercise
+import pl.matiu.kalistenika.trainingModel.SeriesInterface
+import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 
 //progression indicator do linii miedzy kulkami
 //bottom albo side sheets - do menu dolnego lub boczbnego
-@OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SeriesScreen(
     navController: NavController,
     trainingId: Int?
 ) {
+    val context = LocalContext.current
+    val viewModel: SeriesViewModel = viewModel()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val exerciseList by viewModel.exerciseList.collectAsState()
+
+    LaunchedEffect(trainingId) {
+        viewModel.loadData(context, trainingId)
+    }
+
+    if (isLoading) {
+        LoadingScreen()
+    } else {
+        exerciseList?.let {
+            trainingId?.let { it1 ->
+                SeriesScreenView(
+                    exerciseList = it,
+                    navController = navController,
+                    trainingId = it1
+                )
+            }
+        }
+    }
+}
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+fun LoadingScreen() {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = InsideLevel1,
+    ) {
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Loading...")
+        }
+
+    }
+}
+
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SeriesScreenView(
+    exerciseList: List<SeriesInterface>,
+    navController: NavController,
+    trainingId: Int
+) {
+
     var addTraining by rememberSaveable { mutableStateOf(false) }
     var startStop by rememberSaveable { mutableStateOf(false) }
     var endOfSeries by rememberSaveable { mutableStateOf(false) }
-
-    var timeExerciseList: List<SeriesInterface> =
-        TimeExerciseInternalStorage().loadTimeExerciseFromInternalStorage(LocalContext.current,
-            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId))
-            .filter { v -> v.trainingId == trainingId }
-
-    var repetitionExerciseList: List<SeriesInterface> =
-        RepetitionExerciseInternalStorage().loadRepetitionExerciseFromInternalStorage(LocalContext.current,
-            TrainingInternalStorageService().getTrainingNameById(LocalContext.current, trainingId))
-            .filter { v -> v.trainingId == trainingId }
-
-    var exerciseList: List<SeriesInterface> = ( timeExerciseList + repetitionExerciseList ).sortedBy { it.positionInTraining }
-//    var showBottomSheet by remember { mutableStateOf(true) }
 
     var pagerState = rememberPagerState(
         pageCount = {
@@ -93,7 +134,7 @@ fun SeriesScreen(
     val coroutineScope = rememberCoroutineScope()
 
     //jesli skonczy sie seria to ten fragment kodu powoduje przejscie do kolejnego cwiczenia
-    if(endOfSeries) {
+    if (endOfSeries) {
 
         coroutineScope.launch {
             pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -152,11 +193,11 @@ fun SeriesScreen(
                                     tint = Smola
                                 )
                             } else {
-                                Icon(
-                                    painter = rememberVectorPainter(image = Icons.Filled.Menu),
+                                Image(
+                                    painter = painterResource(id = R.drawable.pauseimage3),
                                     contentDescription = "play",
-                                    tint = Smola
-                                )
+                                    modifier = Modifier.size(24.dp).background(Color.Transparent)
+                                    )
                             }
 
                         }
@@ -233,7 +274,7 @@ fun SeriesScreen(
                                     )
                                 }
                             } else {
-                                when (exerciseList[index]) {
+                                when (exerciseList!![index]) {
                                     //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
                                     is RepetitionExercise -> StartRepetitionSeries(
                                         context = LocalContext.current,
@@ -317,7 +358,6 @@ fun StepProgressBar(numberOfSteps: IntRange, pagerState: PagerState) {
             }
         }
     }
-
 }
 
 @Composable

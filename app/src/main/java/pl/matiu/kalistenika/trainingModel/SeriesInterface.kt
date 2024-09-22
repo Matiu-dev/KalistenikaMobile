@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.training.model
+package pl.matiu.kalistenika.trainingModel
 
 interface SeriesInterface {
     val trainingId: Int?

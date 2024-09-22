@@ -1,26 +1,37 @@
+package pl.matiu.kalistenika.ui
+
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,50 +39,51 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
+import pl.matiu.kalistenika.exerciseApi.ExerciseApi
 import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
 import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
+import pl.matiu.kalistenika.logger.ConsoleLogger
+import pl.matiu.kalistenika.logger.LoggerDecorator
 import pl.matiu.kalistenika.navigation.Training
-import pl.matiu.kalistenika.training.model.RepetitionExercise
-import pl.matiu.kalistenika.training.model.TimeExercise
-import pl.matiu.kalistenika.training.timeExercise.DialogWithImage
+import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
+import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 
-@OptIn(ExperimentalFoundationApi::class)
+@SuppressLint("CoroutineCreationDuringComposition")
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun StartRepetitionSeries(
+fun StartTimeSeries(
     context: Context,
-    exercise: RepetitionExercise,
+    exercise: TimeExercise,
     startStop: Boolean,
     onStarStopChange: (Boolean) -> Unit,
     navController: NavController,
-    pagerState: PagerState,
     endOfSeries: Boolean,
-    onEndOfSeriesChange: (Boolean) -> Unit
+    onEndOfSeriesChange: (Boolean) -> Unit,
+    pagerState: PagerState,
 ) {
 
     val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
     val breakSong = remember { MediaPlayer.create(context, R.raw.breaksong) }
 
-    var sekunder by rememberSaveable {
-        mutableIntStateOf(0)
-    }
+    var sekunder by rememberSaveable { mutableStateOf(0) }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -80,7 +92,7 @@ fun StartRepetitionSeries(
         }
     }
 
-    var currentProgress by remember { mutableStateOf(0f) }
+    var currentProgress by rememberSaveable { mutableStateOf(0f) }
     var initialBreakTime by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -89,30 +101,31 @@ fun StartRepetitionSeries(
             onDismissRequest = { showDialog = false },
             onConfirmation = {  },
             painter = painterResource(id = android.R.drawable.ic_dialog_info),
-            imageDescription = "opis"
+            imageDescription = "opis",
+            exerciseName = exercise.exerciseName
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = {
-                    navController.navigate(Training.route + "/${exercise.trainingId}" + "/editRepetitionExercise" + "/${exercise.exerciseId}")
-                },
-                onDoubleClick = {
-                    RepetitionExerciseInternalStorage().deleteRepetitionExerciseById(
-                        context, exercise.exerciseId,
-                        TrainingInternalStorageService().getTrainingNameById(
-                            context,
-                            exercise.trainingId
-                        )
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .combinedClickable(
+            onClick = {
+                navController.navigate(Training.route + "/${exercise.trainingId}" + "/editTimeExercise" + "/${exercise.exerciseId}")
+            },
+            onDoubleClick = {
+                TimeExerciseInternalStorage().deleteTimeExerciseById(
+                    context,
+                    exercise.exerciseId,
+                    exercise.trainingId,
+                    TrainingInternalStorageService().getTrainingNameById(
+                        context,
+                        exercise.trainingId
                     )
+                )
 
-                    navController.navigate(Training.route + "/${exercise.trainingId}")
-                }
-            )
-
+                navController.navigate(Training.route + "/${exercise.trainingId}")
+            }
+        )
     ) {
 
         //do testu
@@ -126,13 +139,14 @@ fun StartRepetitionSeries(
 
         //do testu
 
-
         Row(modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Box(modifier = Modifier.fillMaxWidth().weight(1f),
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
                 contentAlignment = Alignment.Center) {
                 Text(
                     text = exercise.exerciseName,
@@ -165,15 +179,7 @@ fun StartRepetitionSeries(
         Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         Text(
-            text = "Liczba powtórzeń w serii: ${exercise.numberOfReps}",
-            color = Smola,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
-
-        Text(
-            text = "Zatrzymanie czasu po serii: ${if (exercise.stopTimer) "tak" else "nie"}",
+            text = "Czas dla serii: ${exercise.timeForSeries}",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -209,39 +215,33 @@ fun StartRepetitionSeries(
         )
 
         Text(
-            text = "Koniec przerwy za ${exercise.breakBetweenSeries - sekunder % exercise.breakBetweenSeries} sekund",
+            text = "Koniec ${
+                isSeriesOrBreak(
+                    sekunder,
+                    exercise.breakBetweenSeries,
+                    exercise.timeForSeries
+                )
+            } za " +
+                    "${
+                        seriesOrBreak(
+                            sekunder,
+                            exercise.breakBetweenSeries,
+                            exercise.timeForSeries
+                        )
+                    } sekund",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-
-//        Text(
-//            text = "Initial break ${initialBreakTime} sekund",
-//            color = Smola,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-
-//        Text(
-//            text = "Aktualnie jest ${isSeriesOrBreak(sekunder, exercise.breakBetweenSeries, exercise.timeForSeries)} przez:" +
-//                    "${seriesOrBreak(sekunder, exercise.breakBetweenSeries, exercise.timeForSeries)} sekund",
-//            color = ZielonyNapis,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-
-//        Text(
-//            text = "Wykonanych serii: ${floor((sekunder.toDouble()/exercise.breakBetweenSeries.toDouble()) + 1)}",
-//            color = ZielonyNapis,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
 
         LaunchedEffect(startStop) {
 
             if (startStop) {
 
-                if(initialBreakTime != exercise.breakBetweenSeries) {
+                //czekanie jeszcze jednej przerwy i przejscie do kolejnego cwiczenia
+                if (initialBreakTime != exercise.breakBetweenSeries) {
                     if (pagerState.currentPage == pagerState.pageCount) {
                         onStarStopChange(!startStop)
                     } else {
-                        //czekanie jeszcze jednej przerwy i przejscie do kolejnego cwiczenia
                         for (i in initialBreakTime..exercise.breakBetweenSeries) {
                             currentProgress = i.toFloat() / exercise.breakBetweenSeries.toFloat()
 
@@ -253,21 +253,40 @@ fun StartRepetitionSeries(
                     }
                 }
 
-                while (sekunder < exercise.breakBetweenSeries * exercise.numberOfSeries && startStop) {
+
+                while (!isFullTimeForExercise(
+                        exercise.numberOfSeries,
+                        exercise.breakBetweenSeries,
+                        exercise.timeForSeries,
+                        sekunder
+                    )
+                ) {
                     delay(1000)
                     sekunder++
 
-                    currentProgress = (sekunder % exercise.breakBetweenSeries).toFloat() /
-                            exercise.breakBetweenSeries
+                    currentProgress = (isSeriesOrBreakSecond(
+                        sekunder,
+                        exercise.breakBetweenSeries,
+                        exercise.timeForSeries,
+                        exercise
+                    ) -
+                            seriesOrBreak(
+                                sekunder,
+                                exercise.breakBetweenSeries,
+                                exercise.timeForSeries
+                            )).toFloat() /
+                            isSeriesOrBreakSecond(
+                                sekunder,
+                                exercise.breakBetweenSeries,
+                                exercise.timeForSeries,
+                                exercise
+                            )
 
-                    if (exercise.stopTimer && sekunder % exercise.breakBetweenSeries == 0) {
-                        onStarStopChange(!startStop)
-//                        startStop = !startStop
-                    }
+                    isEndOfSeriesOrBreak(
+                        sekunder, exercise.breakBetweenSeries, exercise.timeForSeries,
+                        seriesSong, breakSong
+                    )
 
-                    if (sekunder % exercise.breakBetweenSeries == 0) {
-                        breakSong.start()
-                    }
                 }
 
                 onEndOfSeriesChange(!endOfSeries)
@@ -275,6 +294,114 @@ fun StartRepetitionSeries(
         }
     }
 }
+
+@Composable
+fun DialogWithImage(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    painter: Painter,
+    imageDescription: String,
+    exerciseName: String
+) {
+
+    val logger = ConsoleLogger()
+    logger.log("pobieranie danych")
+
+    var exercise = remember {
+        mutableStateOf<List<ExerciseApi>>(emptyList())
+    }
+
+    RealTimeDatabaseService().loadData { exercises ->
+        exercise.value = exercises.filter { it.name == exerciseName }
+    }
+
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        // Draw a rectangle shape with rounded corners inside the dialog
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(375.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+//                Image(
+//                    painter = painter,
+//                    contentDescription = imageDescription,
+//                    contentScale = ContentScale.Fit,
+//                    modifier = Modifier
+//                        .height(160.dp)
+//                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    TextButton(
+                        onClick = { onDismissRequest() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Dismiss")
+                    }
+                    TextButton(
+                        onClick = { onConfirmation() },
+                        modifier = Modifier.padding(8.dp),
+                    ) {
+                        Text("Confirm")
+                    }
+                }
+
+                //dane
+                exercise.value.let { exercise ->
+                    if(exercise.isNotEmpty()) {
+                        LazyColumn() {
+                            items(exercise) {
+                                Text(
+                                    text = it.name ,
+                                    modifier = Modifier.padding(16.dp),
+                                )
+                                Text(
+                                    text = it.type,
+                                    modifier = Modifier.padding(16.dp),
+                                )
+                                Text(
+                                    text = it.muscle,
+                                    modifier = Modifier.padding(16.dp),
+                                )
+                                Text(
+                                    text = it.equipment,
+                                    modifier = Modifier.padding(16.dp),
+                                )
+                                Text(
+                                    text = it.difficulty,
+                                    modifier = Modifier.padding(16.dp),
+                                )
+                                Text(
+                                    text = it.instructions,
+                                    modifier = Modifier.padding(16.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+
+                //dane
+            }
+        }
+    }
+}
+//suspend fun loadProgress(updateProgress: (Float) -> Unit, time: Int) {
+//    for (i in 0..time) {
+//        updateProgress(i.toFloat() / time)
+//        delay(1000)
+//    }
+//}
 
 fun isEndOfSeriesOrBreak(
     actualTime: Int,
@@ -287,14 +414,14 @@ fun isEndOfSeriesOrBreak(
 
     //jesli czas jest rowny czasowi serii i aktualnie jest seria
     if (seriesOrBreak(actualTime, breakTime, seriesTime) == seriesTime &&
-        isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("seria")
+        isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("serii")
     ) {
         seriesSong.start()
     }
 
     //jesli czas jest rowny czasowi przerwy i aktualnie jest przerwa
     if (seriesOrBreak(actualTime, breakTime, seriesTime) == breakTime &&
-        isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("przerwa")
+        isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("przerwy")
     ) {
         breakSong.start()
     }
@@ -305,9 +432,9 @@ fun isSeriesOrBreak(actualTime: Int, breakTime: Int, seriesTime: Int): String {
     val modTime: Int = actualTime % breakAndSeriesTime
 
     return if (modTime < seriesTime) {
-        "seria"
+        "serii"
     } else {
-        "przerwa"
+        "przerwy"
     }
 }
 

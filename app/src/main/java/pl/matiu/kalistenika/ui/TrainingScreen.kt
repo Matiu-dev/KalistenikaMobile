@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.training
+package pl.matiu.kalistenika.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -24,15 +24,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
 import pl.matiu.kalistenika.navigation.Training
-import pl.matiu.kalistenika.training.model.TrainingModel
-import pl.matiu.kalistenika.ui.theme.Beige
-import pl.matiu.kalistenika.ui.theme.InsideLevel0Background
+import pl.matiu.kalistenika.trainingModel.TrainingModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
