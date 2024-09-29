@@ -94,7 +94,7 @@ fun TrainingScreen(navController: NavController) {
 }
 
 @Composable
-fun AddTrainingButton( onClick: () -> Unit,) {
+fun AddTrainingButton( onClick: () -> Unit) {
 
     FloatingActionButton(
         onClick = {

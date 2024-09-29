@@ -1,10 +1,16 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 
-//    id("com.android.application")
     id("com.google.gms.google-services")
+
+//    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
+    id("kotlin-kapt")
 }
+
+
 
 android {
     namespace = "pl.matiu.kalistenika"
@@ -32,12 +38,14 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = rootProject.extra["sourceCompatibility"] as JavaVersion
+        targetCompatibility = rootProject.extra["targetCompatibility"] as JavaVersion
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
 
         allWarningsAsErrors = false
 
@@ -99,4 +107,14 @@ dependencies {
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
+
+    //room
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
+    
 }

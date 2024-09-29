@@ -9,3 +9,10 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.10" apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
 }
+
+extra["sourceCompatibility"] = JavaVersion.VERSION_17
+extra["targetCompatibility"] = JavaVersion.VERSION_17
+
+//room {
+//    shemaDirectory("$projectDir/schemas")
+//}

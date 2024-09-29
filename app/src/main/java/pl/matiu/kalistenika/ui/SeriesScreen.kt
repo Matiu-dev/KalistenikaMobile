@@ -71,12 +71,13 @@ fun SeriesScreen(
     trainingId: Int?
 ) {
     val context = LocalContext.current
-    val viewModel: SeriesViewModel = viewModel()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val exerciseList by viewModel.exerciseList.collectAsState()
+    val seriesViewModel: SeriesViewModel = viewModel()
+    val isLoading by seriesViewModel.isLoading.collectAsState()
+    val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
+    //tutaj
     LaunchedEffect(trainingId) {
-        viewModel.loadData(context, trainingId)
+        seriesViewModel.loadData(context, trainingId)
     }
 
     if (isLoading) {
@@ -93,6 +94,8 @@ fun SeriesScreen(
         }
     }
 }
+
+fun test() = print("xd")
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -274,7 +277,7 @@ fun SeriesScreenView(
                                     )
                                 }
                             } else {
-                                when (exerciseList!![index]) {
+                                when (exerciseList[index]) {
                                     //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
                                     is RepetitionExercise -> StartRepetitionSeries(
                                         context = LocalContext.current,

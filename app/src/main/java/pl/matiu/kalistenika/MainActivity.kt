@@ -161,7 +161,6 @@ fun KalistenikaApp() {
                 ModalDrawerSheet {
                     DrawerItem("Pobierz treningi")
 
-
                     Card {
                         NavigationDrawerItem(
                             label = { Text(text = "Zard w masterze(SPRAWDŹ TUTAJ!!)") },
