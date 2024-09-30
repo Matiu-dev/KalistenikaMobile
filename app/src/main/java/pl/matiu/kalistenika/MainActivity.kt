@@ -33,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,15 +47,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.history.HistoryScreen
-import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
 import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.logger.DateTimeLogger
 import pl.matiu.kalistenika.logger.ThreadIdLogger
@@ -75,6 +75,8 @@ import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.Wheat
 import pl.matiu.kalistenika.exerciseApi.NinjaApiService
+import pl.matiu.kalistenika.myViewModel.SeriesViewModel
+import pl.matiu.kalistenika.myViewModel.TrainingViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.ui.DrawerItem
 import java.lang.Exception
@@ -325,16 +327,17 @@ fun KalistenikaApp() {
                         isNavigationIcon = true
                         addButton = ""
 
-                        CreateTraining(navController = navController, LocalContext.current)
+                        CreateTraining(navController = navController)
                     }
 
                     composable(route = Training.route + "/{trainingId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
 
-                        topBarTitle = TrainingInternalStorageService().getTrainingNameById(
-                            LocalContext.current,
-                            trainingId
-                        )
+                        val trainingViewModel: TrainingViewModel = viewModel()
+                        val trainingList by trainingViewModel.trainingList.collectAsState()
+
+                        topBarTitle = trainingList?.filter { it.trainingId == trainingId }?.get(0)?.name.toString()
+
                         topBarPreviewScreen = Training.route
                         isNavigationIcon = true
                         addButton = "AddExercise"
@@ -353,17 +356,14 @@ fun KalistenikaApp() {
                         isNavigationIcon = true
                         addButton = ""
 
+                        val seriesViewModel: SeriesViewModel = viewModel()
+                        val exerciseList by seriesViewModel.exerciseList.collectAsState()
+
                         CreateSeries(
                             navController = navController,
                             trainingId = trainingId,
                             LocalContext.current,
-                            TimeExerciseInternalStorage().getNumberOfExerciseForTrainingId(
-                                LocalContext.current, trainingId,
-                                TrainingInternalStorageService().getTrainingNameById(
-                                    LocalContext.current,
-                                    trainingId
-                                )
-                            )
+                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size ?: 0
                         )
                     }
 
@@ -377,24 +377,15 @@ fun KalistenikaApp() {
                         isNavigationIcon = true
                         addButton = ""
 
+                        val seriesViewModel: SeriesViewModel = viewModel()
+                        val exerciseList by seriesViewModel.exerciseList.collectAsState()
+
                         RepetitionExerciseEditScreen(
                             navigator = navController,
                             context = LocalContext.current,
-                            exercise = RepetitionExerciseInternalStorage().findRepetitionExerciseById(
-                                LocalContext.current,
-                                exerciseId,
-                                TrainingInternalStorageService().getTrainingNameById(
-                                    LocalContext.current,
-                                    trainingId
-                                )
-                            ), trainingId,
-                            TimeExerciseInternalStorage().getNumberOfExerciseForTrainingId(
-                                LocalContext.current, trainingId,
-                                TrainingInternalStorageService().getTrainingNameById(
-                                    LocalContext.current,
-                                    trainingId
-                                )
-                            )
+                            exercise =  seriesViewModel.getRepetitionSeriesById(exerciseId = exerciseId),
+                            trainingId = trainingId,
+                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size ?: 0
                         )
                     }
 
@@ -408,24 +399,15 @@ fun KalistenikaApp() {
                         isNavigationIcon = true
                         addButton = ""
 
+                        val seriesViewModel: SeriesViewModel = viewModel()
+                        val exerciseList by seriesViewModel.exerciseList.collectAsState()
+
                         TimeExerciseEditScreen(
                             navigator = navController,
                             context = LocalContext.current,
-                            exercise = TimeExerciseInternalStorage().findTimeExerciseById(
-                                LocalContext.current,
-                                exerciseId,
-                                TrainingInternalStorageService().getTrainingNameById(
-                                    LocalContext.current,
-                                    trainingId
-                                )
-                            ), trainingId,
-                            TimeExerciseInternalStorage().getNumberOfExerciseForTrainingId(
-                                LocalContext.current, trainingId,
-                                TrainingInternalStorageService().getTrainingNameById(
-                                    LocalContext.current,
-                                    trainingId
-                                )
-                            )
+                            exercise = seriesViewModel.getTimeSeriesById(exerciseId = exerciseId),
+                            trainingId = trainingId,
+                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size ?: 0
                         )
                     }
 

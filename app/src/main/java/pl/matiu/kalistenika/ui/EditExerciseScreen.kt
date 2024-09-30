@@ -26,10 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
+import pl.matiu.kalistenika.myViewModel.SeriesViewModel
 import pl.matiu.kalistenika.navigation.Training
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
@@ -45,6 +44,9 @@ fun RepetitionExerciseEditScreen(
     trainingId: Int,
     numberOfExercise: Int
 ) {
+
+    val exerciseViewModel: SeriesViewModel = viewModel()
+
 
     var exerciseName by remember {
         mutableStateOf(exercise?.exerciseName)
@@ -123,6 +125,25 @@ fun RepetitionExerciseEditScreen(
                 Button(
                     onClick = {
                         if (exercise != null) {
+//                            stopTimer?.let {
+//                                RepetitionExercise(
+//                                    exercise.exerciseId,
+//                                    exerciseName.toString(),
+//                                    numberOfSeries.toInt(),
+//                                    numberOfReps.toInt(),
+//                                    it,
+//                                    breakBetweenSeries.toInt(),
+//                                    exercisePositionInTraining - 1,
+//                                    trainingId
+//                                )
+//                            }?.let {
+//                                RepetitionExerciseInternalStorage().updateRepetitionExerciseToInternalStorage(
+//                                    context = context,
+//                                    exerciseId = exercise.exerciseId,
+//                                    repetitionExercise = it,
+//                                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
+//                                )
+//                            }
                             stopTimer?.let {
                                 RepetitionExercise(
                                     exercise.exerciseId,
@@ -135,11 +156,8 @@ fun RepetitionExerciseEditScreen(
                                     trainingId
                                 )
                             }?.let {
-                                RepetitionExerciseInternalStorage().updateRepetitionExerciseToInternalStorage(
-                                    context = context,
-                                    exerciseId = exercise.exerciseId,
-                                    repetitionExercise = it,
-                                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
+                                exerciseViewModel.updateRepetitionSeries(
+                                    it
                                 )
                             }
                         }
@@ -168,6 +186,8 @@ fun TimeExerciseEditScreen(
     trainingId: Int,
     numberOfExercise: Int
 ) {
+
+    val exerciseViewModel: SeriesViewModel = viewModel()
 
     var exerciseName by remember {
         mutableStateOf(exercise?.exerciseName)
@@ -325,10 +345,22 @@ fun TimeExerciseEditScreen(
                 Button(
                     onClick = {
                         if (exercise != null) {
-                            TimeExerciseInternalStorage().updateTimeExerciseToInternalStorage(
-                                context = context,
-                                exerciseId = exercise.exerciseId,
-                                timeExercise = TimeExercise(
+//                            TimeExerciseInternalStorage().updateTimeExerciseToInternalStorage(
+//                                context = context,
+//                                exerciseId = exercise.exerciseId,
+//                                timeExercise = TimeExercise(
+//                                    exercise.exerciseId,
+//                                    exerciseName.toString(),
+//                                    numberOfSeries.toInt(),
+//                                    timeForSeries.toInt(),
+//                                    breakBetweenSeries.toInt(),
+//                                    exercisePositionInTraining - 1,
+//                                    trainingId
+//                                ),
+//                                TrainingInternalStorageService().getTrainingNameById(context, trainingId)
+//                            )
+                            exerciseViewModel.updateTimeSeries(
+                                TimeExercise(
                                     exercise.exerciseId,
                                     exerciseName.toString(),
                                     numberOfSeries.toInt(),
@@ -336,8 +368,7 @@ fun TimeExerciseEditScreen(
                                     breakBetweenSeries.toInt(),
                                     exercisePositionInTraining - 1,
                                     trainingId
-                                ),
-                                TrainingInternalStorageService().getTrainingNameById(context, trainingId)
+                                )
                             )
                         }
                         navigator.navigate(route = Training.route + "/${trainingId}")

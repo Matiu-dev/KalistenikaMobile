@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
+import pl.matiu.kalistenika.myViewModel.SeriesViewModel
+import pl.matiu.kalistenika.myViewModel.TrainingViewModel
 import pl.matiu.kalistenika.navigation.Training
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
@@ -60,7 +60,8 @@ fun StartRepetitionSeries(
     navController: NavController,
     pagerState: PagerState,
     endOfSeries: Boolean,
-    onEndOfSeriesChange: (Boolean) -> Unit
+    onEndOfSeriesChange: (Boolean) -> Unit,
+    seriesViewModel: SeriesViewModel
 ) {
 
     val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
@@ -99,14 +100,7 @@ fun StartRepetitionSeries(
                     navController.navigate(Training.route + "/${exercise.trainingId}" + "/editRepetitionExercise" + "/${exercise.exerciseId}")
                 },
                 onDoubleClick = {
-                    RepetitionExerciseInternalStorage().deleteRepetitionExerciseById(
-                        context, exercise.exerciseId,
-                        TrainingInternalStorageService().getTrainingNameById(
-                            context,
-                            exercise.trainingId
-                        )
-                    )
-
+                    seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
                     navController.navigate(Training.route + "/${exercise.trainingId}")
                 }
             )
@@ -114,13 +108,13 @@ fun StartRepetitionSeries(
     ) {
 
         //do testu
-//        Text(
-//            text = exercise.toString(),
-//            color = Smola,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-//
-//        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Text(
+            text = exercise.toString(),
+            color = Smola,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         //do testu
 

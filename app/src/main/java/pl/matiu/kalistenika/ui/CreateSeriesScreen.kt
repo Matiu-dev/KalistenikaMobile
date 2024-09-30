@@ -36,9 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.internalStorage.RepetitionExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TimeExerciseInternalStorage
-import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
+import pl.matiu.kalistenika.myViewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -55,7 +53,7 @@ fun CreateSeries(
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1,
-        ) {
+    ) {
         Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)) {
 
             Row(modifier = Modifier.padding(vertical = 5.dp)) {
@@ -91,7 +89,9 @@ fun RepetitiveSeries(
 
     Surface(
         color = InsideLevel1,
-        modifier = Modifier.border(1.dp, Smola, RoundedCornerShape(8.dp)).background(InsideLevel2)
+        modifier = Modifier
+            .border(1.dp, Smola, RoundedCornerShape(8.dp))
+            .background(InsideLevel2)
     ) {
         Column() {
             Row(
@@ -212,19 +212,31 @@ fun RepetitiveSeriesOptions(
             ) {
                 Button(
                     onClick = {
-                        RepetitionExerciseInternalStorage().saveRepetitionExerciseToInternalStorage(
-                            context,
+//                        RepetitionExerciseInternalStorage().saveRepetitionExerciseToInternalStorage(
+//                            context,
+//                            RepetitionExercise(
+//                                1,
+//                                exerciseName,
+//                                numberOfSeries.toInt(),
+//                                numberOfReps.toInt(),
+//                                stopTimer,
+//                                breakBetweenSeries.toInt(),
+//                                exercisePositionInTraining - 1,
+//                                trainingId
+//                            ),
+//                            TrainingInternalStorageService().getTrainingNameById(context ,trainingId)
+//                        )
+
+                        SeriesViewModel().addRepetitionSeries(
                             RepetitionExercise(
-                                1,
-                                exerciseName,
-                                numberOfSeries.toInt(),
-                                numberOfReps.toInt(),
-                                stopTimer,
-                                breakBetweenSeries.toInt(),
-                                exercisePositionInTraining - 1,
-                                trainingId
-                            ),
-                            TrainingInternalStorageService().getTrainingNameById(context ,trainingId)
+                                exerciseName = exerciseName,
+                                numberOfSeries = numberOfSeries.toInt(),
+                                numberOfReps = numberOfReps.toInt(),
+                                stopTimer = stopTimer,
+                                breakBetweenSeries = breakBetweenSeries.toInt(),
+                                positionInTraining = exercisePositionInTraining - 1,
+                                trainingId = trainingId
+                            )
                         )
 
                         navController.navigate("training/${trainingId}")
@@ -363,18 +375,29 @@ fun TimeSeriesOptions(
 
         Button(
             onClick = {
-                TimeExerciseInternalStorage().saveTimeExerciseToInternalStorage(
-                    context,
+//                TimeExerciseInternalStorage().saveTimeExerciseToInternalStorage(
+//                    context,
+//                    TimeExercise(
+//                        1,
+//                        exerciseName,
+//                        numberOfSeries.toInt(),
+//                        timeForSeries.toInt(),
+//                        breakBetweenSeries.toInt(),
+//                        exercisePositionInTraining - 1,
+//                        trainingId
+//                    ),
+//                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
+//                )
+
+                SeriesViewModel().addTimeSeries(
                     TimeExercise(
-                        1,
-                        exerciseName,
-                        numberOfSeries.toInt(),
-                        timeForSeries.toInt(),
-                        breakBetweenSeries.toInt(),
-                        exercisePositionInTraining - 1,
-                        trainingId
-                    ),
-                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
+                        exerciseName = exerciseName,
+                        numberOfSeries = numberOfSeries.toInt(),
+                        timeForSeries = timeForSeries.toInt(),
+                        breakBetweenSeries = breakBetweenSeries.toInt(),
+                        positionInTraining = exercisePositionInTraining - 1,
+                        trainingId = trainingId
+                    )
                 )
 
                 navController.navigate("training/${trainingId}")

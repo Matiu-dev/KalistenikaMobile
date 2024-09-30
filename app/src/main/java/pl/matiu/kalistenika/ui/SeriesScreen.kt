@@ -70,25 +70,24 @@ fun SeriesScreen(
     navController: NavController,
     trainingId: Int?
 ) {
-    val context = LocalContext.current
     val seriesViewModel: SeriesViewModel = viewModel()
     val isLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
-    //tutaj
-    LaunchedEffect(trainingId) {
-        seriesViewModel.loadData(context, trainingId)
-    }
+//    LaunchedEffect(trainingId) {
+//        seriesViewModel.loadData(context, trainingId)
+//    }
 
     if (isLoading) {
         LoadingScreen()
     } else {
-        exerciseList?.let {
+        exerciseList?.filter { it.trainingId == trainingId }?.sortedBy { it.positionInTraining }.let {
             trainingId?.let { it1 ->
                 SeriesScreenView(
                     exerciseList = it,
                     navController = navController,
-                    trainingId = it1
+                    trainingId = it1,
+                    seriesViewModel = seriesViewModel
                 )
             }
         }
@@ -119,9 +118,10 @@ fun LoadingScreen() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SeriesScreenView(
-    exerciseList: List<SeriesInterface>,
+    exerciseList: List<SeriesInterface>?,
     navController: NavController,
-    trainingId: Int
+    trainingId: Int,
+    seriesViewModel: SeriesViewModel
 ) {
 
     var addTraining by rememberSaveable { mutableStateOf(false) }
@@ -130,7 +130,7 @@ fun SeriesScreenView(
 
     var pagerState = rememberPagerState(
         pageCount = {
-            exerciseList.size
+            exerciseList?.size ?: 0
         }
     )
 
@@ -251,7 +251,7 @@ fun SeriesScreenView(
                             ) {
 
                             if (index == pagerState.currentPage) {
-                                when (exerciseList[index]) {
+                                when (exerciseList?.get(index)) {
 
                                     is RepetitionExercise -> StartRepetitionSeries(
                                         context = LocalContext.current,
@@ -262,6 +262,7 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        seriesViewModel = seriesViewModel
                                     )
 
 
@@ -274,10 +275,11 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        seriesViewModel = seriesViewModel
                                     )
                                 }
                             } else {
-                                when (exerciseList[index]) {
+                                when (exerciseList?.get(index)) {
                                     //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
                                     is RepetitionExercise -> StartRepetitionSeries(
                                         context = LocalContext.current,
@@ -288,6 +290,7 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        seriesViewModel = seriesViewModel
                                     )
 
 
@@ -300,14 +303,17 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        seriesViewModel = seriesViewModel
                                     )
                                 }
                             }
 
-                            StepProgressBar(
-                                numberOfSteps = exerciseList.indices,
-                                pagerState = pagerState
-                            )
+                            if (exerciseList != null) {
+                                StepProgressBar(
+                                    numberOfSteps = exerciseList.indices,
+                                    pagerState = pagerState
+                                )
+                            }
                         }
 
                     }

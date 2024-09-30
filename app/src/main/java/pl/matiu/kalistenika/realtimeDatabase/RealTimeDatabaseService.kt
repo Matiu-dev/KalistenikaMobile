@@ -11,7 +11,6 @@ import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.logger.Logger
 import java.lang.Exception
 
-//TODO reddis
 class RealTimeDatabaseService {
 
     private val database = Firebase.database

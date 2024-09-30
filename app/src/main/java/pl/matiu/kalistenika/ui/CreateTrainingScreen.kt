@@ -17,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,8 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.internalStorage.TrainingInternalStorageService
+import pl.matiu.kalistenika.myViewModel.TrainingViewModel
 import pl.matiu.kalistenika.navigation.Training
 import pl.matiu.kalistenika.ui.theme.Beige
 import pl.matiu.kalistenika.ui.theme.InsideLevel0Background
@@ -36,9 +39,13 @@ import pl.matiu.kalistenika.ui.theme.Smola
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTraining(navController: NavController, context: Context) {
+fun CreateTraining(navController: NavController) {
 
     var trainingName by remember { mutableStateOf("") }
+
+    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingList2 by trainingViewModel.trainingList.collectAsState()
+
 
     Surface(
         modifier = Modifier
@@ -55,7 +62,7 @@ fun CreateTraining(navController: NavController, context: Context) {
                 modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically,
 
-            ) {
+                ) {
 
                 Text(
                     text = "Nazwa treningu",
@@ -86,10 +93,13 @@ fun CreateTraining(navController: NavController, context: Context) {
 
                 Button(
                     onClick = {
-                        TrainingInternalStorageService().saveTrainingToInternalStorage(
-                            context = context,
-                            trainingName
-                        )
+//                        TrainingInternalStorageService().saveTrainingToInternalStorage(
+//                            context = context,
+//                            trainingName
+//                        )
+
+                        trainingViewModel.addTraining(name = trainingName)
+
                         navController.navigate(Training.route)
                     },
                     modifier = Modifier
