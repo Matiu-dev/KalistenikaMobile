@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.myViewModel.SeriesViewModel
+import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1

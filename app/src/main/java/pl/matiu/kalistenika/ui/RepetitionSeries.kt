@@ -40,9 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.myViewModel.SeriesViewModel
-import pl.matiu.kalistenika.myViewModel.TrainingViewModel
-import pl.matiu.kalistenika.navigation.Training
+import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.DialogWithImage
@@ -97,24 +96,24 @@ fun StartRepetitionSeries(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    navController.navigate(Training.route + "/${exercise.trainingId}" + "/editRepetitionExercise" + "/${exercise.exerciseId}")
+                    navController.navigate(Routes.Training.destination + "/${exercise.trainingId}" + "/editRepetitionExercise" + "/${exercise.exerciseId}")
                 },
                 onDoubleClick = {
                     seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
-                    navController.navigate(Training.route + "/${exercise.trainingId}")
+                    navController.navigate(Routes.Training.destination + "/${exercise.trainingId}")
                 }
             )
 
     ) {
 
         //do testu
-        Text(
-            text = exercise.toString(),
-            color = Smola,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+//        Text(
+//            text = exercise.toString(),
+//            color = Smola,
+//            modifier = Modifier.align(Alignment.CenterHorizontally)
+//        )
+//
+//        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         //do testu
 

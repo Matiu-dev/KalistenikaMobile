@@ -8,7 +8,6 @@ import pl.matiu.kalistenika.trainingModel.TimeExercise
 
 @Dao
 interface TimeSeriesDao {
-
     @Query("SELECT * FROM TimeExercise")
     fun getAllTimeExercise(): List<TimeExercise>
     @Query("SELECT * FROM TimeExercise WHERE trainingId = :trainingId")

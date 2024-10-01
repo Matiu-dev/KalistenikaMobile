@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -47,18 +46,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
+import pl.matiu.kalistenika.Routes
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
 import pl.matiu.kalistenika.logger.ConsoleLogger
-import pl.matiu.kalistenika.logger.LoggerDecorator
-import pl.matiu.kalistenika.myViewModel.SeriesViewModel
-import pl.matiu.kalistenika.navigation.Training
+import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -110,23 +107,23 @@ fun StartTimeSeries(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                navController.navigate(Training.route + "/${exercise.trainingId}" + "/editTimeExercise" + "/${exercise.exerciseId}")
+                navController.navigate(Routes.Training.destination + "/${exercise.trainingId}" + "/editTimeExercise" + "/${exercise.exerciseId}")
             },
             onDoubleClick = {
                 seriesViewModel.deleteTimeSeries(timeExercise = exercise)
-                navController.navigate(Training.route + "/${exercise.trainingId}")
+                navController.navigate(Routes.Training.destination + "/${exercise.trainingId}")
             }
         )
     ) {
 
         //do testu
-        Text(
-            text = exercise.toString(),
-            color = Smola,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+//        Text(
+//            text = exercise.toString(),
+//            color = Smola,
+//            modifier = Modifier.align(Alignment.CenterHorizontally)
+//        )
+//
+//        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         //do testu
 

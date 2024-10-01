@@ -1,7 +1,5 @@
 package pl.matiu.kalistenika.ui
 
-import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,10 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.myViewModel.TrainingViewModel
-import pl.matiu.kalistenika.navigation.Training
-import pl.matiu.kalistenika.ui.theme.Beige
-import pl.matiu.kalistenika.ui.theme.InsideLevel0Background
+import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -100,7 +95,7 @@ fun CreateTraining(navController: NavController) {
 
                         trainingViewModel.addTraining(name = trainingName)
 
-                        navController.navigate(Training.route)
+                        navController.navigate(Routes.Training.destination)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

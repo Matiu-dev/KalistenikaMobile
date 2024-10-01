@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,10 +25,15 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -37,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -47,7 +54,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.navigation.compose.NavHost
@@ -58,9 +64,6 @@ import pl.matiu.kalistenika.history.HistoryScreen
 import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.logger.DateTimeLogger
 import pl.matiu.kalistenika.logger.ThreadIdLogger
-import pl.matiu.kalistenika.navigation.History
-import pl.matiu.kalistenika.navigation.Training
-import pl.matiu.kalistenika.navigation.UserProfile
 import pl.matiu.kalistenika.ui.SeriesScreen
 import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
 import pl.matiu.kalistenika.ui.UserProfileScreen
@@ -75,9 +78,8 @@ import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.Wheat
 import pl.matiu.kalistenika.exerciseApi.NinjaApiService
-import pl.matiu.kalistenika.myViewModel.SeriesViewModel
-import pl.matiu.kalistenika.myViewModel.TrainingViewModel
-import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
+import pl.matiu.kalistenika.viewModel.SeriesViewModel
+import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.DrawerItem
 import java.lang.Exception
 
@@ -156,6 +158,10 @@ fun KalistenikaApp() {
         var drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
+        val tabsScreen = Routes.values().toList()
+        var tabIndex by remember { mutableStateOf(0) }
+
+
         ModalNavigationDrawer(
             drawerState = drawerState,
             gesturesEnabled = drawerState.isOpen,
@@ -211,7 +217,7 @@ fun KalistenikaApp() {
                             IconButton(onClick = {
                                 scope.launch {
                                     drawerState.apply {
-                                        if(isClosed) open() else close()
+                                        if (isClosed) open() else close()
                                     }
                                 }
                             }) {
@@ -232,74 +238,51 @@ fun KalistenikaApp() {
                             .fillMaxWidth()
                             .background(color = MainScreenColor)
                     ) {
-                        Row() {
-                            //TODO https://developer.android.com/develop/ui/compose/components/fab
-//                        ExtendedFloatingActionButton(onClick = { /*TODO*/ }) {
-//
-//                        }
+                            TabRow(
+                                divider = {},
+                                selectedTabIndex = tabIndex,
+                                indicator = {
+                                        tabPositions ->
+                                    if (tabIndex < tabPositions.size) {
+                                        TabRowDefaults.Indicator(
+                                            modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
+                                            color = Wheat
+                                        )
+                                    }
+                                }
+                            ) {
+                                tabsScreen.forEachIndexed { index, dest ->
+                                    Tab(
+                                        modifier = Modifier.background(color = MainScreenColor),
+                                        text = { Text(dest.text, color = Wheat) },
+                                        selected = tabIndex == index,
+                                        onClick = {
+                                            tabIndex = index
+                                            navController.navigate(dest.destination)
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = dest.icon,
+                                                contentDescription = "icon",
+                                                tint = Wheat
+                                            )
+                                        }
+                                    )
 
-                            ElevatedButton(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-//                        colors = ButtonDefaults.outlinedButtonColors(contentColor = ZielonyNapis),
-                                onClick = {
-                                    navController.navigate(Training.route)
-                                }) {
-                                Text(text = "Trening", color = Wheat)
-                                Icon(
-                                    painter = rememberVectorPainter(image = Training.icon),
-                                    contentDescription = "icon", tint = Wheat
-                                )
+                                }
                             }
-
-                            ElevatedButton(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                                onClick = {
-                                    navController.navigate(History.route)
-                                }) {
-                                Text(text = "Historia", color = Wheat)
-                                Icon(
-                                    painter = rememberVectorPainter(image = History.icon),
-                                    contentDescription = "icon", tint = Wheat
-                                )
-                            }
-
-                            ElevatedButton(
-                                modifier = Modifier
-                                    .padding(5.dp)
-                                    .weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                                onClick = {
-                                    navController.navigate(UserProfile.route)
-                                }) {
-                                Text(
-                                    text = "Profil",
-                                    color = Wheat
-                                )
-                                Icon(
-                                    painter = rememberVectorPainter(image = UserProfile.icon),
-                                    contentDescription = "icon", tint = Wheat
-                                )
-                            }
-                        }
-
                     }
                 },
                 floatingActionButton = {
 
                     if (addButton == "AddTraining") {
-                        AddTrainingButton { navController.navigate(Training.route + "/createTraining") }
+                        AddTrainingButton { navController.navigate(Routes.Training.destination + "/createTraining") }
 //                    AddTrainingButton(navController = navController)
 
                     }
 
                     if (addButton == "AddExercise") {
-                        AddExerciseButton { navController.navigate(Training.route + "/$trainingId" + "/createSeries") }
+                        AddExerciseButton { navController.navigate(Routes.Training.destination + "/$trainingId" + "/createSeries") }
                     }
                 }
             ) { innerPadding ->
@@ -308,21 +291,21 @@ fun KalistenikaApp() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Training.route,
+                    startDestination = Routes.Training.destination,
                     modifier = Modifier.padding(innerPadding)
                 ) {
-                    composable(route = Training.route) {
+                    composable(route = Routes.Training.destination) {
                         topBarTitle = "Treningi"
-                        topBarPreviewScreen = Training.route
+                        topBarPreviewScreen = Routes.Training.destination
                         isNavigationIcon = false
                         addButton = "AddTraining"
 
                         TrainingScreen(navController = navController)
                     }
 
-                    composable(route = Training.route + "/createTraining") {
+                    composable(route = Routes.Training.destination + "/createTraining") {
                         topBarTitle = "Kreator treningu"
-                        topBarPreviewScreen = Training.route
+                        topBarPreviewScreen = Routes.Training.destination
 
                         isNavigationIcon = true
                         addButton = ""
@@ -330,15 +313,16 @@ fun KalistenikaApp() {
                         CreateTraining(navController = navController)
                     }
 
-                    composable(route = Training.route + "/{trainingId}") { backStackEntry ->
+                    composable(route = Routes.Training.destination + "/{trainingId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
 
                         val trainingViewModel: TrainingViewModel = viewModel()
                         val trainingList by trainingViewModel.trainingList.collectAsState()
 
-                        topBarTitle = trainingList?.filter { it.trainingId == trainingId }?.get(0)?.name.toString()
+                        topBarTitle = trainingList?.filter { it.trainingId == trainingId }
+                            ?.get(0)?.name.toString()
 
-                        topBarPreviewScreen = Training.route
+                        topBarPreviewScreen = Routes.Training.destination
                         isNavigationIcon = true
                         addButton = "AddExercise"
 
@@ -348,11 +332,11 @@ fun KalistenikaApp() {
                         )
                     }
 
-                    composable(route = Training.route + "/{trainingId}" + "/createSeries") { backStackEntry ->
+                    composable(route = Routes.Training.destination + "/{trainingId}" + "/createSeries") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
 
                         topBarTitle = "Kreator serii"
-                        topBarPreviewScreen = Training.route + "/${trainingId}"
+                        topBarPreviewScreen = Routes.Training.destination + "/${trainingId}"
                         isNavigationIcon = true
                         addButton = ""
 
@@ -363,17 +347,18 @@ fun KalistenikaApp() {
                             navController = navController,
                             trainingId = trainingId,
                             LocalContext.current,
-                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size ?: 0
+                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size
+                                ?: 0
                         )
                     }
 
-                    composable(route = Training.route + "/{trainingId}" + "/editRepetitionExercise" + "/{exerciseId}") { backStackEntry ->
+                    composable(route = Routes.Training.destination + "/{trainingId}" + "/editRepetitionExercise" + "/{exerciseId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
                         val exerciseId =
                             backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
 
                         topBarTitle = "Edytor ćwiczenia"
-                        topBarPreviewScreen = Training.route + "/${trainingId}"
+                        topBarPreviewScreen = Routes.Training.destination + "/${trainingId}"
                         isNavigationIcon = true
                         addButton = ""
 
@@ -382,20 +367,20 @@ fun KalistenikaApp() {
 
                         RepetitionExerciseEditScreen(
                             navigator = navController,
-                            context = LocalContext.current,
-                            exercise =  seriesViewModel.getRepetitionSeriesById(exerciseId = exerciseId),
+                            exercise = seriesViewModel.getRepetitionSeriesById(exerciseId = exerciseId),
                             trainingId = trainingId,
-                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size ?: 0
+                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size
+                                ?: 0
                         )
                     }
 
-                    composable(route = Training.route + "/{trainingId}" + "/editTimeExercise" + "/{exerciseId}") { backStackEntry ->
+                    composable(route = Routes.Training.destination + "/{trainingId}" + "/editTimeExercise" + "/{exerciseId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
                         val exerciseId =
                             backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
 
                         topBarTitle = "Edytor ćwiczenia"
-                        topBarPreviewScreen = Training.route + "/${trainingId}"
+                        topBarPreviewScreen = Routes.Training.destination + "/${trainingId}"
                         isNavigationIcon = true
                         addButton = ""
 
@@ -407,11 +392,12 @@ fun KalistenikaApp() {
                             context = LocalContext.current,
                             exercise = seriesViewModel.getTimeSeriesById(exerciseId = exerciseId),
                             trainingId = trainingId,
-                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size ?: 0
+                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size
+                                ?: 0
                         )
                     }
 
-                    composable(route = History.route) {
+                    composable(route = Routes.History.destination) {
                         topBarTitle = "Historia"
                         isNavigationIcon = false
                         addButton = ""
@@ -419,7 +405,7 @@ fun KalistenikaApp() {
                         HistoryScreen()
                     }
 
-                    composable(route = UserProfile.route) {
+                    composable(route = "user_profile") {
                         topBarTitle = "Profil"
                         isNavigationIcon = false
                         addButton = ""

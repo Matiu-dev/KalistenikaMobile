@@ -28,8 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.myViewModel.SeriesViewModel
-import pl.matiu.kalistenika.navigation.Training
+import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -39,7 +39,6 @@ import pl.matiu.kalistenika.ui.theme.Smola
 @Composable
 fun RepetitionExerciseEditScreen(
     navigator: NavController,
-    context: Context,
     exercise: RepetitionExercise?,
     trainingId: Int,
     numberOfExercise: Int
@@ -125,25 +124,6 @@ fun RepetitionExerciseEditScreen(
                 Button(
                     onClick = {
                         if (exercise != null) {
-//                            stopTimer?.let {
-//                                RepetitionExercise(
-//                                    exercise.exerciseId,
-//                                    exerciseName.toString(),
-//                                    numberOfSeries.toInt(),
-//                                    numberOfReps.toInt(),
-//                                    it,
-//                                    breakBetweenSeries.toInt(),
-//                                    exercisePositionInTraining - 1,
-//                                    trainingId
-//                                )
-//                            }?.let {
-//                                RepetitionExerciseInternalStorage().updateRepetitionExerciseToInternalStorage(
-//                                    context = context,
-//                                    exerciseId = exercise.exerciseId,
-//                                    repetitionExercise = it,
-//                                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
-//                                )
-//                            }
                             stopTimer?.let {
                                 RepetitionExercise(
                                     exercise.exerciseId,
@@ -161,7 +141,7 @@ fun RepetitionExerciseEditScreen(
                                 )
                             }
                         }
-                        navigator.navigate(route = Training.route + "/${trainingId}")
+                        navigator.navigate(route = Routes.Training.destination + "/${trainingId}")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -371,7 +351,7 @@ fun TimeExerciseEditScreen(
                                 )
                             )
                         }
-                        navigator.navigate(route = Training.route + "/${trainingId}")
+                        navigator.navigate(route = Routes.Training.destination + "/${trainingId}")
                     },
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)

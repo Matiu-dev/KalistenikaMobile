@@ -1,15 +1,11 @@
-package pl.matiu.kalistenika.myViewModel
+package pl.matiu.kalistenika.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.MainApplication
-import pl.matiu.kalistenika.room.RepetitionSeriesDao
-import pl.matiu.kalistenika.trainingModel.SeriesInterface
 import pl.matiu.kalistenika.trainingModel.TrainingModel
 
 class TrainingViewModel: ViewModel() {

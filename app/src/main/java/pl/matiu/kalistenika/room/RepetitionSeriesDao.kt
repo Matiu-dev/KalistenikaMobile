@@ -7,7 +7,6 @@ import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 
 @Dao
 interface RepetitionSeriesDao {
-
     @Query("SELECT * FROM RepetitionExercise")
     fun getAllRepetitionExercise(): List<RepetitionExercise>
     @Query("SELECT * FROM RepetitionExercise WHERE trainingId = :trainingId")
@@ -22,7 +21,6 @@ interface RepetitionSeriesDao {
     fun deleteRepetitionExerciseByTrainingId(trainingId: Int)
     @Query("UPDATE RepetitionExercise SET positionInTraining = positionInTraining + 1 WHERE trainingId = :trainingId AND positionInTraining >= :newExerciseNumber")
     fun updatePositionWhileAdding(trainingId: Int, newExerciseNumber: Int)
-
     @Query("UPDATE RepetitionExercise SET positionInTraining = positionInTraining - 1 WHERE trainingId = :trainingId AND positionInTraining >= :newExerciseNumber")
     fun updatePositionWhileDeleting(trainingId: Int, newExerciseNumber: Int)
 }
