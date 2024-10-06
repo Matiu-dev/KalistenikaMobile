@@ -1,5 +1,7 @@
 package pl.matiu.kalistenika.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,13 +37,9 @@ import pl.matiu.kalistenika.ui.theme.Smola
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTraining(navController: NavController) {
+fun CreateTraining(navController: NavController, context: Context) {
 
     var trainingName by remember { mutableStateOf("") }
-
-    val trainingViewModel: TrainingViewModel = viewModel()
-    val trainingList2 by trainingViewModel.trainingList.collectAsState()
-
 
     Surface(
         modifier = Modifier
@@ -89,8 +87,12 @@ fun CreateTraining(navController: NavController) {
 
                 Button(
                     onClick = {
-                        TrainingDatabaseService().addTraining(name = trainingName)
-                        navController.navigate(MainRoutes.Training.destination)
+                        if(trainingName.isNotBlank()) {
+                            TrainingDatabaseService().addTraining(name = trainingName)
+                            navController.navigate(MainRoutes.Training.destination)
+                        } else {
+                            Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()

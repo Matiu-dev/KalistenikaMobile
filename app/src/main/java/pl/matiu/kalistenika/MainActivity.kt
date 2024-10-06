@@ -156,9 +156,6 @@ fun KalistenikaApp() {
         val tabsScreen = MainRoutes.values().toList()
         var tabIndex by remember { mutableStateOf(0) }
 
-//        val seriesViewModel: SeriesViewModel = viewModel()
-//        val exerciseList by seriesViewModel.exerciseList.collectAsState()
-
         ModalNavigationDrawer(
             drawerState = drawerState,
             gesturesEnabled = drawerState.isOpen,
@@ -304,17 +301,13 @@ fun KalistenikaApp() {
                         isNavigationIcon = AlternativeRoutes.CreateTraining.isNavigationIcon
                         addButton = AlternativeRoutes.CreateTraining.addButton
 
-                        CreateTraining(navController = navController)
+                        CreateTraining(navController = navController, LocalContext.current)
                     }
 
                     composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
 
-//                        val trainingViewModel: TrainingViewModel = viewModel()
-//                        val trainingList by trainingViewModel.trainingList.collectAsState()
-
                         topBarTitle = TrainingDatabaseService().getAllTraining().filter { it.trainingId == trainingId }[0].name
-
                         topBarPreviewScreen = AlternativeRoutes.SeriesScreen.topBarPreviewScreen
                         isNavigationIcon = AlternativeRoutes.SeriesScreen.isNavigationIcon
                         addButton = AlternativeRoutes.SeriesScreen.addButton
@@ -332,7 +325,6 @@ fun KalistenikaApp() {
                         topBarPreviewScreen = AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingId}"
                         isNavigationIcon = AlternativeRoutes.CreateSeries.isNavigationIcon
                         addButton = AlternativeRoutes.CreateSeries.addButton
-
 
                         CreateSeries(
                             navController = navController,
@@ -380,7 +372,7 @@ fun KalistenikaApp() {
                     composable(route = MainRoutes.History.destination) {
                         topBarTitle = MainRoutes.History.topBarTitle
                         isNavigationIcon = MainRoutes.History.isNavigationIcon
-                        addButton = ""
+                        addButton = MainRoutes.History.addButton
 
                         HistoryScreen()
                     }

@@ -1,6 +1,7 @@
 package pl.matiu.kalistenika.ui
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
-import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -213,34 +213,27 @@ fun RepetitiveSeriesOptions(
             ) {
                 Button(
                     onClick = {
-//                        RepetitionExerciseInternalStorage().saveRepetitionExerciseToInternalStorage(
-//                            context,
-//                            RepetitionExercise(
-//                                1,
-//                                exerciseName,
-//                                numberOfSeries.toInt(),
-//                                numberOfReps.toInt(),
-//                                stopTimer,
-//                                breakBetweenSeries.toInt(),
-//                                exercisePositionInTraining - 1,
-//                                trainingId
-//                            ),
-//                            TrainingInternalStorageService().getTrainingNameById(context ,trainingId)
-//                        )
-
-                        ExerciseDatabaseService().addRepetitionSeries(
-                            RepetitionExercise(
-                                exerciseName = exerciseName,
-                                numberOfSeries = numberOfSeries.toInt(),
-                                numberOfReps = numberOfReps.toInt(),
-                                stopTimer = stopTimer,
-                                breakBetweenSeries = breakBetweenSeries.toInt(),
-                                positionInTraining = exercisePositionInTraining - 1,
-                                trainingId = trainingId
+                        if (exerciseName.isNotBlank() &&
+                            numberOfSeries.toIntOrNull() is Int &&
+                            numberOfReps.toIntOrNull() is Int &&
+                            breakBetweenSeries.toIntOrNull() is Int
+                        ) {
+                            ExerciseDatabaseService().addRepetitionSeries(
+                                RepetitionExercise(
+                                    exerciseName = exerciseName,
+                                    numberOfSeries = numberOfSeries.toInt(),
+                                    numberOfReps = numberOfReps.toInt(),
+                                    stopTimer = stopTimer,
+                                    breakBetweenSeries = breakBetweenSeries.toInt(),
+                                    positionInTraining = exercisePositionInTraining - 1,
+                                    trainingId = trainingId
+                                )
                             )
-                        )
 
-                        navController.navigate("training/${trainingId}")
+                            navController.navigate("training/${trainingId}")
+                        } else {
+                            Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
+                        }
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
@@ -322,9 +315,9 @@ fun TimeSeries(
                         Column {
                             TimeSeriesOptions(
                                 numberOfExercise = numberOfExercise,
-                                context = context,
                                 navController = navController,
                                 trainingId = trainingId,
+                                context = context
                             )
                         }
                     }
@@ -339,9 +332,9 @@ fun TimeSeries(
 @Composable
 fun TimeSeriesOptions(
     numberOfExercise: Int,
-    context: Context,
     navController: NavController,
-    trainingId: Int?
+    trainingId: Int?,
+    context: Context
 ) {
     var exerciseName by rememberSaveable { mutableStateOf("") }
     var numberOfSeries by rememberSaveable { mutableStateOf("") }
@@ -354,7 +347,8 @@ fun TimeSeriesOptions(
         RowTextFieldElement(
             elementName = "Nazwa ćwiczenia",
             element = exerciseName,
-            onElementChange = { exerciseName = it })
+            onElementChange = { exerciseName = it },
+        )
         RowTextFieldElement(
             elementName = "Ilość serii(liczba)",
             element = numberOfSeries,
@@ -376,32 +370,26 @@ fun TimeSeriesOptions(
 
         Button(
             onClick = {
-//                TimeExerciseInternalStorage().saveTimeExerciseToInternalStorage(
-//                    context,
-//                    TimeExercise(
-//                        1,
-//                        exerciseName,
-//                        numberOfSeries.toInt(),
-//                        timeForSeries.toInt(),
-//                        breakBetweenSeries.toInt(),
-//                        exercisePositionInTraining - 1,
-//                        trainingId
-//                    ),
-//                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
-//                )
-
-                ExerciseDatabaseService().addTimeSeries(
-                    TimeExercise(
-                        exerciseName = exerciseName,
-                        numberOfSeries = numberOfSeries.toInt(),
-                        timeForSeries = timeForSeries.toInt(),
-                        breakBetweenSeries = breakBetweenSeries.toInt(),
-                        positionInTraining = exercisePositionInTraining - 1,
-                        trainingId = trainingId
+                if (exerciseName.isNotBlank() &&
+                    numberOfSeries.toIntOrNull() is Int &&
+                    timeForSeries.toIntOrNull() is Int &&
+                    breakBetweenSeries.toIntOrNull() is Int
+                ) {
+                    ExerciseDatabaseService().addTimeSeries(
+                        TimeExercise(
+                            exerciseName = exerciseName,
+                            numberOfSeries = numberOfSeries.toInt(),
+                            timeForSeries = timeForSeries.toInt(),
+                            breakBetweenSeries = breakBetweenSeries.toInt(),
+                            positionInTraining = exercisePositionInTraining - 1,
+                            trainingId = trainingId
+                        )
                     )
-                )
 
-                navController.navigate("training/${trainingId}")
+                    navController.navigate("training/${trainingId}")
+                } else {
+                    Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
