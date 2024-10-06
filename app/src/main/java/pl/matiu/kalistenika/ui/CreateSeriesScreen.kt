@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
@@ -227,7 +228,7 @@ fun RepetitiveSeriesOptions(
 //                            TrainingInternalStorageService().getTrainingNameById(context ,trainingId)
 //                        )
 
-                        SeriesViewModel().addRepetitionSeries(
+                        ExerciseDatabaseService().addRepetitionSeries(
                             RepetitionExercise(
                                 exerciseName = exerciseName,
                                 numberOfSeries = numberOfSeries.toInt(),
@@ -389,7 +390,7 @@ fun TimeSeriesOptions(
 //                    TrainingInternalStorageService().getTrainingNameById(context, trainingId)
 //                )
 
-                SeriesViewModel().addTimeSeries(
+                ExerciseDatabaseService().addTimeSeries(
                     TimeExercise(
                         exerciseName = exerciseName,
                         numberOfSeries = numberOfSeries.toInt(),

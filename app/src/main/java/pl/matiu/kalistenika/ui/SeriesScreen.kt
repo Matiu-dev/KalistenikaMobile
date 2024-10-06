@@ -50,7 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.SeriesInterface
@@ -71,10 +71,6 @@ fun SeriesScreen(
     val isLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
-//    LaunchedEffect(trainingId) {
-//        seriesViewModel.loadData(context, trainingId)
-//    }
-
     if (isLoading) {
         LoadingScreen()
     } else {
@@ -91,8 +87,6 @@ fun SeriesScreen(
     }
 }
 
-fun test() = print("xd")
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoadingScreen() {
@@ -100,14 +94,12 @@ fun LoadingScreen() {
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1,
     ) {
-
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Loading...")
         }
-
     }
 }
 
@@ -319,7 +311,7 @@ fun SeriesScreenView(
 
 
             } else {
-                navController.navigate(Routes.Training.destination + "/${trainingId}" + "/createSeries")
+                navController.navigate(MainRoutes.Training.destination + "/${trainingId}" + "/createSeries")
             }
         }
     }

@@ -26,7 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.room.TrainingDatabaseService
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -88,14 +89,8 @@ fun CreateTraining(navController: NavController) {
 
                 Button(
                     onClick = {
-//                        TrainingInternalStorageService().saveTrainingToInternalStorage(
-//                            context = context,
-//                            trainingName
-//                        )
-
-                        trainingViewModel.addTraining(name = trainingName)
-
-                        navController.navigate(Routes.Training.destination)
+                        TrainingDatabaseService().addTraining(name = trainingName)
+                        navController.navigate(MainRoutes.Training.destination)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

@@ -29,7 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.room.TrainingDatabaseService
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -73,8 +74,8 @@ fun TrainingScreen(navController: NavController) {
                                         navController.navigate("training/${training.trainingId}")
                                     },
                                     onDoubleClick = {
-                                        trainingViewModel.deleteTraining(training.trainingId)
-                                        navController.navigate(Routes.Training.destination)
+                                        TrainingDatabaseService().deleteTraining(training.trainingId)
+                                        navController.navigate(MainRoutes.Training.destination)
                                     }
                                 ),
                             verticalArrangement = Arrangement.Center,

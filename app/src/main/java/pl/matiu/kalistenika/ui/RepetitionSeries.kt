@@ -40,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.room.ExerciseDatabaseService
+import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
@@ -96,11 +98,11 @@ fun StartRepetitionSeries(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    navController.navigate(Routes.Training.destination + "/${exercise.trainingId}" + "/editRepetitionExercise" + "/${exercise.exerciseId}")
+                    navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}"  + "/${exercise.exerciseId}")
                 },
                 onDoubleClick = {
-                    seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
-                    navController.navigate(Routes.Training.destination + "/${exercise.trainingId}")
+                    ExerciseDatabaseService().deleteRepetitionSeries(repetitionExercise = exercise)
+                    navController.navigate(MainRoutes.Training.destination + "/${exercise.trainingId}")
                 }
             )
 

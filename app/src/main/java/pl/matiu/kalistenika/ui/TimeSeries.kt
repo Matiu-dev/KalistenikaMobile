@@ -52,11 +52,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.Routes
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
 import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
+import pl.matiu.kalistenika.room.ExerciseDatabaseService
+import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -107,11 +109,11 @@ fun StartTimeSeries(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                navController.navigate(Routes.Training.destination + "/${exercise.trainingId}" + "/editTimeExercise" + "/${exercise.exerciseId}")
+                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.exerciseId}")
             },
             onDoubleClick = {
-                seriesViewModel.deleteTimeSeries(timeExercise = exercise)
-                navController.navigate(Routes.Training.destination + "/${exercise.trainingId}")
+                ExerciseDatabaseService().deleteTimeSeries(timeExercise = exercise)
+                navController.navigate(MainRoutes.Training.destination + "/${exercise.trainingId}")
             }
         )
     ) {

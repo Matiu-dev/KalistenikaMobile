@@ -26,10 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.Routes
-import pl.matiu.kalistenika.viewModel.SeriesViewModel
+import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -43,10 +42,6 @@ fun RepetitionExerciseEditScreen(
     trainingId: Int,
     numberOfExercise: Int
 ) {
-
-    val exerciseViewModel: SeriesViewModel = viewModel()
-
-
     var exerciseName by remember {
         mutableStateOf(exercise?.exerciseName)
     }
@@ -136,12 +131,12 @@ fun RepetitionExerciseEditScreen(
                                     trainingId
                                 )
                             }?.let {
-                                exerciseViewModel.updateRepetitionSeries(
+                                ExerciseDatabaseService().updateRepetitionSeries(
                                     it
                                 )
                             }
                         }
-                        navigator.navigate(route = Routes.Training.destination + "/${trainingId}")
+                        navigator.navigate(route = MainRoutes.Training.destination + "/${trainingId}")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -166,8 +161,6 @@ fun TimeExerciseEditScreen(
     trainingId: Int,
     numberOfExercise: Int
 ) {
-
-    val exerciseViewModel: SeriesViewModel = viewModel()
 
     var exerciseName by remember {
         mutableStateOf(exercise?.exerciseName)
@@ -325,21 +318,7 @@ fun TimeExerciseEditScreen(
                 Button(
                     onClick = {
                         if (exercise != null) {
-//                            TimeExerciseInternalStorage().updateTimeExerciseToInternalStorage(
-//                                context = context,
-//                                exerciseId = exercise.exerciseId,
-//                                timeExercise = TimeExercise(
-//                                    exercise.exerciseId,
-//                                    exerciseName.toString(),
-//                                    numberOfSeries.toInt(),
-//                                    timeForSeries.toInt(),
-//                                    breakBetweenSeries.toInt(),
-//                                    exercisePositionInTraining - 1,
-//                                    trainingId
-//                                ),
-//                                TrainingInternalStorageService().getTrainingNameById(context, trainingId)
-//                            )
-                            exerciseViewModel.updateTimeSeries(
+                            ExerciseDatabaseService().updateTimeSeries(
                                 TimeExercise(
                                     exercise.exerciseId,
                                     exerciseName.toString(),
@@ -351,7 +330,7 @@ fun TimeExerciseEditScreen(
                                 )
                             )
                         }
-                        navigator.navigate(route = Routes.Training.destination + "/${trainingId}")
+                        navigator.navigate(route = MainRoutes.Training.destination + "/${trainingId}")
                     },
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)

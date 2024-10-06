@@ -9,23 +9,18 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -48,12 +43,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 import androidx.navigation.compose.NavHost
@@ -78,7 +70,10 @@ import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.Wheat
 import pl.matiu.kalistenika.exerciseApi.NinjaApiService
-import pl.matiu.kalistenika.viewModel.SeriesViewModel
+import pl.matiu.kalistenika.room.ExerciseDatabaseService
+import pl.matiu.kalistenika.room.TrainingDatabaseService
+import pl.matiu.kalistenika.routes.AlternativeRoutes
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.DrawerItem
 import java.lang.Exception
@@ -158,9 +153,11 @@ fun KalistenikaApp() {
         var drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
-        val tabsScreen = Routes.values().toList()
+        val tabsScreen = MainRoutes.values().toList()
         var tabIndex by remember { mutableStateOf(0) }
 
+//        val seriesViewModel: SeriesViewModel = viewModel()
+//        val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -238,51 +235,49 @@ fun KalistenikaApp() {
                             .fillMaxWidth()
                             .background(color = MainScreenColor)
                     ) {
-                            TabRow(
-                                divider = {},
-                                selectedTabIndex = tabIndex,
-                                indicator = {
-                                        tabPositions ->
-                                    if (tabIndex < tabPositions.size) {
-                                        TabRowDefaults.Indicator(
-                                            modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
-                                            color = Wheat
-                                        )
-                                    }
-                                }
-                            ) {
-                                tabsScreen.forEachIndexed { index, dest ->
-                                    Tab(
-                                        modifier = Modifier.background(color = MainScreenColor),
-                                        text = { Text(dest.text, color = Wheat) },
-                                        selected = tabIndex == index,
-                                        onClick = {
-                                            tabIndex = index
-                                            navController.navigate(dest.destination)
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = dest.icon,
-                                                contentDescription = "icon",
-                                                tint = Wheat
-                                            )
-                                        }
+                        TabRow(
+                            divider = {},
+                            selectedTabIndex = tabIndex,
+                            indicator = { tabPositions ->
+                                if (tabIndex < tabPositions.size) {
+                                    TabRowDefaults.Indicator(
+                                        modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
+                                        color = Wheat
                                     )
-
                                 }
                             }
+                        ) {
+                            tabsScreen.forEachIndexed { index, dest ->
+                                Tab(
+                                    modifier = Modifier.background(color = MainScreenColor),
+                                    text = { Text(dest.title, color = Wheat) },
+                                    selected = tabIndex == index,
+                                    onClick = {
+                                        tabIndex = index
+                                        navController.navigate(dest.destination)
+                                    },
+                                    icon = {
+                                        Icon(
+                                            imageVector = dest.icon,
+                                            contentDescription = "icon",
+                                            tint = Wheat
+                                        )
+                                    }
+                                )
+                            }
+                        }
                     }
                 },
                 floatingActionButton = {
 
                     if (addButton == "AddTraining") {
-                        AddTrainingButton { navController.navigate(Routes.Training.destination + "/createTraining") }
+                        AddTrainingButton { navController.navigate(MainRoutes.Training.destination + "/createTraining") }
 //                    AddTrainingButton(navController = navController)
 
                     }
 
                     if (addButton == "AddExercise") {
-                        AddExerciseButton { navController.navigate(Routes.Training.destination + "/$trainingId" + "/createSeries") }
+                        AddExerciseButton { navController.navigate(AlternativeRoutes.CreateSeries.destination + "/$trainingId") }
                     }
                 }
             ) { innerPadding ->
@@ -291,40 +286,38 @@ fun KalistenikaApp() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.Training.destination,
+                    startDestination = MainRoutes.Training.destination,
                     modifier = Modifier.padding(innerPadding)
                 ) {
-                    composable(route = Routes.Training.destination) {
-                        topBarTitle = "Treningi"
-                        topBarPreviewScreen = Routes.Training.destination
-                        isNavigationIcon = false
-                        addButton = "AddTraining"
+                    composable(route = MainRoutes.Training.destination) {
+                        topBarTitle = MainRoutes.Training.topBarTitle
+                        topBarPreviewScreen = MainRoutes.Training.destination
+                        isNavigationIcon = MainRoutes.Training.isNavigationIcon
+                        addButton = MainRoutes.Training.addButton
 
                         TrainingScreen(navController = navController)
                     }
 
-                    composable(route = Routes.Training.destination + "/createTraining") {
-                        topBarTitle = "Kreator treningu"
-                        topBarPreviewScreen = Routes.Training.destination
-
-                        isNavigationIcon = true
-                        addButton = ""
+                    composable(route = AlternativeRoutes.CreateTraining.destination) {
+                        topBarTitle = AlternativeRoutes.CreateTraining.topBarTitle
+                        topBarPreviewScreen = AlternativeRoutes.CreateTraining.topBarPreviewScreen
+                        isNavigationIcon = AlternativeRoutes.CreateTraining.isNavigationIcon
+                        addButton = AlternativeRoutes.CreateTraining.addButton
 
                         CreateTraining(navController = navController)
                     }
 
-                    composable(route = Routes.Training.destination + "/{trainingId}") { backStackEntry ->
+                    composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
 
-                        val trainingViewModel: TrainingViewModel = viewModel()
-                        val trainingList by trainingViewModel.trainingList.collectAsState()
+//                        val trainingViewModel: TrainingViewModel = viewModel()
+//                        val trainingList by trainingViewModel.trainingList.collectAsState()
 
-                        topBarTitle = trainingList?.filter { it.trainingId == trainingId }
-                            ?.get(0)?.name.toString()
+                        topBarTitle = TrainingDatabaseService().getAllTraining().filter { it.trainingId == trainingId }[0].name
 
-                        topBarPreviewScreen = Routes.Training.destination
-                        isNavigationIcon = true
-                        addButton = "AddExercise"
+                        topBarPreviewScreen = AlternativeRoutes.SeriesScreen.topBarPreviewScreen
+                        isNavigationIcon = AlternativeRoutes.SeriesScreen.isNavigationIcon
+                        addButton = AlternativeRoutes.SeriesScreen.addButton
 
                         SeriesScreen(
                             navController = navController,
@@ -332,86 +325,73 @@ fun KalistenikaApp() {
                         )
                     }
 
-                    composable(route = Routes.Training.destination + "/{trainingId}" + "/createSeries") { backStackEntry ->
+                    composable(route = AlternativeRoutes.CreateSeries.destination + "/{trainingId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
 
-                        topBarTitle = "Kreator serii"
-                        topBarPreviewScreen = Routes.Training.destination + "/${trainingId}"
-                        isNavigationIcon = true
-                        addButton = ""
+                        topBarTitle = AlternativeRoutes.CreateSeries.topBarTitle
+                        topBarPreviewScreen = AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingId}"
+                        isNavigationIcon = AlternativeRoutes.CreateSeries.isNavigationIcon
+                        addButton = AlternativeRoutes.CreateSeries.addButton
 
-                        val seriesViewModel: SeriesViewModel = viewModel()
-                        val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
                         CreateSeries(
                             navController = navController,
                             trainingId = trainingId,
-                            LocalContext.current,
-                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size
-                                ?: 0
+                            context = LocalContext.current,
+                            numberOfExercise = ExerciseDatabaseService().getAllSeries().filter { it.trainingId == trainingId }.size
                         )
                     }
 
-                    composable(route = Routes.Training.destination + "/{trainingId}" + "/editRepetitionExercise" + "/{exerciseId}") { backStackEntry ->
+                    composable(route = AlternativeRoutes.EditRepetitionSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-                        val exerciseId =
-                            backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
 
-                        topBarTitle = "Edytor ćwiczenia"
-                        topBarPreviewScreen = Routes.Training.destination + "/${trainingId}"
-                        isNavigationIcon = true
-                        addButton = ""
-
-                        val seriesViewModel: SeriesViewModel = viewModel()
-                        val exerciseList by seriesViewModel.exerciseList.collectAsState()
+                        topBarTitle = AlternativeRoutes.EditRepetitionSeries.topBarTitle
+                        topBarPreviewScreen = AlternativeRoutes.EditRepetitionSeries.topBarPreviewScreen + "/${trainingId}"
+                        isNavigationIcon = AlternativeRoutes.EditRepetitionSeries.isNavigationIcon
+                        addButton = AlternativeRoutes.EditRepetitionSeries.addButton
 
                         RepetitionExerciseEditScreen(
                             navigator = navController,
-                            exercise = seriesViewModel.getRepetitionSeriesById(exerciseId = exerciseId),
+                            exercise = ExerciseDatabaseService().getRepetitionSeriesById(exerciseId = exerciseId),
                             trainingId = trainingId,
-                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size
-                                ?: 0
+                            numberOfExercise = ExerciseDatabaseService().getAllSeries().filter { it.trainingId == trainingId }.size
                         )
                     }
 
-                    composable(route = Routes.Training.destination + "/{trainingId}" + "/editTimeExercise" + "/{exerciseId}") { backStackEntry ->
+                    composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-                        val exerciseId =
-                            backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
 
-                        topBarTitle = "Edytor ćwiczenia"
-                        topBarPreviewScreen = Routes.Training.destination + "/${trainingId}"
-                        isNavigationIcon = true
-                        addButton = ""
-
-                        val seriesViewModel: SeriesViewModel = viewModel()
-                        val exerciseList by seriesViewModel.exerciseList.collectAsState()
+                        topBarTitle = AlternativeRoutes.EditTimeSeries.topBarTitle
+                        topBarPreviewScreen = AlternativeRoutes.EditTimeSeries.topBarPreviewScreen + "/${trainingId}"
+                        isNavigationIcon = AlternativeRoutes.EditTimeSeries.isNavigationIcon
+                        addButton = AlternativeRoutes.EditTimeSeries.addButton
 
                         TimeExerciseEditScreen(
                             navigator = navController,
                             context = LocalContext.current,
-                            exercise = seriesViewModel.getTimeSeriesById(exerciseId = exerciseId),
+                            exercise = ExerciseDatabaseService().getTimeSeriesById(exerciseId = exerciseId),
                             trainingId = trainingId,
-                            numberOfExercise = exerciseList?.filter { it.trainingId == trainingId }?.size
-                                ?: 0
+                            numberOfExercise = ExerciseDatabaseService().getAllSeries().filter { it.trainingId == trainingId }.size
                         )
                     }
 
-                    composable(route = Routes.History.destination) {
-                        topBarTitle = "Historia"
-                        isNavigationIcon = false
+                    composable(route = MainRoutes.History.destination) {
+                        topBarTitle = MainRoutes.History.topBarTitle
+                        isNavigationIcon = MainRoutes.History.isNavigationIcon
                         addButton = ""
 
                         HistoryScreen()
                     }
 
-                    composable(route = "user_profile") {
-                        topBarTitle = "Profil"
-                        isNavigationIcon = false
-                        addButton = ""
-
-                        UserProfileScreen()
-                    }
+//                    composable(route = "user_profile") {
+//                        topBarTitle = "Profil"
+//                        isNavigationIcon = false
+//                        addButton = ""
+//
+//                        UserProfileScreen()
+//                    }
                 }
             }
         }

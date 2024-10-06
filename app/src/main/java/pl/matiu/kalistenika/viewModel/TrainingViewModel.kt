@@ -6,37 +6,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.MainApplication
+import pl.matiu.kalistenika.room.ExerciseDatabaseService
+import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.trainingModel.TrainingModel
 
 class TrainingViewModel: ViewModel() {
 
-    val trainingDao = MainApplication.trainingDatabase.getTrainingDao()
-
     private var _trainingList = MutableStateFlow<List<TrainingModel>?>(null)
     val trainingList = _trainingList.asStateFlow()
-
 
     init {
         getAllTraining()
     }
 
     fun getAllTraining() {
-        _trainingList.value = trainingDao.getAllTrainings()
-    }
-
-    fun addTraining(name: String) {
-        viewModelScope.launch {
-            trainingDao.addTraining(TrainingModel(name = name))
-        }
-
-    }
-
-    fun deleteTraining(trainingId: Int) {
-        viewModelScope.launch {
-
-            SeriesViewModel().deleteAllExerciseByTrainingId(trainingId)
-
-            trainingDao.deleteTraining(trainingId)
-        }
+        _trainingList.value = TrainingDatabaseService().getAllTraining()
     }
 }
