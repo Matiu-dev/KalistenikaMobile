@@ -2,40 +2,21 @@ package pl.matiu.kalistenika
 
 import android.app.Application
 import androidx.room.Room
-import pl.matiu.kalistenika.room.RepetitionSeriesDatabase
-import pl.matiu.kalistenika.room.TimeSeriesDatabase
-import pl.matiu.kalistenika.room.TrainingDatabase
+import pl.matiu.kalistenika.room.ExerciseDatabase
 
 class MainApplication: Application() {
 
     companion object {
-        lateinit var trainingDatabase: TrainingDatabase
-        lateinit var timeSeriesDatabase: TimeSeriesDatabase
-        lateinit var repetitionSeriesDatabase: RepetitionSeriesDatabase
+        lateinit var exerciseDatabase: ExerciseDatabase
     }
 
     override fun onCreate() {
         super.onCreate()
-        trainingDatabase = Room.databaseBuilder(
-            applicationContext,
-            TrainingDatabase::class.java,
-            TrainingDatabase.NAME
-        )
-            .allowMainThreadQueries()
-            .build()
 
-        timeSeriesDatabase = Room.databaseBuilder(
+        exerciseDatabase = Room.databaseBuilder(
             applicationContext,
-            TimeSeriesDatabase::class.java,
-            TimeSeriesDatabase.NAME
-        )
-            .allowMainThreadQueries()
-            .build()
-
-        repetitionSeriesDatabase = Room.databaseBuilder(
-            applicationContext,
-            RepetitionSeriesDatabase::class.java,
-            RepetitionSeriesDatabase.NAME
+            ExerciseDatabase::class.java,
+            ExerciseDatabase.NAME
         )
             .allowMainThreadQueries()
             .build()

@@ -101,7 +101,7 @@ fun StartTimeSeries(
             onConfirmation = {  },
             painter = painterResource(id = android.R.drawable.ic_dialog_info),
             imageDescription = "opis",
-            exerciseName = exercise.exerciseName
+            exerciseName = exercise.timeExerciseName
         )
     }
 
@@ -109,7 +109,7 @@ fun StartTimeSeries(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.exerciseId}")
+                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
             },
             onDoubleClick = {
                 ExerciseDatabaseService().deleteTimeSeries(timeExercise = exercise)
@@ -139,7 +139,7 @@ fun StartTimeSeries(
                 .weight(1f),
                 contentAlignment = Alignment.Center) {
                 Text(
-                    text = exercise.exerciseName,
+                    text = exercise.timeExerciseName,
                     color = Smola,
                 )
             }
@@ -161,7 +161,7 @@ fun StartTimeSeries(
         Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         Text(
-            text = "Ilość serii: ${exercise.numberOfSeries}",
+            text = "Ilość serii: ${exercise.numberOfTimeSeries}",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -169,7 +169,7 @@ fun StartTimeSeries(
         Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         Text(
-            text = "Czas dla serii: ${exercise.timeForSeries}",
+            text = "Czas dla serii: ${exercise.timeForTimeSeries}",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -177,7 +177,7 @@ fun StartTimeSeries(
         Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         Text(
-            text = "Przerwa między seriami: ${exercise.breakBetweenSeries}",
+            text = "Przerwa między seriami: ${exercise.breakBetweenTimeSeries}",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -208,15 +208,15 @@ fun StartTimeSeries(
             text = "Koniec ${
                 isSeriesOrBreak(
                     sekunder,
-                    exercise.breakBetweenSeries,
-                    exercise.timeForSeries
+                    exercise.breakBetweenTimeSeries,
+                    exercise.timeForTimeSeries
                 )
             } za " +
                     "${
                         seriesOrBreak(
                             sekunder,
-                            exercise.breakBetweenSeries,
-                            exercise.timeForSeries
+                            exercise.breakBetweenTimeSeries,
+                            exercise.timeForTimeSeries
                         )
                     } sekund",
             color = Smola,
@@ -228,12 +228,12 @@ fun StartTimeSeries(
             if (startStop) {
 
                 //czekanie jeszcze jednej przerwy i przejscie do kolejnego cwiczenia
-                if (initialBreakTime != exercise.breakBetweenSeries) {
+                if (initialBreakTime != exercise.breakBetweenTimeSeries) {
                     if (pagerState.currentPage == pagerState.pageCount) {
                         onStarStopChange(!startStop)
                     } else {
-                        for (i in initialBreakTime..exercise.breakBetweenSeries) {
-                            currentProgress = i.toFloat() / exercise.breakBetweenSeries.toFloat()
+                        for (i in initialBreakTime..exercise.breakBetweenTimeSeries) {
+                            currentProgress = i.toFloat() / exercise.breakBetweenTimeSeries.toFloat()
 
                             initialBreakTime = i
                             delay(1000)
@@ -245,9 +245,9 @@ fun StartTimeSeries(
 
 
                 while (!isFullTimeForExercise(
-                        exercise.numberOfSeries,
-                        exercise.breakBetweenSeries,
-                        exercise.timeForSeries,
+                        exercise.numberOfTimeSeries,
+                        exercise.breakBetweenTimeSeries,
+                        exercise.timeForTimeSeries,
                         sekunder
                     )
                 ) {
@@ -256,24 +256,24 @@ fun StartTimeSeries(
 
                     currentProgress = (isSeriesOrBreakSecond(
                         sekunder,
-                        exercise.breakBetweenSeries,
-                        exercise.timeForSeries,
+                        exercise.breakBetweenTimeSeries,
+                        exercise.timeForTimeSeries,
                         exercise
                     ) -
                             seriesOrBreak(
                                 sekunder,
-                                exercise.breakBetweenSeries,
-                                exercise.timeForSeries
+                                exercise.breakBetweenTimeSeries,
+                                exercise.timeForTimeSeries
                             )).toFloat() /
                             isSeriesOrBreakSecond(
                                 sekunder,
-                                exercise.breakBetweenSeries,
-                                exercise.timeForSeries,
+                                exercise.breakBetweenTimeSeries,
+                                exercise.timeForTimeSeries,
                                 exercise
                             )
 
                     isEndOfSeriesOrBreak(
-                        sekunder, exercise.breakBetweenSeries, exercise.timeForSeries,
+                        sekunder, exercise.breakBetweenTimeSeries, exercise.timeForTimeSeries,
                         seriesSong, breakSong
                     )
 
@@ -293,9 +293,6 @@ fun DialogWithImage(
     imageDescription: String,
     exerciseName: String
 ) {
-
-    val logger = ConsoleLogger()
-    logger.log("pobieranie danych")
 
     var exercise = remember {
         mutableStateOf<List<ExerciseApi>>(emptyList())
@@ -438,9 +435,9 @@ fun isSeriesOrBreakSecond(
     val modTime: Int = actualTime % breakAndSeriesTime
 
     return if (modTime < seriesTime) {
-        exercise.timeForSeries
+        exercise.timeForTimeSeries
     } else {
-        exercise.breakBetweenSeries
+        exercise.breakBetweenTimeSeries
     }
 }
 

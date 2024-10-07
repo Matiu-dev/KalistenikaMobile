@@ -43,11 +43,11 @@ fun RepetitionExerciseEditScreen(
     numberOfExercise: Int
 ) {
     var exerciseName by remember {
-        mutableStateOf(exercise?.exerciseName)
+        mutableStateOf(exercise?.repetitionExerciseName)
     }
 
     var numberOfSeries by remember {
-        mutableStateOf(exercise?.numberOfSeries.toString())
+        mutableStateOf(exercise?.numberOfRepetitionSeries.toString())
     }
 
     var numberOfReps by remember {
@@ -59,7 +59,7 @@ fun RepetitionExerciseEditScreen(
     }
 
     var breakBetweenSeries by remember {
-        mutableStateOf(exercise?.breakBetweenSeries.toString())
+        mutableStateOf(exercise?.breakBetweenRepetitionSeries.toString())
     }
 
     var exercisePositionInTraining by rememberSaveable { mutableIntStateOf(numberOfExercise) }
@@ -121,7 +121,7 @@ fun RepetitionExerciseEditScreen(
                         if (exercise != null) {
                             stopTimer?.let {
                                 RepetitionExercise(
-                                    exercise.exerciseId,
+                                    exercise.repetitionExerciseId,
                                     exerciseName.toString(),
                                     numberOfSeries.toInt(),
                                     numberOfReps.toInt(),
@@ -163,19 +163,19 @@ fun TimeExerciseEditScreen(
 ) {
 
     var exerciseName by remember {
-        mutableStateOf(exercise?.exerciseName)
+        mutableStateOf(exercise?.timeExerciseName)
     }
 
     var numberOfSeries by remember {
-        mutableStateOf(exercise?.numberOfSeries.toString())
+        mutableStateOf(exercise?.numberOfTimeSeries.toString())
     }
 
     var timeForSeries by remember {
-        mutableStateOf(exercise?.timeForSeries.toString())
+        mutableStateOf(exercise?.timeForTimeSeries.toString())
     }
 
     var breakBetweenSeries by remember {
-        mutableStateOf(exercise?.breakBetweenSeries.toString())
+        mutableStateOf(exercise?.breakBetweenTimeSeries.toString())
     }
 
     var exercisePositionInTraining by rememberSaveable { mutableIntStateOf(numberOfExercise) }
@@ -203,7 +203,7 @@ fun TimeExerciseEditScreen(
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                exercise?.exerciseName?.let {
+                exercise?.timeExerciseName?.let {
                     TextField(
                         value = exerciseName.toString(),
                         onValueChange = { exerciseName = it },
@@ -231,7 +231,7 @@ fun TimeExerciseEditScreen(
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                exercise?.numberOfSeries?.let {
+                exercise?.numberOfTimeSeries?.let {
                     TextField(
                         value = numberOfSeries,
                         onValueChange = { numberOfSeries = it },
@@ -258,7 +258,7 @@ fun TimeExerciseEditScreen(
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                exercise?.timeForSeries?.let {
+                exercise?.timeForTimeSeries?.let {
                     TextField(
                         value = timeForSeries,
                         onValueChange = { timeForSeries = it },
@@ -286,7 +286,7 @@ fun TimeExerciseEditScreen(
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                exercise?.breakBetweenSeries?.let {
+                exercise?.breakBetweenTimeSeries?.let {
                     TextField(
                         value = breakBetweenSeries,
                         onValueChange = { breakBetweenSeries = it },
@@ -320,7 +320,7 @@ fun TimeExerciseEditScreen(
                         if (exercise != null) {
                             ExerciseDatabaseService().updateTimeSeries(
                                 TimeExercise(
-                                    exercise.exerciseId,
+                                    exercise.timeExerciseId,
                                     exerciseName.toString(),
                                     numberOfSeries.toInt(),
                                     timeForSeries.toInt(),

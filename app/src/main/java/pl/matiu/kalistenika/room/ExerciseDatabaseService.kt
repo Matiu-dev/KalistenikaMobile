@@ -4,18 +4,24 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.MainApplication
+import pl.matiu.kalistenika.trainingModel.RepetitionAndTimeExercise
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.SeriesInterface
 import pl.matiu.kalistenika.trainingModel.TimeExercise
 
 class ExerciseDatabaseService {
 
-    private val timeSeriesDao = MainApplication.timeSeriesDatabase.getTimeSeriesDao()
-    private val repetitionSeriesDao =
-        MainApplication.repetitionSeriesDatabase.getRepetitionSeriesDao()
+    private val exerciseDao = MainApplication.exerciseDatabase.getExerciseDao()
+    fun getAllSeries(): List<RepetitionAndTimeExercise> {
+        return exerciseDao.getAllExercise()
+    }
 
-    fun getAllSeries(): List<SeriesInterface> {
-        return timeSeriesDao.getAllTimeExercise() + repetitionSeriesDao.getAllRepetitionExercise()
+    fun getAllRepetitionExercise(): List<RepetitionExercise> {
+        return exerciseDao.getAllRepetitionExercise()
+    }
+
+    fun getAllTimeExercise(): List<TimeExercise> {
+        return exerciseDao.getAllTimeExercise()
     }
 
     fun addRepetitionSeries(repetitionExercise: RepetitionExercise) {
@@ -23,7 +29,7 @@ class ExerciseDatabaseService {
 
         repetitionExercise.trainingId?.let {
             repetitionExercise.positionInTraining?.let { it1 ->
-                repetitionSeriesDao.updatePositionWhileAdding(
+                exerciseDao.updatePositionWhileAddingInRepetitionExercise(
                     trainingId = it,
                     newExerciseNumber = it1
                 )
@@ -32,14 +38,14 @@ class ExerciseDatabaseService {
 
         repetitionExercise.trainingId?.let {
             repetitionExercise.positionInTraining?.let { it1 ->
-                timeSeriesDao.updatePositionWhileAdding(
+                exerciseDao.updatePositionWhileAddingInTimeExercise(
                     trainingId = it,
                     newExerciseNumber = it1
                 )
             }
         }
 
-        repetitionSeriesDao.addRepetitionExercise(repetitionExercise)
+        exerciseDao.addRepetitionExercise(repetitionExercise)
 //        }
 
     }
@@ -51,7 +57,7 @@ class ExerciseDatabaseService {
 
         timeExercise.trainingId?.let {
             timeExercise.positionInTraining?.let { it1 ->
-                repetitionSeriesDao.updatePositionWhileAdding(
+                exerciseDao.updatePositionWhileAddingInRepetitionExercise(
                     trainingId = it,
                     newExerciseNumber = it1
                 )
@@ -60,7 +66,7 @@ class ExerciseDatabaseService {
 
         timeExercise.trainingId?.let {
             timeExercise.positionInTraining?.let { it1 ->
-                timeSeriesDao.updatePositionWhileAdding(
+                exerciseDao.updatePositionWhileAddingInTimeExercise(
                     trainingId = it,
                     newExerciseNumber = it1
                 )
@@ -69,7 +75,7 @@ class ExerciseDatabaseService {
 
         //ustawia kolejnosc wszystkich cwiczen dla treningu
 
-        timeSeriesDao.addTimeExercise(timeExercise)
+        exerciseDao.addTimeExercise(timeExercise)
 
     }
 
@@ -78,7 +84,7 @@ class ExerciseDatabaseService {
 
         repetitionExercise.trainingId?.let {
             repetitionExercise.positionInTraining?.let { it1 ->
-                repetitionSeriesDao.updatePositionWhileDeleting(
+                exerciseDao.updatePositionWhileDeletingInRepetitionExercise(
                     it,
                     it1
                 )
@@ -87,14 +93,14 @@ class ExerciseDatabaseService {
 
         repetitionExercise.trainingId?.let {
             repetitionExercise.positionInTraining?.let { it1 ->
-                timeSeriesDao.updatePositionWhileDeleting(
+                exerciseDao.updatePositionWhileDeletingInTimeExercise(
                     it,
                     it1
                 )
             }
         }
 
-        repetitionSeriesDao.deleteRepetitionExercise(repetitionExercise.exerciseId)
+        exerciseDao.deleteRepetitionExercise(repetitionExercise.repetitionExerciseId)
 //        }
     }
 
@@ -103,7 +109,7 @@ class ExerciseDatabaseService {
 
         timeExercise.trainingId?.let {
             timeExercise.positionInTraining?.let { it1 ->
-                repetitionSeriesDao.updatePositionWhileDeleting(
+                exerciseDao.updatePositionWhileDeletingInRepetitionExercise(
                     it,
                     it1
                 )
@@ -112,14 +118,14 @@ class ExerciseDatabaseService {
 
         timeExercise.trainingId?.let {
             timeExercise.positionInTraining?.let { it1 ->
-                timeSeriesDao.updatePositionWhileDeleting(
+                exerciseDao.updatePositionWhileDeletingInTimeExercise(
                     it,
                     it1
                 )
             }
         }
 
-        timeSeriesDao.deleteTimeExercise(timeExercise.exerciseId)
+        exerciseDao.deleteTimeExercise(timeExercise.timeExerciseId)
 //        }
     }
 
@@ -127,7 +133,7 @@ class ExerciseDatabaseService {
 
         //pobieranie aktualnej obiektu repetition
         val repetitionExerciseOld: RepetitionExercise =
-            getRepetitionSeriesById(exerciseId = repetitionExerciseNew.exerciseId)
+            getRepetitionSeriesById(exerciseId = repetitionExerciseNew.repetitionExerciseId)
         //delete
         deleteRepetitionSeries(repetitionExercise = repetitionExerciseOld)
         //add
@@ -137,7 +143,7 @@ class ExerciseDatabaseService {
     fun updateTimeSeries(timeExerciseNew: TimeExercise) {
         //pobieranie aktualnej obiektu repetition
         val timeExerciseOld: TimeExercise =
-            getTimeSeriesById(exerciseId = timeExerciseNew.exerciseId)
+            getTimeSeriesById(exerciseId = timeExerciseNew.timeExerciseId)
         //delete sprawdzic ktora pozycja jest podawana / stara czy nowa (timeExercise)
         deleteTimeSeries(timeExercise = timeExerciseOld)
         //add
@@ -145,15 +151,15 @@ class ExerciseDatabaseService {
     }
 
     fun deleteAllExerciseByTrainingId(trainingId: Int) {
-        timeSeriesDao.deleteTimeExerciseByTrainingId(trainingId = trainingId)
-        repetitionSeriesDao.deleteRepetitionExerciseByTrainingId(trainingId = trainingId)
+        exerciseDao.deleteTimeExerciseByTrainingId(trainingId = trainingId)
+        exerciseDao.deleteRepetitionExerciseByTrainingId(trainingId = trainingId)
     }
 
     fun getRepetitionSeriesById(exerciseId: Int): RepetitionExercise {
-        return repetitionSeriesDao.getRepetitionExerciseById(exerciseId)
+        return exerciseDao.getRepetitionExerciseById(exerciseId)
     }
 
     fun getTimeSeriesById(exerciseId: Int): TimeExercise {
-        return timeSeriesDao.getTimeExerciseById(exerciseId)
+        return exerciseDao.getTimeExerciseById(exerciseId)
     }
 }

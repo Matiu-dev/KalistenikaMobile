@@ -117,13 +117,6 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Test() {
-    val logger = DateTimeLogger(ThreadIdLogger(ConsoleLogger()))
-
-    logger.log("test")
-}
-
-@Composable
 fun Test2() {
     LaunchedEffect(Unit) {
         try {
@@ -330,7 +323,8 @@ fun KalistenikaApp() {
                             navController = navController,
                             trainingId = trainingId,
                             context = LocalContext.current,
-                            numberOfExercise = ExerciseDatabaseService().getAllSeries().filter { it.trainingId == trainingId }.size
+                            numberOfExercise = ExerciseDatabaseService().getAllRepetitionExercise().filter { it.trainingId == trainingId }.size
+                                    + ExerciseDatabaseService().getAllTimeExercise().filter { it.trainingId == trainingId }.size
                         )
                     }
 
@@ -347,7 +341,8 @@ fun KalistenikaApp() {
                             navigator = navController,
                             exercise = ExerciseDatabaseService().getRepetitionSeriesById(exerciseId = exerciseId),
                             trainingId = trainingId,
-                            numberOfExercise = ExerciseDatabaseService().getAllSeries().filter { it.trainingId == trainingId }.size
+                            numberOfExercise = ExerciseDatabaseService().getAllRepetitionExercise().filter { it.trainingId == trainingId }.size
+                                    + ExerciseDatabaseService().getAllTimeExercise().filter { it.trainingId == trainingId }.size
                         )
                     }
 
@@ -365,7 +360,8 @@ fun KalistenikaApp() {
                             context = LocalContext.current,
                             exercise = ExerciseDatabaseService().getTimeSeriesById(exerciseId = exerciseId),
                             trainingId = trainingId,
-                            numberOfExercise = ExerciseDatabaseService().getAllSeries().filter { it.trainingId == trainingId }.size
+                            numberOfExercise = ExerciseDatabaseService().getAllRepetitionExercise().filter { it.trainingId == trainingId }.size
+                            + ExerciseDatabaseService().getAllTimeExercise().filter { it.trainingId == trainingId }.size
                         )
                     }
 

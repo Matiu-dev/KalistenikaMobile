@@ -89,7 +89,7 @@ fun StartRepetitionSeries(
             onConfirmation = {  },
             painter = painterResource(id = android.R.drawable.ic_dialog_info),
             imageDescription = "opis",
-            exerciseName = exercise.exerciseName
+            exerciseName = exercise.repetitionExerciseName
         )
     }
 
@@ -98,7 +98,7 @@ fun StartRepetitionSeries(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}"  + "/${exercise.exerciseId}")
+                    navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}"  + "/${exercise.repetitionExerciseId}")
                 },
                 onDoubleClick = {
                     ExerciseDatabaseService().deleteRepetitionSeries(repetitionExercise = exercise)
@@ -128,7 +128,7 @@ fun StartRepetitionSeries(
             Box(modifier = Modifier.fillMaxWidth().weight(1f),
                 contentAlignment = Alignment.Center) {
                 Text(
-                    text = exercise.exerciseName,
+                    text = exercise.repetitionExerciseName,
                     color = Smola,
                 )
             }
@@ -150,7 +150,7 @@ fun StartRepetitionSeries(
         Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         Text(
-            text = "Ilość serii: ${exercise.numberOfSeries}",
+            text = "Ilość serii: ${exercise.numberOfRepetitionSeries}",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -174,7 +174,7 @@ fun StartRepetitionSeries(
         Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         Text(
-            text = "Przerwa między seriami: ${exercise.breakBetweenSeries}",
+            text = "Przerwa między seriami: ${exercise.breakBetweenRepetitionSeries}",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -202,7 +202,7 @@ fun StartRepetitionSeries(
         )
 
         Text(
-            text = "Koniec przerwy za ${exercise.breakBetweenSeries - sekunder % exercise.breakBetweenSeries} sekund",
+            text = "Koniec przerwy za ${exercise.breakBetweenRepetitionSeries - sekunder % exercise.breakBetweenRepetitionSeries} sekund",
             color = Smola,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -230,13 +230,13 @@ fun StartRepetitionSeries(
 
             if (startStop) {
 
-                if(initialBreakTime != exercise.breakBetweenSeries) {
+                if(initialBreakTime != exercise.breakBetweenRepetitionSeries) {
                     if (pagerState.currentPage == pagerState.pageCount) {
                         onStarStopChange(!startStop)
                     } else {
                         //czekanie jeszcze jednej przerwy i przejscie do kolejnego cwiczenia
-                        for (i in initialBreakTime..exercise.breakBetweenSeries) {
-                            currentProgress = i.toFloat() / exercise.breakBetweenSeries.toFloat()
+                        for (i in initialBreakTime..exercise.breakBetweenRepetitionSeries) {
+                            currentProgress = i.toFloat() / exercise.breakBetweenRepetitionSeries.toFloat()
 
                             initialBreakTime = i
                             delay(1000)
@@ -246,19 +246,19 @@ fun StartRepetitionSeries(
                     }
                 }
 
-                while (sekunder < exercise.breakBetweenSeries * exercise.numberOfSeries && startStop) {
+                while (sekunder < exercise.breakBetweenRepetitionSeries * exercise.numberOfRepetitionSeries && startStop) {
                     delay(1000)
                     sekunder++
 
-                    currentProgress = (sekunder % exercise.breakBetweenSeries).toFloat() /
-                            exercise.breakBetweenSeries
+                    currentProgress = (sekunder % exercise.breakBetweenRepetitionSeries).toFloat() /
+                            exercise.breakBetweenRepetitionSeries
 
-                    if (exercise.stopTimer && sekunder % exercise.breakBetweenSeries == 0) {
+                    if (exercise.stopTimer && sekunder % exercise.breakBetweenRepetitionSeries == 0) {
                         onStarStopChange(!startStop)
 //                        startStop = !startStop
                     }
 
-                    if (sekunder % exercise.breakBetweenSeries == 0) {
+                    if (sekunder % exercise.breakBetweenRepetitionSeries == 0) {
                         breakSong.start()
                     }
                 }
@@ -314,9 +314,9 @@ fun isSeriesOrBreakSecond(
     val modTime: Int = actualTime % breakAndSeriesTime
 
     return if (modTime < seriesTime) {
-        exercise.timeForSeries
+        exercise.timeForTimeSeries
     } else {
-        exercise.breakBetweenSeries
+        exercise.breakBetweenTimeSeries
     }
 }
 

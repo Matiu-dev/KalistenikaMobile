@@ -7,7 +7,7 @@ import pl.matiu.kalistenika.trainingModel.TrainingModel
 
 class TrainingDatabaseService {
 
-    val trainingDao = MainApplication.trainingDatabase.getTrainingDao()
+    val trainingDao = MainApplication.exerciseDatabase.getTrainingDao()
 
     fun getAllTraining(): List<TrainingModel> {
         return trainingDao.getAllTrainings()

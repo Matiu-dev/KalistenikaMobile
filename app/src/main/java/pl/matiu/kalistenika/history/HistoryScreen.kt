@@ -43,6 +43,7 @@ import pl.matiu.kalistenika.ui.theme.ZielonyNapis
 import java.time.DayOfWeek
 import java.time.Month
 import java.util.Calendar
+import java.util.Date
 
 //TODO https://m3.material.io/components/date-pickers/overview
 //https://developer.android.com/develop/ui/compose/components/snackbar po dodaniu nowego treningu
@@ -58,6 +59,9 @@ fun HistoryScreen() {
 
         DatePicker(state = datePickerState)
 
+        val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
+
+        Log.d("wybrana data", selectedDate.toString())
     }
 }
 

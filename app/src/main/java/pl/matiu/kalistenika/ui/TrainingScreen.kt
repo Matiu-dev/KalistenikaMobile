@@ -43,10 +43,6 @@ fun TrainingScreen(navController: NavController) {
     val trainingViewModel: TrainingViewModel = viewModel()
     val trainingList2 by trainingViewModel.trainingList.collectAsState()
 
-    for (training in trainingList2!!) {
-        Log.d("dziala czy nie?", "${training.trainingId} ${training.name} ")
-    }
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1
@@ -61,30 +57,34 @@ fun TrainingScreen(navController: NavController) {
                     ),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    itemsIndexed(trainingList2!!) { index, training ->
-                        Column(
 
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(56.dp)
-                                .background(InsideLevel1, RoundedCornerShape(8.dp))
-                                .border(1.dp, Smola, RoundedCornerShape(8.dp))
-                                .combinedClickable(
-                                    onClick = {
-                                        navController.navigate("training/${training.trainingId}")
-                                    },
-                                    onDoubleClick = {
-                                        TrainingDatabaseService().deleteTraining(training.trainingId)
-                                        navController.navigate(MainRoutes.Training.destination)
-                                    }
-                                ),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = training.name,
-                                color = Smola
-                            )
+                    if (trainingList2 != null && trainingList2!!.isNotEmpty()) {
+
+                        itemsIndexed(trainingList2!!) { index, training ->
+                            Column(
+
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(56.dp)
+                                    .background(InsideLevel1, RoundedCornerShape(8.dp))
+                                    .border(1.dp, Smola, RoundedCornerShape(8.dp))
+                                    .combinedClickable(
+                                        onClick = {
+                                            navController.navigate("training/${training.trainingId}")
+                                        },
+                                        onDoubleClick = {
+                                            TrainingDatabaseService().deleteTraining(training.trainingId)
+                                            navController.navigate(MainRoutes.Training.destination)
+                                        }
+                                    ),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = training.name,
+                                    color = Smola
+                                )
+                            }
                         }
                     }
                 }

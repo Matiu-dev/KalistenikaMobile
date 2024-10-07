@@ -26,10 +26,10 @@ class RealTimeDatabaseService {
                     val ref = database.getReference("/Exercises/${exercise.name}")
                     ref.setValue(exercise)
 
-                    logger.log("$exercise")
+//                    logger.log("$exercise")
                 }
             } catch (e: Exception) {
-                logger.log("failed downloading exercises $e")
+                logger.log("failed downloading exercises","$e")
             }
 
         }
@@ -46,13 +46,13 @@ class RealTimeDatabaseService {
                         }
                         onDataLoaded(exerciseList)
                     } else {
-                        logger.log("Data not found")
+                        logger.log("load data","Data not found")
                     }
                 }.addOnFailureListener { e ->
-                    logger.log("failed to load data: $e")
+                    logger.log("load data", "failed to load data: $e")
                 }
             } catch (e: Exception) {
-                logger.log("failed downloading exercises $e")
+                logger.log("load data", "failed downloading exercises $e")
             }
         }
     }

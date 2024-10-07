@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.trainingModel.RepetitionAndTimeExercise
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.trainingModel.RepetitionExercise
 import pl.matiu.kalistenika.trainingModel.SeriesInterface
@@ -71,19 +72,19 @@ fun SeriesScreen(
     val isLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
+
+
     if (isLoading) {
         LoadingScreen()
     } else {
-        exerciseList?.filter { it.trainingId == trainingId }?.sortedBy { it.positionInTraining }.let {
-            trainingId?.let { it1 ->
-                SeriesScreenView(
-                    exerciseList = it,
-                    navController = navController,
-                    trainingId = it1,
-                    seriesViewModel = seriesViewModel
-                )
-            }
-        }
+//        repetitionAndTimeExercise?.filter { it.repetitionExercise.trainingId == trainingId }?.sortedBy { it.repetitionExercise.positionInTraining }.let {
+
+        SeriesScreenView(
+            exerciseList = exerciseList?.filter { it.trainingId == trainingId }?.sortedBy { it.positionInTraining },
+            navController = navController,
+            trainingId = trainingId,
+            seriesViewModel = seriesViewModel
+        )
     }
 }
 
@@ -109,7 +110,7 @@ fun LoadingScreen() {
 fun SeriesScreenView(
     exerciseList: List<SeriesInterface>?,
     navController: NavController,
-    trainingId: Int,
+    trainingId: Int?,
     seriesViewModel: SeriesViewModel
 ) {
 
@@ -188,8 +189,10 @@ fun SeriesScreenView(
                                 Image(
                                     painter = painterResource(id = R.drawable.pauseimage3),
                                     contentDescription = "play",
-                                    modifier = Modifier.size(24.dp).background(Color.Transparent)
-                                    )
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .background(Color.Transparent)
+                                )
                             }
 
                         }

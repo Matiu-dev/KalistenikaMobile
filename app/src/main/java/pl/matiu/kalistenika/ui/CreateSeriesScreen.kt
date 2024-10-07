@@ -220,11 +220,11 @@ fun RepetitiveSeriesOptions(
                         ) {
                             ExerciseDatabaseService().addRepetitionSeries(
                                 RepetitionExercise(
-                                    exerciseName = exerciseName,
-                                    numberOfSeries = numberOfSeries.toInt(),
+                                    repetitionExerciseName = exerciseName,
+                                    numberOfRepetitionSeries = numberOfSeries.toInt(),
                                     numberOfReps = numberOfReps.toInt(),
                                     stopTimer = stopTimer,
-                                    breakBetweenSeries = breakBetweenSeries.toInt(),
+                                    breakBetweenRepetitionSeries = breakBetweenSeries.toInt(),
                                     positionInTraining = exercisePositionInTraining - 1,
                                     trainingId = trainingId
                                 )
@@ -377,10 +377,10 @@ fun TimeSeriesOptions(
                 ) {
                     ExerciseDatabaseService().addTimeSeries(
                         TimeExercise(
-                            exerciseName = exerciseName,
-                            numberOfSeries = numberOfSeries.toInt(),
-                            timeForSeries = timeForSeries.toInt(),
-                            breakBetweenSeries = breakBetweenSeries.toInt(),
+                            timeExerciseName = exerciseName,
+                            numberOfTimeSeries = numberOfSeries.toInt(),
+                            timeForTimeSeries = timeForSeries.toInt(),
+                            breakBetweenTimeSeries = breakBetweenSeries.toInt(),
                             positionInTraining = exercisePositionInTraining - 1,
                             trainingId = trainingId
                         )
