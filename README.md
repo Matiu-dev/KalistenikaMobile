@@ -2,7 +2,7 @@
 
 ## Technologies
 
-Kotlin, Jetpack Compose, Coroutines, Retrofit, Firebase
+Kotlin, Jetpack Compose, Coroutines, Retrofit, Firebase, Room Database
 
 ## Description
 
