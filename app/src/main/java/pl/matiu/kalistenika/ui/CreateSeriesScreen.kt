@@ -38,8 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
-import pl.matiu.kalistenika.trainingModel.RepetitionExercise
-import pl.matiu.kalistenika.trainingModel.TimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionExercise
+import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola

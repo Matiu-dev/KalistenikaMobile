@@ -51,11 +51,10 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.routes.MainRoutes
-import pl.matiu.kalistenika.trainingModel.RepetitionAndTimeExercise
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
-import pl.matiu.kalistenika.trainingModel.RepetitionExercise
-import pl.matiu.kalistenika.trainingModel.SeriesInterface
-import pl.matiu.kalistenika.trainingModel.TimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionExercise
+import pl.matiu.kalistenika.model.training.SeriesInterface
+import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -72,13 +71,9 @@ fun SeriesScreen(
     val isLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
-
-
     if (isLoading) {
         LoadingScreen()
     } else {
-//        repetitionAndTimeExercise?.filter { it.repetitionExercise.trainingId == trainingId }?.sortedBy { it.repetitionExercise.positionInTraining }.let {
-
         SeriesScreenView(
             exerciseList = exerciseList?.filter { it.trainingId == trainingId }?.sortedBy { it.positionInTraining },
             navController = navController,

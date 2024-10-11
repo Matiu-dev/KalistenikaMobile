@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.history
+package pl.matiu.kalistenika.ui.history
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -36,6 +36,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import pl.matiu.kalistenika.routes.AlternativeRoutes
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -49,7 +53,7 @@ import java.util.Date
 //https://developer.android.com/develop/ui/compose/components/snackbar po dodaniu nowego treningu
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen() {
+fun HistoryScreen(navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1,
@@ -62,6 +66,10 @@ fun HistoryScreen() {
         val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
 
         Log.d("wybrana data", selectedDate.toString())
+
+        if(selectedDate != null) {
+            navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.toString()}" )
+        }
     }
 }
 

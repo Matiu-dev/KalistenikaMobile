@@ -1,19 +1,13 @@
 package pl.matiu.kalistenika.viewModel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import pl.matiu.kalistenika.MainApplication
 import pl.matiu.kalistenika.logger.ConsoleLogger
-import pl.matiu.kalistenika.room.ExerciseDatabase
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
-import pl.matiu.kalistenika.trainingModel.RepetitionAndTimeExercise
-import pl.matiu.kalistenika.trainingModel.RepetitionExercise
-import pl.matiu.kalistenika.trainingModel.SeriesInterface
-import pl.matiu.kalistenika.trainingModel.TimeExercise
+import pl.matiu.kalistenika.model.training.SeriesInterface
 
 class SeriesViewModel : ViewModel() {
 

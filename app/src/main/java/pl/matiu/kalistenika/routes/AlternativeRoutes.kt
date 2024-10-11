@@ -49,6 +49,14 @@ enum class AlternativeRoutes(
         topBarPreviewScreen = SeriesScreen.destination,
         isNavigationIcon = true,
         addButton = ""
+    ),
+
+    HistoryDateDetails(
+        destination = MainRoutes.History.destination + "/historyDetails",
+        topBarTitle = "Szczegóły",
+        topBarPreviewScreen = MainRoutes.History.destination,
+        isNavigationIcon = true,
+        addButton = ""
     )
 
 }

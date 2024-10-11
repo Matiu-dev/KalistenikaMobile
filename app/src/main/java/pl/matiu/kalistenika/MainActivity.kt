@@ -52,7 +52,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
-import pl.matiu.kalistenika.history.HistoryScreen
+import pl.matiu.kalistenika.ui.history.HistoryScreen
 import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.logger.DateTimeLogger
 import pl.matiu.kalistenika.logger.ThreadIdLogger
@@ -76,6 +76,7 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.DrawerItem
+import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
 import java.lang.Exception
 
 class MainActivity : ComponentActivity() {
@@ -370,7 +371,19 @@ fun KalistenikaApp() {
                         isNavigationIcon = MainRoutes.History.isNavigationIcon
                         addButton = MainRoutes.History.addButton
 
-                        HistoryScreen()
+                        HistoryScreen(navController = navController)
+                    }
+
+                    composable(route = AlternativeRoutes.HistoryDateDetails.destination + "/{date}") {
+
+                        val date: String = it.arguments?.getString("date").toString()
+
+                        topBarTitle = AlternativeRoutes.HistoryDateDetails.topBarTitle
+                        topBarPreviewScreen = AlternativeRoutes.HistoryDateDetails.topBarPreviewScreen
+                        isNavigationIcon = AlternativeRoutes.HistoryDateDetails.isNavigationIcon
+                        addButton = AlternativeRoutes.HistoryDateDetails.addButton
+                        
+                        HistoryDetailsScreen(date = date)
                     }
 
 //                    composable(route = "user_profile") {

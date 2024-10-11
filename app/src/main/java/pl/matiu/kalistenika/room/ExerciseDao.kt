@@ -3,10 +3,9 @@ package pl.matiu.kalistenika.room
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import pl.matiu.kalistenika.trainingModel.RepetitionAndTimeExercise
-import pl.matiu.kalistenika.trainingModel.RepetitionExercise
-import pl.matiu.kalistenika.trainingModel.SeriesInterface
-import pl.matiu.kalistenika.trainingModel.TimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionAndTimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionExercise
+import pl.matiu.kalistenika.model.training.TimeExercise
 
 @Dao
 interface ExerciseDao {

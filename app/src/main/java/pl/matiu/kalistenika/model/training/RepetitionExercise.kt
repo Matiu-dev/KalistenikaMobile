@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.trainingModel
+package pl.matiu.kalistenika.model.training
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -7,12 +7,12 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(    foreignKeys = [ForeignKey(
-    entity = TrainingModel::class,  // Tabela, do której się odwołujemy
-    parentColumns = ["trainingId"], // Kolumna z tabeli "parent" (TrainingModel)
-    childColumns = ["repetitionTrainingId"],  // Kolumna z tabeli "child" (RepetitionExercise)
-    onDelete = ForeignKey.CASCADE   // Co zrobić w przypadku usunięcia wpisu (tutaj kaskadowe usuwanie)
+    entity = TrainingModel::class,
+    parentColumns = ["trainingId"],
+    childColumns = ["repetitionTrainingId"],
+    onDelete = ForeignKey.CASCADE
 )],
-    indices = [Index("repetitionTrainingId")] // Dodanie indeksu dla kolumny trainingId)
+    indices = [Index("repetitionTrainingId")]
 )
 data class RepetitionExercise(
     @PrimaryKey(autoGenerate = true)

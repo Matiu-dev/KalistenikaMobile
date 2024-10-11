@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.trainingModel
+package pl.matiu.kalistenika.model.training
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

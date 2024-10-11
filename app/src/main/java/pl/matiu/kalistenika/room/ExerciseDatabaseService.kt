@@ -1,13 +1,9 @@
 package pl.matiu.kalistenika.room
 
-import android.content.Context
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.MainApplication
-import pl.matiu.kalistenika.trainingModel.RepetitionAndTimeExercise
-import pl.matiu.kalistenika.trainingModel.RepetitionExercise
-import pl.matiu.kalistenika.trainingModel.SeriesInterface
-import pl.matiu.kalistenika.trainingModel.TimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionAndTimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionExercise
+import pl.matiu.kalistenika.model.training.TimeExercise
 
 class ExerciseDatabaseService {
 

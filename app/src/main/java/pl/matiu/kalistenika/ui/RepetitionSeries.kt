@@ -1,5 +1,6 @@
 import android.content.Context
 import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,8 +46,9 @@ import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
-import pl.matiu.kalistenika.trainingModel.RepetitionExercise
-import pl.matiu.kalistenika.trainingModel.TimeExercise
+import pl.matiu.kalistenika.model.training.RepetitionExercise
+import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.ui.DialogWithImage
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -83,10 +86,10 @@ fun StartRepetitionSeries(
     var initialBreakTime by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
-    if(showDialog) {
+    if (showDialog) {
         DialogWithImage(
             onDismissRequest = { showDialog = false },
-            onConfirmation = {  },
+            onConfirmation = { },
             painter = painterResource(id = android.R.drawable.ic_dialog_info),
             imageDescription = "opis",
             exerciseName = exercise.repetitionExerciseName
@@ -98,7 +101,7 @@ fun StartRepetitionSeries(
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {
-                    navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}"  + "/${exercise.repetitionExerciseId}")
+                    navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}" + "/${exercise.repetitionExerciseId}")
                 },
                 onDoubleClick = {
                     ExerciseDatabaseService().deleteRepetitionSeries(repetitionExercise = exercise)
@@ -120,13 +123,37 @@ fun StartRepetitionSeries(
         //do testu
 
 
-        Row(modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                onClick = {
+                    /* TODO dodawanie ćwiczenia do historii */
 
-            Box(modifier = Modifier.fillMaxWidth().weight(1f),
-                contentAlignment = Alignment.Center) {
+                    RealTimeDatabaseService().writeDataHistory(exercise)
+                    Toast.makeText(context, "dodano ćwiczenie do historii", Toast.LENGTH_SHORT)
+                        .show()
+                },
+                modifier = Modifier.weight(1f)
+            )
+            {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.AddCircle),
+                    contentDescription = "before",
+                    tint = Smola,
+                    modifier = Modifier.background(Color.Transparent)
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     text = exercise.repetitionExerciseName,
                     color = Smola,
@@ -136,7 +163,8 @@ fun StartRepetitionSeries(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 onClick = { showDialog = true },
-                modifier = Modifier.weight(1f))
+                modifier = Modifier.weight(1f)
+            )
             {
                 Icon(
                     painter = rememberVectorPainter(image = Icons.Filled.Info),
@@ -230,13 +258,14 @@ fun StartRepetitionSeries(
 
             if (startStop) {
 
-                if(initialBreakTime != exercise.breakBetweenRepetitionSeries) {
+                if (initialBreakTime != exercise.breakBetweenRepetitionSeries) {
                     if (pagerState.currentPage == pagerState.pageCount) {
                         onStarStopChange(!startStop)
                     } else {
                         //czekanie jeszcze jednej przerwy i przejscie do kolejnego cwiczenia
                         for (i in initialBreakTime..exercise.breakBetweenRepetitionSeries) {
-                            currentProgress = i.toFloat() / exercise.breakBetweenRepetitionSeries.toFloat()
+                            currentProgress =
+                                i.toFloat() / exercise.breakBetweenRepetitionSeries.toFloat()
 
                             initialBreakTime = i
                             delay(1000)

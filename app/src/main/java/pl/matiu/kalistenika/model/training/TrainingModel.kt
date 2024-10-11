@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.trainingModel
+package pl.matiu.kalistenika.model.training
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,9 +1,7 @@
 package pl.matiu.kalistenika.room
 
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.MainApplication
-import pl.matiu.kalistenika.trainingModel.TrainingModel
+import pl.matiu.kalistenika.model.training.TrainingModel
 
 class TrainingDatabaseService {
 
