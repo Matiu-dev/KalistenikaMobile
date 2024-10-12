@@ -17,13 +17,13 @@ import androidx.room.PrimaryKey
 data class RepetitionExercise(
     @PrimaryKey(autoGenerate = true)
     val repetitionExerciseId: Int = 0,
-    val repetitionExerciseName: String,
-    val numberOfRepetitionSeries: Int,
-    val numberOfReps: Int,
-    val stopTimer: Boolean,
-    val breakBetweenRepetitionSeries: Int,
+    val repetitionExerciseName: String = "",
+    val numberOfRepetitionSeries: Int = 0,
+    val numberOfReps: Int = 0,
+    val stopTimer: Boolean = false,
+    val breakBetweenRepetitionSeries: Int = 0,
     @ColumnInfo(name = "repetitionExercisePositionInTraining")
-    override var positionInTraining: Int?,
+    override var positionInTraining: Int? = null,
     @ColumnInfo(name = "repetitionTrainingId")
-    override val trainingId: Int?
+    override val trainingId: Int? = null
 ): SeriesInterface

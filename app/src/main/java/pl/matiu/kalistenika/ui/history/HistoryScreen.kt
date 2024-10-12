@@ -44,10 +44,12 @@ import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.ZielonyNapis
+import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.Month
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 //TODO https://m3.material.io/components/date-pickers/overview
 //https://developer.android.com/develop/ui/compose/components/snackbar po dodaniu nowego treningu
@@ -64,11 +66,12 @@ fun HistoryScreen(navController: NavController) {
         DatePicker(state = datePickerState)
 
         val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
+        val myDateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
 
         Log.d("wybrana data", selectedDate.toString())
 
         if(selectedDate != null) {
-            navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.toString()}" )
+            navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.let { myDateFormat.format(it) }}" )
         }
     }
 }

@@ -69,11 +69,7 @@ class RealTimeDatabaseService {
     }
 
     fun writeDataHistory(exercise: SeriesInterface) {
-
-
         CoroutineScope(Dispatchers.IO).launch {
-
-
             try {
                 when (exercise) {
                     is RepetitionExercise -> {
@@ -92,16 +88,38 @@ class RealTimeDatabaseService {
         }
     }
 
-    fun loadDataHistory(onDataLoaded: (List<ExerciseApi>) -> Unit) {
+    fun loadDataHistoryRepetitionExercise(date: String, onDataLoaded: (List<RepetitionExercise>) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val ref = database.getReference("/Exercises")
+                val ref = database.getReference("/History/${date}")
                 ref.get().addOnSuccessListener { snapshot ->
                     if (snapshot.exists()) {
-                        val exerciseList = snapshot.children.mapNotNull { dataSnapshot ->
-                            dataSnapshot.getValue(ExerciseApi::class.java)
+                        val repetitionExerciseList = snapshot.children.mapNotNull { dataSnapshot ->
+                            dataSnapshot.child("exercise").getValue(RepetitionExercise::class.java)
                         }
-                        onDataLoaded(exerciseList)
+                        onDataLoaded(repetitionExerciseList)
+                    } else {
+                        logger.log("load data", "Data not found")
+                    }
+                }.addOnFailureListener { e ->
+                    logger.log("load data", "failed to load data: $e")
+                }
+            } catch (e: Exception) {
+                logger.log("load data", "failed downloading exercises $e")
+            }
+        }
+    }
+
+    fun loadDataHistoryTimeExercise(date: String, onDataLoaded: (List<TimeExercise>) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val ref = database.getReference("/History/${date}")
+                ref.get().addOnSuccessListener { snapshot ->
+                    if (snapshot.exists()) {
+                        val timeExerciseList = snapshot.children.mapNotNull { dataSnapshot ->
+                            dataSnapshot.child("exercise").getValue(TimeExercise::class.java)
+                        }
+                        onDataLoaded(timeExerciseList)
                     } else {
                         logger.log("load data", "Data not found")
                     }

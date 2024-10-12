@@ -138,8 +138,6 @@ fun StartTimeSeries(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 onClick = {
-                    /* TODO dodawanie ćwiczenia do historii */
-
                     RealTimeDatabaseService().writeDataHistory(exercise)
                     Toast.makeText(context, "dodano ćwiczenie do historii", Toast.LENGTH_SHORT)
                         .show()

@@ -17,12 +17,12 @@ import androidx.room.PrimaryKey
 data class TimeExercise(
     @PrimaryKey(autoGenerate = true)
     val timeExerciseId: Int = 0,
-    val timeExerciseName: String,
-    val numberOfTimeSeries: Int,
-    val timeForTimeSeries: Int,
-    val breakBetweenTimeSeries: Int,
+    val timeExerciseName: String = "",
+    val numberOfTimeSeries: Int = 0,
+    val timeForTimeSeries: Int = 0,
+    val breakBetweenTimeSeries: Int = 0,
     @ColumnInfo(name = "timeExercisePositionInTraining")
-    override var positionInTraining: Int?,
+    override var positionInTraining: Int? = null,
     @ColumnInfo(name = "timeTrainingId")
-    override val trainingId: Int?
+    override val trainingId: Int? = null
 ): SeriesInterface
