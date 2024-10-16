@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui
+package pl.matiu.kalistenika.ui.series
 
 import android.content.Context
 import androidx.compose.foundation.border

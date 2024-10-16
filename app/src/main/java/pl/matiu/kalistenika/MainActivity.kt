@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,22 +47,23 @@ import pl.matiu.kalistenika.ui.SeriesScreen
 import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
 import pl.matiu.kalistenika.ui.AddExerciseButton
 import pl.matiu.kalistenika.ui.AddTrainingButton
-import pl.matiu.kalistenika.ui.CreateSeries
-import pl.matiu.kalistenika.ui.CreateTraining
-import pl.matiu.kalistenika.ui.RepetitionExerciseEditScreen
-import pl.matiu.kalistenika.ui.TimeExerciseEditScreen
+import pl.matiu.kalistenika.ui.series.CreateSeries
+import pl.matiu.kalistenika.ui.training.CreateTraining
+import pl.matiu.kalistenika.ui.series.RepetitionExerciseEditScreen
+import pl.matiu.kalistenika.ui.series.TimeExerciseEditScreen
 import pl.matiu.kalistenika.ui.TrainingScreen
 import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.Wheat
-import pl.matiu.kalistenika.exerciseApi.NinjaApiService
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.DrawerItem
+import pl.matiu.kalistenika.ui.dialog.DialogFactory
+import pl.matiu.kalistenika.ui.dialog.DialogType
 import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
-import java.lang.Exception
+
 
 class MainActivity : ComponentActivity() {
 
@@ -98,23 +98,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             KalistenikaApp()
 //            Test2()
-            Log.d("siema", "eniu")
-        }
-    }
-}
 
-@Composable
-fun Test2() {
-    LaunchedEffect(Unit) {
-        try {
-            val exerciseList = NinjaApiService().getExercises()
-            exerciseList.forEach { exercise ->
-                Log.d("e", "$exercise")
-            }
-        } catch (e: Exception) {
-            Log.e("error", "failed", e)
+//            val dialog = DialogFactory().createDialog(DialogType.CREATE_REPETITION_SERIES)
+//            DialogFactory().ShowDialog(dialog = dialog)
         }
-
     }
 }
 
@@ -122,6 +109,7 @@ fun Test2() {
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun KalistenikaApp() {
+
 
     KalistenikaTheme {
         val navController = rememberNavController()
@@ -132,9 +120,6 @@ fun KalistenikaApp() {
         var trainingId by rememberSaveable { mutableIntStateOf(0) }
         var drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
-
-//        val tabsScreen = MainRoutes.values().toList()
-
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -155,7 +140,6 @@ fun KalistenikaApp() {
                 }
             }) {
             Scaffold(
-
                 topBar = {
                     CenterAlignedTopAppBar(
                         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(

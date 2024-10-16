@@ -1,0 +1,10 @@
+package pl.matiu.kalistenika.ui.dialog
+
+enum class DialogType {
+    CREATE_TIME_SERIES,
+    UPDATE_TIME_SERIES,
+    DELETE_TIME_SERIES,
+    CREATE_REPETITION_SERIES,
+    UPDATE_REPETITION_SERIES,
+    DELETE_REPETITION_SERIES
+}

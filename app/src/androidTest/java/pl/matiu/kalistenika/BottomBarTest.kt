@@ -28,6 +28,7 @@ class BottomBarTest {
             BottomAppBar(navController = navController)
         }
 
+        Thread.sleep(1000)
         composeTestRule.onNodeWithText(MainRoutes.Training.title).performClick()
         Thread.sleep(1000)
         composeTestRule.onNodeWithText(MainRoutes.History.title).performClick()
