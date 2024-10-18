@@ -25,7 +25,7 @@ class SeriesViewModel : ViewModel() {
         ConsoleLogger().log("pobieranie dnaych", "seriesViewModel")
         viewModelScope.launch {
             _isLoading.value = true
-            _exerciseList.value = ExerciseDatabaseService().getAllRepetitionExercise() + ExerciseDatabaseService().getAllTimeExercise()
+            _exerciseList.value = ExerciseDatabaseService().getAllRepetitionExercise() + ExerciseDatabaseService().getAllTimeExercise()//implementacja ExerciseDatabaseService - DI
             _isLoading.value = false
         }
     }

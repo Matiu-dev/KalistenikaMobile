@@ -37,10 +37,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.ui.history.HistoryScreen
 import pl.matiu.kalistenika.ui.SeriesScreen
@@ -63,8 +65,10 @@ import pl.matiu.kalistenika.ui.DrawerItem
 import pl.matiu.kalistenika.ui.dialog.DialogFactory
 import pl.matiu.kalistenika.ui.dialog.DialogType
 import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
+import pl.matiu.kalistenika.viewModel.NinjaApiViewModel
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -96,8 +100,9 @@ class MainActivity : ComponentActivity() {
 //        RealTimeDatabaseService().writeData()
 
         setContent {
-            KalistenikaApp()
-//            Test2()
+            KalistenikaTheme {
+                KalistenikaApp()
+            }
 
 //            val dialog = DialogFactory().createDialog(DialogType.CREATE_REPETITION_SERIES)
 //            DialogFactory().ShowDialog(dialog = dialog)

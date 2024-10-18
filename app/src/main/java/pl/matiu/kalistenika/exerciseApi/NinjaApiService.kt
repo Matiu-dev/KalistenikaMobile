@@ -12,19 +12,20 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+//do usuneicia
 class NinjaApiService {
 
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.api-ninjas.com/v1/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    private val service: NinjaApi by lazy {
-        retrofit.create(NinjaApi::class.java)
-    }
-    suspend fun getExercises(): List<ExerciseApi>  {
-        return service.getMuscleExercise()
-    }
+//    private val retrofit: Retrofit by lazy {
+//        Retrofit.Builder()
+//            .baseUrl("https://api.api-ninjas.com/v1/")
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+//    }
+//
+//    private val service: NinjaApi by lazy {
+//        retrofit.create(NinjaApi::class.java)
+//    }
+//    suspend fun getExercises(): List<ExerciseApi>  {
+//        return service.getMuscleExercise()
+//    }
 }
