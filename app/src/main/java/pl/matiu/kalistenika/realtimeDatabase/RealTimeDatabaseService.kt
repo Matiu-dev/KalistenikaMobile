@@ -9,7 +9,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
-import pl.matiu.kalistenika.exerciseApi.NinjaApiService
 import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.logger.Logger
 import pl.matiu.kalistenika.model.history.HistoryModel
@@ -33,18 +32,13 @@ class RealTimeDatabaseService {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 exerciseList?.forEach { exercise ->
-
                     val ref = database.getReference("/Exercises/${exercise.name}")
                     ref.setValue(exercise)
-
-//                    logger.log("$exercise")
                 }
             } catch (e: Exception) {
                 logger.log("failed downloading exercises", "$e")
             }
-
         }
     }
 

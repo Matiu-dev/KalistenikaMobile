@@ -26,11 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
+import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +87,7 @@ fun CreateTraining(navController: NavController, context: Context) {
                 Button(
                     onClick = {
                         if(trainingName.isNotBlank()) {
-                            TrainingDatabaseService().addTraining(name = trainingName)
+                            TrainingViewModel().addTraining(TrainingModel(name = trainingName))
                             navController.navigate(MainRoutes.Training.destination)
                         } else {
                             Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()

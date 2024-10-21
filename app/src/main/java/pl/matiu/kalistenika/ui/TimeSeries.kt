@@ -56,6 +56,7 @@ import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
+import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
@@ -80,15 +81,16 @@ fun StartTimeSeries(
     seriesViewModel: SeriesViewModel
 ) {
 
-    val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
-    val breakSong = remember { MediaPlayer.create(context, R.raw.breaksong) }
+//    val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
+//    val breakSong = remember { MediaPlayer.create(context, R.raw.breaksong) }
 
     var sekunder by rememberSaveable { mutableStateOf(0) }
 
     DisposableEffect(Unit) {
         onDispose {
-            seriesSong.release()
-            breakSong.release()
+//            seriesSong.release()
+//            StartSong.seriesSong.release()
+//            breakSong.release()
         }
     }
 
@@ -262,7 +264,7 @@ fun StartTimeSeries(
                             delay(1000)
                         }
 
-                        seriesSong.start()
+                        StartSong.seriesSong.start()
                     }
                 }
 
@@ -297,7 +299,7 @@ fun StartTimeSeries(
 
                     isEndOfSeriesOrBreak(
                         sekunder, exercise.breakBetweenTimeSeries, exercise.timeForTimeSeries,
-                        seriesSong, breakSong
+                        StartSong.seriesSong, StartSong.breakSong
                     )
 
                 }
@@ -426,14 +428,14 @@ fun isEndOfSeriesOrBreak(
     if (seriesOrBreak(actualTime, breakTime, seriesTime) == seriesTime &&
         isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("serii")
     ) {
-        seriesSong.start()
+        StartSong.seriesSong.start()
     }
 
     //jesli czas jest rowny czasowi przerwy i aktualnie jest przerwa
     if (seriesOrBreak(actualTime, breakTime, seriesTime) == breakTime &&
         isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("przerwy")
     ) {
-        breakSong.start()
+        StartSong.breakSong.start()
     }
 }
 

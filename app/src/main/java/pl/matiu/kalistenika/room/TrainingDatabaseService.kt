@@ -2,6 +2,7 @@ package pl.matiu.kalistenika.room
 
 import pl.matiu.kalistenika.MainApplication
 import pl.matiu.kalistenika.model.training.TrainingModel
+import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 class TrainingDatabaseService {
 
@@ -11,12 +12,12 @@ class TrainingDatabaseService {
         return trainingDao.getAllTrainings()
     }
 
-    fun addTraining(name: String) {
-        trainingDao.addTraining(TrainingModel(name = name))
+    fun addTraining(trainingModel: TrainingModel) {
+        trainingDao.addTraining(trainingModel)
     }
 
-    fun deleteTraining(trainingId: Int) {
-        ExerciseDatabaseService().deleteAllExerciseByTrainingId(trainingId)
-        trainingDao.deleteTraining(trainingId)
+    fun deleteTraining(trainingModel: TrainingModel) {
+        ExerciseDatabaseService().deleteAllExerciseByTrainingId(trainingModel.trainingId)
+        trainingDao.deleteTraining(trainingModel.trainingId)
     }
 }

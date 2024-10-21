@@ -24,17 +24,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
+import pl.matiu.testowa.dialog.DialogController
+import pl.matiu.testowa.dialog.DialogEnum
+import pl.matiu.testowa.dialog.ShowDialog
 
 @Composable
 @ExperimentalFoundationApi
@@ -42,6 +49,11 @@ fun TrainingScreen(navController: NavController) {
 
     val trainingViewModel: TrainingViewModel = viewModel()
     val trainingList2 by trainingViewModel.trainingList.collectAsState()
+
+    val showDialog = remember { mutableStateOf(false) }
+
+    val dialogType = DialogEnum.DELETE_DIALOG
+    val dialogResponse = DialogController().showDialog(dialogType, TimeExercise())
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -73,8 +85,9 @@ fun TrainingScreen(navController: NavController) {
                                             navController.navigate("training/${training.trainingId}")
                                         },
                                         onDoubleClick = {
-                                            TrainingDatabaseService().deleteTraining(training.trainingId)
-                                            navController.navigate(MainRoutes.Training.destination)
+//                                            TrainingViewModel().deleteTraining(training)
+//                                            navController.navigate(MainRoutes.Training.destination)
+                                            showDialog.value = true
                                         }
                                     ),
                                 verticalArrangement = Arrangement.Center,
@@ -90,6 +103,14 @@ fun TrainingScreen(navController: NavController) {
                 }
             }
         }
+
+        if(showDialog.value) {
+            ShowDialog(
+                dialogResponse,
+                showDialog = showDialog.value,
+                onShowDialogChange = { showDialog.value = it })
+        }
+
     }
 }
 

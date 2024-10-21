@@ -25,7 +25,7 @@ import pl.matiu.kalistenika.ui.theme.Smola
 @Composable
 fun HistoryDetailsScreen(date: String) {
 
-    var timeExercise = remember {
+    val timeExercise = remember {
         mutableStateOf<List<TimeExercise>>(emptyList())
     }
 
@@ -33,7 +33,7 @@ fun HistoryDetailsScreen(date: String) {
         timeExercise.value = history
     }
 
-    var repetitionExercise = remember {
+    val repetitionExercise = remember {
         mutableStateOf<List<RepetitionExercise>>(emptyList())
     }
 
@@ -56,6 +56,18 @@ fun HistoryDetailsScreen(date: String) {
                     text = "Treningi wykonane w dniu: $date"
                 )
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Divider(
+                    color = Smola,
+                    thickness = 2.dp
+                )
+            }
+
 
             LazyColumn(modifier = Modifier
                 .fillMaxWidth()) {

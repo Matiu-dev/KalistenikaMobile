@@ -1,5 +1,6 @@
 package pl.matiu.kalistenika.room
 
+import androidx.room.Transaction
 import pl.matiu.kalistenika.MainApplication
 import pl.matiu.kalistenika.model.training.RepetitionAndTimeExercise
 import pl.matiu.kalistenika.model.training.RepetitionExercise
@@ -20,8 +21,8 @@ class ExerciseDatabaseService {
         return exerciseDao.getAllTimeExercise()
     }
 
+    @Transaction
     fun addRepetitionSeries(repetitionExercise: RepetitionExercise) {
-//        viewModelScope.launch {
 
         repetitionExercise.trainingId?.let {
             repetitionExercise.positionInTraining?.let { it1 ->
@@ -42,14 +43,10 @@ class ExerciseDatabaseService {
         }
 
         exerciseDao.addRepetitionExercise(repetitionExercise)
-//        }
-
     }
 
+    @Transaction
     fun addTimeSeries(timeExercise: TimeExercise) {
-
-        //ustawia kolejnosc wszystkich cwiczen dla treningu
-
 
         timeExercise.trainingId?.let {
             timeExercise.positionInTraining?.let { it1 ->
@@ -69,14 +66,11 @@ class ExerciseDatabaseService {
             }
         }
 
-        //ustawia kolejnosc wszystkich cwiczen dla treningu
-
         exerciseDao.addTimeExercise(timeExercise)
-
     }
 
+    @Transaction
     fun deleteRepetitionSeries(repetitionExercise: RepetitionExercise) {
-//        viewModelScope.launch {
 
         repetitionExercise.trainingId?.let {
             repetitionExercise.positionInTraining?.let { it1 ->
@@ -97,11 +91,10 @@ class ExerciseDatabaseService {
         }
 
         exerciseDao.deleteRepetitionExercise(repetitionExercise.repetitionExerciseId)
-//        }
     }
 
+    @Transaction
     fun deleteTimeSeries(timeExercise: TimeExercise) {
-//        viewModelScope.launch {
 
         timeExercise.trainingId?.let {
             timeExercise.positionInTraining?.let { it1 ->
@@ -122,9 +115,9 @@ class ExerciseDatabaseService {
         }
 
         exerciseDao.deleteTimeExercise(timeExercise.timeExerciseId)
-//        }
     }
 
+    @Transaction
     fun updateRepetitionSeries(repetitionExerciseNew: RepetitionExercise) {
 
         //pobieranie aktualnej obiektu repetition
@@ -136,6 +129,7 @@ class ExerciseDatabaseService {
         addRepetitionSeries(repetitionExercise = repetitionExerciseNew)
     }
 
+    @Transaction
     fun updateTimeSeries(timeExerciseNew: TimeExercise) {
         //pobieranie aktualnej obiektu repetition
         val timeExerciseOld: TimeExercise =
@@ -146,6 +140,7 @@ class ExerciseDatabaseService {
         addTimeSeries(timeExercise = timeExerciseNew)
     }
 
+    @Transaction
     fun deleteAllExerciseByTrainingId(trainingId: Int) {
         exerciseDao.deleteTimeExerciseByTrainingId(trainingId = trainingId)
         exerciseDao.deleteRepetitionExerciseByTrainingId(trainingId = trainingId)

@@ -37,13 +37,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.hilt.navigation.compose.hiltViewModel
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.ui.history.HistoryScreen
 import pl.matiu.kalistenika.ui.SeriesScreen
 import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
@@ -62,8 +62,6 @@ import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.DrawerItem
-import pl.matiu.kalistenika.ui.dialog.DialogFactory
-import pl.matiu.kalistenika.ui.dialog.DialogType
 import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
 import pl.matiu.kalistenika.viewModel.NinjaApiViewModel
 
@@ -99,8 +97,11 @@ class MainActivity : ComponentActivity() {
 
 //        RealTimeDatabaseService().writeData()
 
+
         setContent {
             KalistenikaTheme {
+                StartSong.init(LocalContext.current) // Inicjalizuj singletona w odpowiednim miejscu
+//                val player = StartSong.seriesSong
                 KalistenikaApp()
             }
 
