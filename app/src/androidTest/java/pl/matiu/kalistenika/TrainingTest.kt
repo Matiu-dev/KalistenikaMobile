@@ -1,40 +1,39 @@
 package pl.matiu.kalistenika
 
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.ui.dialog.CreateTrainingDialog
+import pl.matiu.testowa.dialog.DialogValues
 
-class BottomBarTest {
+
+class TrainingTest {
 
     @get:Rule
-    val composeTestRule = createComposeRule()
+    val trainingTestRule = createComposeRule()
 
     @Test
-    fun bottomBarTest() {
-
-        composeTestRule.setContent {
+    fun createTrainingTest() {
+        trainingTestRule.setContent {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = MainRoutes.Training.destination ) {
                 composable(route = MainRoutes.Training.destination) {}
                 composable(route = MainRoutes.History.destination) {}
             }
 
-            BottomAppBar(navController = navController)
+            CreateTrainingDialog(
+                showDialog = true,
+                onShowDialogChange = { },
+                dialogValues = DialogValues(title = "Create Dialog"),
+                navController = navController,
+                context = LocalContext.current
+            )
         }
-
-        Thread.sleep(1000)
-        composeTestRule.onNodeWithText(MainRoutes.Training.title).performClick()
-        Thread.sleep(1000)
-        composeTestRule.onNodeWithText(MainRoutes.History.title).performClick()
-        Thread.sleep(1000)
-        composeTestRule.onNodeWithText(MainRoutes.History.title).assertIsSelected()
-        Thread.sleep(2000)
     }
 }

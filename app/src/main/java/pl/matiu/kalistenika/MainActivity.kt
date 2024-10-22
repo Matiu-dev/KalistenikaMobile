@@ -116,7 +116,6 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun KalistenikaApp() {
 
-
     KalistenikaTheme {
         val navController = rememberNavController()
         var topBarTitle by rememberSaveable { mutableStateOf("test") }
@@ -124,7 +123,7 @@ fun KalistenikaApp() {
         var isNavigationIcon by rememberSaveable { mutableStateOf(false) }
         var addButton by rememberSaveable { mutableStateOf("") } //dodawanie ćwiczenia/treningu
         var trainingId by rememberSaveable { mutableIntStateOf(0) }
-        var drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
         ModalNavigationDrawer(
@@ -200,8 +199,9 @@ fun KalistenikaApp() {
                 floatingActionButton = {
 
                     if (addButton == "AddTraining") {
-                        AddTrainingButton { navController.navigate(MainRoutes.Training.destination + "/createTraining") }
+                        AddTrainingButton (navController = navController)
 //                    AddTrainingButton(navController = navController)
+
 
                     }
 
@@ -227,14 +227,14 @@ fun KalistenikaApp() {
                         TrainingScreen(navController = navController)
                     }
 
-                    composable(route = AlternativeRoutes.CreateTraining.destination) {
-                        topBarTitle = AlternativeRoutes.CreateTraining.topBarTitle
-                        topBarPreviewScreen = AlternativeRoutes.CreateTraining.topBarPreviewScreen
-                        isNavigationIcon = AlternativeRoutes.CreateTraining.isNavigationIcon
-                        addButton = AlternativeRoutes.CreateTraining.addButton
-
-                        CreateTraining(navController = navController, LocalContext.current)
-                    }
+//                    composable(route = AlternativeRoutes.CreateTraining.destination) {
+//                        topBarTitle = AlternativeRoutes.CreateTraining.topBarTitle
+//                        topBarPreviewScreen = AlternativeRoutes.CreateTraining.topBarPreviewScreen
+//                        isNavigationIcon = AlternativeRoutes.CreateTraining.isNavigationIcon
+//                        addButton = AlternativeRoutes.CreateTraining.addButton
+//
+////                        CreateTraining(navController = navController, LocalContext.current)
+//                    }
 
                     composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!

@@ -1,5 +1,6 @@
 package pl.matiu.kalistenika.media
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.compose.runtime.remember

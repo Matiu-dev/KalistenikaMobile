@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
@@ -41,7 +43,7 @@ import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.testowa.dialog.DialogController
 import pl.matiu.testowa.dialog.DialogEnum
-import pl.matiu.testowa.dialog.ShowDialog
+import pl.matiu.testowa.dialog.ShowTrainingDialog
 
 @Composable
 @ExperimentalFoundationApi
@@ -50,10 +52,8 @@ fun TrainingScreen(navController: NavController) {
     val trainingViewModel: TrainingViewModel = viewModel()
     val trainingList2 by trainingViewModel.trainingList.collectAsState()
 
+    val clickedTraining = remember { mutableIntStateOf(-1) }
     val showDialog = remember { mutableStateOf(false) }
-
-    val dialogType = DialogEnum.DELETE_DIALOG
-    val dialogResponse = DialogController().showDialog(dialogType, TimeExercise())
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -84,10 +84,9 @@ fun TrainingScreen(navController: NavController) {
                                         onClick = {
                                             navController.navigate("training/${training.trainingId}")
                                         },
-                                        onDoubleClick = {
-//                                            TrainingViewModel().deleteTraining(training)
-//                                            navController.navigate(MainRoutes.Training.destination)
+                                        onLongClick = {
                                             showDialog.value = true
+                                            clickedTraining.intValue = trainingList2!!.filter { it.trainingId == training.trainingId }.get(0).trainingId
                                         }
                                     ),
                                 verticalArrangement = Arrangement.Center,
@@ -105,25 +104,40 @@ fun TrainingScreen(navController: NavController) {
         }
 
         if(showDialog.value) {
-            ShowDialog(
-                dialogResponse,
+            ShowTrainingDialog(
+                dialogResponse = DialogController().showDialog(DialogEnum.DELETE_DIALOG,
+                    trainingList2!!.filter { it.trainingId ==  clickedTraining.intValue}[0]),
                 showDialog = showDialog.value,
-                onShowDialogChange = { showDialog.value = it })
+                onShowDialogChange = { showDialog.value = it },
+                navController = navController
+            )
         }
-
     }
 }
 
 @Composable
-fun AddTrainingButton(onClick: () -> Unit) {
+fun AddTrainingButton(navController: NavController) {
+
+    val showDialog = remember { mutableStateOf(false) }
 
     FloatingActionButton(
         onClick = {
-            onClick()
+            showDialog.value = true
         },
         containerColor = InsideLevel2,
         contentColor = Smola
     ) {
         Icon(Icons.Filled.Add, "add exercise")
+    }
+
+    if(showDialog.value) {
+        ShowTrainingDialog(
+            dialogResponse = DialogController().showDialog(DialogEnum.CREATE_DIALOG,
+                TrainingModel(1,"aaa")
+            ),
+            showDialog = showDialog.value,
+            onShowDialogChange = { showDialog.value = it },
+            navController = navController
+        )
     }
 }

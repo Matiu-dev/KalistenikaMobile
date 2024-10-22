@@ -36,13 +36,12 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTraining(navController: NavController, context: Context) {
+fun CreateTraining(name: String,
+                   onNameChange: (String) -> Unit) {
 
-    var trainingName by remember { mutableStateOf("") }
+//    var trainingName by remember { mutableStateOf("") }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
         color = InsideLevel1
     ) {
         Column(
@@ -64,8 +63,8 @@ fun CreateTraining(navController: NavController, context: Context) {
                 )
 
                 TextField(
-                    value = trainingName,
-                    onValueChange = { trainingName = it },
+                    value = name,
+                    onValueChange = { onNameChange(it) },
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent,
                         cursorColor = Smola,
@@ -79,29 +78,29 @@ fun CreateTraining(navController: NavController, context: Context) {
 
             }
 
-            Row(
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Button(
-                    onClick = {
-                        if(trainingName.isNotBlank()) {
-                            TrainingViewModel().addTraining(TrainingModel(name = trainingName))
-                            navController.navigate(MainRoutes.Training.destination)
-                        } else {
-                            Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 5.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
-                ) {
-                    Text(text = "Dodaj trening", color = Smola)
-                }
-
-            }
+//            Row(
+//                modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//
+//                Button(
+//                    onClick = {
+//                        if(trainingName.isNotBlank()) {
+//                            TrainingViewModel().addTraining(TrainingModel(name = trainingName))
+//                            navController.navigate(MainRoutes.Training.destination)
+//                        } else {
+//                            Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
+//                        }
+//                    },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 5.dp),
+//                    colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
+//                ) {
+//                    Text(text = "Dodaj trening", color = Smola)
+//                }
+//
+//            }
 
 
         }
