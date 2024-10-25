@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,7 +62,6 @@ fun TrainingScreen(navController: NavController) {
     ) {
         Column {
             Row {
-                //test
                 LazyColumn(
                     contentPadding = PaddingValues(
                         horizontal = 25.dp,
@@ -82,7 +82,7 @@ fun TrainingScreen(navController: NavController) {
                                     .border(1.dp, Smola, RoundedCornerShape(8.dp))
                                     .combinedClickable(
                                         onClick = {
-                                            navController.navigate("training/${training.trainingId}")
+                                            navController.navigate("training/${training.name}/${training.trainingId}")
                                         },
                                         onLongClick = {
                                             showDialog.value = true

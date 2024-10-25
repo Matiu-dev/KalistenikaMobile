@@ -39,12 +39,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.routes.MainRoutes
-import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
@@ -66,11 +66,12 @@ fun StartRepetitionSeries(
     pagerState: PagerState,
     endOfSeries: Boolean,
     onEndOfSeriesChange: (Boolean) -> Unit,
-    seriesViewModel: SeriesViewModel
 ) {
 
 //    val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
 //    val breakSong = remember { MediaPlayer.create(context, R.raw.breaksong) }
+
+    val seriesViewModel: SeriesViewModel = viewModel()
 
     var sekunder by rememberSaveable {
         mutableIntStateOf(0)
@@ -105,7 +106,7 @@ fun StartRepetitionSeries(
                     navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}" + "/${exercise.repetitionExerciseId}")
                 },
                 onDoubleClick = {
-                    ExerciseDatabaseService().deleteRepetitionSeries(repetitionExercise = exercise)
+                    seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
                     navController.navigate(MainRoutes.Training.destination + "/${exercise.trainingId}")
                 }
             )

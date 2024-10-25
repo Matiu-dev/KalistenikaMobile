@@ -51,15 +51,14 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
 import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
-import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -78,21 +77,18 @@ fun StartTimeSeries(
     endOfSeries: Boolean,
     onEndOfSeriesChange: (Boolean) -> Unit,
     pagerState: PagerState,
-    seriesViewModel: SeriesViewModel
 ) {
-
-//    val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
-//    val breakSong = remember { MediaPlayer.create(context, R.raw.breaksong) }
-
     var sekunder by rememberSaveable { mutableStateOf(0) }
 
-    DisposableEffect(Unit) {
-        onDispose {
+    val seriesViewModel: SeriesViewModel = viewModel()
+
+//    DisposableEffect(Unit) {
+//        onDispose {
 //            seriesSong.release()
 //            StartSong.seriesSong.release()
 //            breakSong.release()
-        }
-    }
+//        }
+//    }
 
     var currentProgress by rememberSaveable { mutableStateOf(0f) }
     var initialBreakTime by remember { mutableIntStateOf(0) }
@@ -112,10 +108,10 @@ fun StartTimeSeries(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
+                navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
             },
             onDoubleClick = {
-                ExerciseDatabaseService().deleteTimeSeries(timeExercise = exercise)
+                seriesViewModel.deleteTimeSeries(timeExercise = exercise)
                 navController.navigate(MainRoutes.Training.destination + "/${exercise.trainingId}")
             }
         )

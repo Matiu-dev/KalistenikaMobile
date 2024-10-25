@@ -23,7 +23,6 @@ class MainApplication: Application() {
             ExerciseDatabase::class.java,
             ExerciseDatabase.NAME
         )
-//            .allowMainThreadQueries()
             .build()
     }
 }

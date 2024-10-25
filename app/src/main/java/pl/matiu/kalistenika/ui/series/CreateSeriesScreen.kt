@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.model.training.RepetitionExercise
@@ -43,14 +45,21 @@ import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
+import pl.matiu.kalistenika.viewModel.SeriesViewModel
+import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 @Composable
 fun CreateSeries(
     navController: NavController,
     trainingId: Int?,
     context: Context,
-    numberOfExercise: Int
+    trainingName: String
 ) {
+
+    val seriesViewModel: SeriesViewModel = viewModel()
+    val listOfSeries = seriesViewModel.exerciseList.collectAsState()
+    val numberOfExercise: Int = listOfSeries.value?.filter { it.trainingId == trainingId }?.size ?: 0
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1,
@@ -62,7 +71,9 @@ fun CreateSeries(
                     navController = navController,
                     trainingId = trainingId,
                     context = context,
-                    numberOfExercise = numberOfExercise
+                    numberOfExercise = numberOfExercise,
+                    seriesViewModel = seriesViewModel,
+                    trainingName = trainingName
                 )
             }
 
@@ -70,8 +81,10 @@ fun CreateSeries(
                 RepetitiveSeries(
                     navController = navController,
                     trainingId = trainingId,
+                    trainingName = trainingName,
                     context = context,
                     numberOfExercise = numberOfExercise,
+                    seriesViewModel = seriesViewModel
                 )
             }
         }
@@ -82,8 +95,10 @@ fun CreateSeries(
 fun RepetitiveSeries(
     navController: NavController,
     trainingId: Int?,
+    trainingName: String,
     context: Context,
     numberOfExercise: Int,
+    seriesViewModel: SeriesViewModel
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -135,6 +150,8 @@ fun RepetitiveSeries(
                                 context = context,
                                 navController = navController,
                                 trainingId = trainingId,
+                                trainingName = trainingName,
+                                seriesViewModel = seriesViewModel
                             )
                         }
                     }
@@ -149,7 +166,9 @@ fun RepetitiveSeriesOptions(
     numberOfExercise: Int,
     context: Context,
     navController: NavController,
-    trainingId: Int?
+    trainingId: Int?,
+    trainingName: String,
+    seriesViewModel: SeriesViewModel
 ) {
     var exerciseName by rememberSaveable { mutableStateOf("") }
     var numberOfSeries by rememberSaveable { mutableStateOf("") }
@@ -218,7 +237,7 @@ fun RepetitiveSeriesOptions(
                             numberOfReps.toIntOrNull() is Int &&
                             breakBetweenSeries.toIntOrNull() is Int
                         ) {
-                            ExerciseDatabaseService().addRepetitionSeries(
+                            seriesViewModel.addRepetitionSeries(
                                 RepetitionExercise(
                                     repetitionExerciseName = exerciseName,
                                     numberOfRepetitionSeries = numberOfSeries.toInt(),
@@ -230,7 +249,7 @@ fun RepetitiveSeriesOptions(
                                 )
                             )
 
-                            navController.navigate("training/${trainingId}")
+                            navController.navigate("training/${trainingName}/${trainingId}")
                         } else {
                             Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
                         }
@@ -249,8 +268,10 @@ fun RepetitiveSeriesOptions(
 fun TimeSeries(
     navController: NavController,
     trainingId: Int?,
+    trainingName: String,
     context: Context,
     numberOfExercise: Int,
+    seriesViewModel: SeriesViewModel
 ) {
 
     var expanded by remember {
@@ -317,7 +338,9 @@ fun TimeSeries(
                                 numberOfExercise = numberOfExercise,
                                 navController = navController,
                                 trainingId = trainingId,
-                                context = context
+                                trainingName = trainingName,
+                                context = context,
+                                seriesViewModel = seriesViewModel
                             )
                         }
                     }
@@ -334,7 +357,9 @@ fun TimeSeriesOptions(
     numberOfExercise: Int,
     navController: NavController,
     trainingId: Int?,
-    context: Context
+    trainingName: String,
+    context: Context,
+    seriesViewModel: SeriesViewModel
 ) {
     var exerciseName by rememberSaveable { mutableStateOf("") }
     var numberOfSeries by rememberSaveable { mutableStateOf("") }
@@ -375,7 +400,7 @@ fun TimeSeriesOptions(
                     timeForSeries.toIntOrNull() is Int &&
                     breakBetweenSeries.toIntOrNull() is Int
                 ) {
-                    ExerciseDatabaseService().addTimeSeries(
+                    seriesViewModel.addTimeSeries(
                         TimeExercise(
                             timeExerciseName = exerciseName,
                             numberOfTimeSeries = numberOfSeries.toInt(),
@@ -386,7 +411,7 @@ fun TimeSeriesOptions(
                         )
                     )
 
-                    navController.navigate("training/${trainingId}")
+                    navController.navigate("training/${trainingName}/${trainingId}")
                 } else {
                     Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
                 }

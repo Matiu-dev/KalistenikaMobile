@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -63,6 +62,7 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.DrawerItem
 import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
+import pl.matiu.kalistenika.ui.series.ExerciseEditScreen
 import pl.matiu.kalistenika.viewModel.NinjaApiViewModel
 
 
@@ -101,12 +101,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             KalistenikaTheme {
                 StartSong.init(LocalContext.current) // Inicjalizuj singletona w odpowiednim miejscu
-//                val player = StartSong.seriesSong
                 KalistenikaApp()
             }
-
-//            val dialog = DialogFactory().createDialog(DialogType.CREATE_REPETITION_SERIES)
-//            DialogFactory().ShowDialog(dialog = dialog)
         }
     }
 }
@@ -123,6 +119,7 @@ fun KalistenikaApp() {
         var isNavigationIcon by rememberSaveable { mutableStateOf(false) }
         var addButton by rememberSaveable { mutableStateOf("") } //dodawanie ćwiczenia/treningu
         var trainingId by rememberSaveable { mutableIntStateOf(0) }
+        var trainingName by rememberSaveable { mutableStateOf("") }
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
 
@@ -132,16 +129,6 @@ fun KalistenikaApp() {
             drawerContent = {
                 ModalDrawerSheet {
                     DrawerItem("Pobierz treningi")
-
-                    Card {
-                        NavigationDrawerItem(
-                            label = { Text(text = "Zard w masterze(SPRAWDŹ TUTAJ!!)") },
-                            selected = false,
-                            onClick = {
-
-                            }
-                        )
-                    }
                 }
             }) {
             Scaffold(
@@ -165,12 +152,17 @@ fun KalistenikaApp() {
                         navigationIcon = {
                             if (isNavigationIcon) {
                                 IconButton(onClick = {
-                                    navController.navigate(topBarPreviewScreen)
+//                                    navController.navigate(topBarPreviewScreen)
+                                    if (topBarPreviewScreen == "history") {
+                                        navController.navigate(route = topBarPreviewScreen)
+                                    } else {
+                                        navController.popBackStack(topBarPreviewScreen, false)
+                                    }
                                 }) {
                                     Icon(
                                         imageVector = Icons.Filled.ArrowBack,
                                         contentDescription = "Localized description",
-                                        tint = Smola
+                                        tint = Wheat
                                     )
                                 }
                             }
@@ -199,10 +191,7 @@ fun KalistenikaApp() {
                 floatingActionButton = {
 
                     if (addButton == "AddTraining") {
-                        AddTrainingButton (navController = navController)
-//                    AddTrainingButton(navController = navController)
-
-
+                        AddTrainingButton(navController = navController)
                     }
 
                     if (addButton == "AddExercise") {
@@ -213,10 +202,12 @@ fun KalistenikaApp() {
 
                 //TODO przetestowac tabsy https://m3.material.io/components/tabs/overview
 
+//                Navigator(TrainingListNavigation(navController = navController, innerPadding))
+
                 NavHost(
                     navController = navController,
                     startDestination = MainRoutes.Training.destination,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
                 ) {
                     composable(route = MainRoutes.Training.destination) {
                         topBarTitle = MainRoutes.Training.topBarTitle
@@ -227,27 +218,19 @@ fun KalistenikaApp() {
                         TrainingScreen(navController = navController)
                     }
 
-//                    composable(route = AlternativeRoutes.CreateTraining.destination) {
-//                        topBarTitle = AlternativeRoutes.CreateTraining.topBarTitle
-//                        topBarPreviewScreen = AlternativeRoutes.CreateTraining.topBarPreviewScreen
-//                        isNavigationIcon = AlternativeRoutes.CreateTraining.isNavigationIcon
-//                        addButton = AlternativeRoutes.CreateTraining.addButton
-//
-////                        CreateTraining(navController = navController, LocalContext.current)
-//                    }
+                    composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingName}" + "/{trainingId}") { backStackEntry ->
 
-                    composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingId}") { backStackEntry ->
-                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
+                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt() ?: 0
+                        trainingName = backStackEntry.arguments?.getString("trainingName") ?: ""
 
-                        topBarTitle = TrainingDatabaseService().getAllTraining()
-                            .filter { it.trainingId == trainingId }[0].name
+                        topBarTitle = backStackEntry.arguments?.getString("trainingName").toString()
                         topBarPreviewScreen = AlternativeRoutes.SeriesScreen.topBarPreviewScreen
                         isNavigationIcon = AlternativeRoutes.SeriesScreen.isNavigationIcon
                         addButton = AlternativeRoutes.SeriesScreen.addButton
 
                         SeriesScreen(
                             navController = navController,
-                            trainingId = trainingId
+                            trainingName = backStackEntry.arguments?.getString("trainingName").toString()
                         )
                     }
 
@@ -256,7 +239,7 @@ fun KalistenikaApp() {
 
                         topBarTitle = AlternativeRoutes.CreateSeries.topBarTitle
                         topBarPreviewScreen =
-                            AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingId}"
+                            AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}"
                         isNavigationIcon = AlternativeRoutes.CreateSeries.isNavigationIcon
                         addButton = AlternativeRoutes.CreateSeries.addButton
 
@@ -264,57 +247,27 @@ fun KalistenikaApp() {
                             navController = navController,
                             trainingId = trainingId,
                             context = LocalContext.current,
-                            numberOfExercise = ExerciseDatabaseService().getAllRepetitionExercise()
-                                .filter { it.trainingId == trainingId }.size
-                                    + ExerciseDatabaseService().getAllTimeExercise()
-                                .filter { it.trainingId == trainingId }.size
+                            trainingName = trainingName
                         )
                     }
 
                     composable(route = AlternativeRoutes.EditRepetitionSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
                         trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-                        val exerciseId =
-                            backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
 
                         topBarTitle = AlternativeRoutes.EditRepetitionSeries.topBarTitle
                         topBarPreviewScreen =
-                            AlternativeRoutes.EditRepetitionSeries.topBarPreviewScreen + "/${trainingId}"
+                            AlternativeRoutes.EditRepetitionSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}"
                         isNavigationIcon = AlternativeRoutes.EditRepetitionSeries.isNavigationIcon
                         addButton = AlternativeRoutes.EditRepetitionSeries.addButton
 
-                        RepetitionExerciseEditScreen(
+                        ExerciseEditScreen(
                             navigator = navController,
-                            exercise = ExerciseDatabaseService().getRepetitionSeriesById(exerciseId = exerciseId),
-                            trainingId = trainingId,
-                            numberOfExercise = ExerciseDatabaseService().getAllRepetitionExercise()
-                                .filter { it.trainingId == trainingId }.size
-                                    + ExerciseDatabaseService().getAllTimeExercise()
-                                .filter { it.trainingId == trainingId }.size
+                            exerciseId = exerciseId,
+                            trainingId = trainingId
                         )
                     }
 
-                    composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
-                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-                        val exerciseId =
-                            backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
-
-                        topBarTitle = AlternativeRoutes.EditTimeSeries.topBarTitle
-                        topBarPreviewScreen =
-                            AlternativeRoutes.EditTimeSeries.topBarPreviewScreen + "/${trainingId}"
-                        isNavigationIcon = AlternativeRoutes.EditTimeSeries.isNavigationIcon
-                        addButton = AlternativeRoutes.EditTimeSeries.addButton
-
-                        TimeExerciseEditScreen(
-                            navigator = navController,
-                            context = LocalContext.current,
-                            exercise = ExerciseDatabaseService().getTimeSeriesById(exerciseId = exerciseId),
-                            trainingId = trainingId,
-                            numberOfExercise = ExerciseDatabaseService().getAllRepetitionExercise()
-                                .filter { it.trainingId == trainingId }.size
-                                    + ExerciseDatabaseService().getAllTimeExercise()
-                                .filter { it.trainingId == trainingId }.size
-                        )
-                    }
 
                     composable(route = MainRoutes.History.destination) {
                         topBarTitle = MainRoutes.History.topBarTitle
@@ -336,14 +289,6 @@ fun KalistenikaApp() {
 
                         HistoryDetailsScreen(date = date)
                     }
-
-//                    composable(route = "user_profile") {
-//                        topBarTitle = "Profil"
-//                        isNavigationIcon = false
-//                        addButton = ""
-//
-//                        UserProfileScreen()
-//                    }
                 }
             }
         }

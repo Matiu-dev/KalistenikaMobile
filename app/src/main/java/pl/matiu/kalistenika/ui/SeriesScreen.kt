@@ -58,6 +58,7 @@ import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
+import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 //progression indicator do linii miedzy kulkami
 //bottom albo side sheets - do menu dolnego lub boczbnego
@@ -65,11 +66,16 @@ import pl.matiu.kalistenika.ui.theme.Smola
 @Composable
 fun SeriesScreen(
     navController: NavController,
-    trainingId: Int?
+    trainingName: String
 ) {
     val seriesViewModel: SeriesViewModel = viewModel()
     val isLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
+
+    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingList = trainingViewModel.trainingList.collectAsState()
+    val trainingId = trainingList.value?.filter { it.name == trainingName }?.get(0)?.trainingId
+    //TODO zrobic unikatoy
 
     if (isLoading) {
         LoadingScreen()
@@ -249,7 +255,6 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
-                                        seriesViewModel = seriesViewModel
                                     )
 
 
@@ -262,7 +267,6 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
-                                        seriesViewModel = seriesViewModel
                                     )
                                 }
                             } else {
@@ -277,7 +281,6 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
-                                        seriesViewModel = seriesViewModel
                                     )
 
 
@@ -290,7 +293,6 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
-                                        seriesViewModel = seriesViewModel
                                     )
                                 }
                             }

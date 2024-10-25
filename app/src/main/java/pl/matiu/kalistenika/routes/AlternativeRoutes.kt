@@ -37,7 +37,7 @@ enum class AlternativeRoutes(
 
     EditTimeSeries(
         destination = MainRoutes.Training.destination + "/editTimeExercise",
-        topBarTitle = "Kreator serii",
+        topBarTitle = "Edytor ćwiczenia",
         topBarPreviewScreen = SeriesScreen.destination,
         isNavigationIcon = true,
         addButton = ""

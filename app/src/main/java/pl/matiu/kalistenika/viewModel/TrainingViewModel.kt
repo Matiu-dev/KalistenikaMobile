@@ -15,6 +15,8 @@ import pl.matiu.kalistenika.room.ExerciseDatabaseService
 
 class TrainingViewModel : ViewModel() {
 
+    private val trainingDatabaseService: TrainingDatabaseService = TrainingDatabaseService()
+
     private var _trainingList = MutableStateFlow<List<TrainingModel>?>(null)
     val trainingList = _trainingList.asStateFlow()
 
@@ -26,28 +28,28 @@ class TrainingViewModel : ViewModel() {
         viewModelScope.launch {
             ThreadIdLogger(ConsoleLogger()).log("training view model", "data downloading")
             _trainingList.value = withContext(Dispatchers.IO) {
-                TrainingDatabaseService().getAllTraining()
+                trainingDatabaseService.getAllTraining()
             }
         }
 
     }
 
     fun addTraining(trainingModel: TrainingModel) {
-        ConsoleLogger().log("training view model", "adding new training ${trainingModel.name}")
+        ThreadIdLogger(ConsoleLogger()).log("training view model", "adding new training ${trainingModel.name}")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                TrainingDatabaseService().addTraining(trainingModel)
-                TrainingDatabaseService().getAllTraining()
+                trainingDatabaseService.addTraining(trainingModel)
+                trainingDatabaseService.getAllTraining()
             }
         }
     }
 
     fun deleteTraining(trainingModel: TrainingModel) {
-        ConsoleLogger().log("training view model", "deleting training ${trainingModel.name}")
+        ThreadIdLogger(ConsoleLogger()).log("training view model", "deleting training ${trainingModel.name}")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                TrainingDatabaseService().deleteTraining(trainingModel)
-                TrainingDatabaseService().getAllTraining()
+                trainingDatabaseService.deleteTraining(trainingModel)
+                trainingDatabaseService.getAllTraining()
             }
         }
     }

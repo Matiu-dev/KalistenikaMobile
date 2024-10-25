@@ -9,6 +9,7 @@ import pl.matiu.kalistenika.model.training.TimeExercise
 class ExerciseDatabaseService {
 
     private val exerciseDao = MainApplication.exerciseDatabase.getExerciseDao()
+
     fun getAllSeries(): List<RepetitionAndTimeExercise> {
         return exerciseDao.getAllExercise()
     }
