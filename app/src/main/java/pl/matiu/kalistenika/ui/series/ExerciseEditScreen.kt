@@ -1,6 +1,7 @@
 package pl.matiu.kalistenika.ui.series
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,9 +39,10 @@ import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
+import java.sql.Time
 
 @Composable
-fun ExerciseEditScreen(
+fun RepetitionExerciseEditScreen(
     navigator: NavController,
     trainingId: Int,
     exerciseId: Int
@@ -49,31 +51,48 @@ fun ExerciseEditScreen(
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val seriesViewModel: SeriesViewModel = viewModel()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
-    val exercise: SeriesInterface = exerciseList.value?.filter { when(it) {
-        is RepetitionExercise -> {
-            it.repetitionExerciseId == exerciseId
-        }
+    //TODO problem jest jak w trenninug repetition i time exercise maja takie samo id
 
-        is TimeExercise -> {
-            it.timeExerciseId == exerciseId
-        }
-
-        else -> {false}
-    } }?.get(0) ?: RepetitionExercise()
-
+    seriesViewModel.getRepetitionSeriesByExerciseId(exerciseId = exerciseId)
     val numberOfExercise = exerciseList.value?.filter { it.trainingId == trainingId }?.size
 
-    when(exercise) {
-        is RepetitionExercise -> {
-            numberOfExercise?.let { RepetitionExerciseEditScreen(repetitionExercise = exercise,
-                numberOfExercise = it, trainingId = trainingId, navigator = navigator,
-                seriesViewModel = seriesViewModel, trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name) }
+    numberOfExercise?.let {
+        seriesViewModel.repetitionExercise.collectAsState().value?.let { it1 ->
+            RepetitionExerciseEditScreen(repetitionExercise = it1,
+                numberOfExercise = it,
+                trainingId = trainingId,
+                navigator = navigator,
+                seriesViewModel = seriesViewModel,
+                trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name
+            )
         }
+    }
+}
 
-        is TimeExercise -> {
-            numberOfExercise?.let { TimeExerciseEditScreen(timeExercise = exercise,
-                numberOfExercise = it, trainingId = trainingId, navigator = navigator,
-                seriesViewModel = seriesViewModel, trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name) }
+@Composable
+fun TimeExerciseEditScreen(
+    navigator: NavController,
+    trainingId: Int,
+    exerciseId: Int
+) {
+    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingList = trainingViewModel.trainingList.collectAsState()
+    val seriesViewModel: SeriesViewModel = viewModel()
+    val exerciseList = seriesViewModel.exerciseList.collectAsState()
+    //TODO problem jest jak w trenninug repetition i time exercise maja takie samo id
+
+    seriesViewModel.getTimeSeriesByExerciseId(exerciseId = exerciseId)
+    val numberOfExercise = exerciseList.value?.filter { it.trainingId == trainingId }?.size
+
+    numberOfExercise?.let {
+        seriesViewModel.timeExercise.collectAsState().value?.let { it1 ->
+            TimeExerciseEditScreen(timeExercise = it1,
+                numberOfExercise = it,
+                trainingId = trainingId,
+                navigator = navigator,
+                seriesViewModel = seriesViewModel,
+                trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name
+            )
         }
     }
 }

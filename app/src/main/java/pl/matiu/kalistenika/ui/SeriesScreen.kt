@@ -84,6 +84,7 @@ fun SeriesScreen(
             exerciseList = exerciseList?.filter { it.trainingId == trainingId }?.sortedBy { it.positionInTraining },
             navController = navController,
             trainingId = trainingId,
+            trainingName = trainingName,
             seriesViewModel = seriesViewModel
         )
     }
@@ -112,6 +113,7 @@ fun SeriesScreenView(
     exerciseList: List<SeriesInterface>?,
     navController: NavController,
     trainingId: Int?,
+    trainingName: String,
     seriesViewModel: SeriesViewModel
 ) {
 
@@ -249,6 +251,7 @@ fun SeriesScreenView(
                                     is RepetitionExercise -> StartRepetitionSeries(
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
+                                        trainingName = trainingName,
                                         startStop = startStop,
                                         onStarStopChange = { startStop = it },
                                         navController = navController,
@@ -267,6 +270,7 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        trainingName = trainingName
                                     )
                                 }
                             } else {
@@ -281,6 +285,7 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        trainingName = trainingName
                                     )
 
 
@@ -293,6 +298,7 @@ fun SeriesScreenView(
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
+                                        trainingName = trainingName
                                     )
                                 }
                             }

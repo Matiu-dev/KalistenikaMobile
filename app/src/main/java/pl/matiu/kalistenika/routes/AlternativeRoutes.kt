@@ -1,9 +1,5 @@
 package pl.matiu.kalistenika.routes
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.ui.graphics.vector.ImageVector
-
 enum class AlternativeRoutes(
     val destination: String,
     val topBarTitle: String,
@@ -11,13 +7,6 @@ enum class AlternativeRoutes(
     val isNavigationIcon: Boolean,
     val addButton: String
 ) {
-    CreateTraining(
-        destination = MainRoutes.Training.destination + "/createTraining",
-        topBarTitle = "Kreator treningu",
-        topBarPreviewScreen = MainRoutes.Training.destination,
-        isNavigationIcon = true,
-        addButton = ""
-    ),
 
     SeriesScreen(
         destination = MainRoutes.Training.destination,

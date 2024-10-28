@@ -71,6 +71,7 @@ import pl.matiu.kalistenika.ui.theme.Smola
 fun StartTimeSeries(
     context: Context,
     exercise: TimeExercise,
+    trainingName: String,
     startStop: Boolean,
     onStarStopChange: (Boolean) -> Unit,
     navController: NavController,
@@ -108,23 +109,23 @@ fun StartTimeSeries(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
+                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
             },
             onDoubleClick = {
                 seriesViewModel.deleteTimeSeries(timeExercise = exercise)
-                navController.navigate(MainRoutes.Training.destination + "/${exercise.trainingId}")
+                navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
             }
         )
     ) {
 
         //do testu
-//        Text(
-//            text = exercise.toString(),
-//            color = Smola,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-//
-//        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Text(
+            text = exercise.toString(),
+            color = Smola,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         //do testu
 

@@ -62,7 +62,6 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.DrawerItem
 import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
-import pl.matiu.kalistenika.ui.series.ExerciseEditScreen
 import pl.matiu.kalistenika.viewModel.NinjaApiViewModel
 
 
@@ -261,7 +260,24 @@ fun KalistenikaApp() {
                         isNavigationIcon = AlternativeRoutes.EditRepetitionSeries.isNavigationIcon
                         addButton = AlternativeRoutes.EditRepetitionSeries.addButton
 
-                        ExerciseEditScreen(
+                        RepetitionExerciseEditScreen(
+                            navigator = navController,
+                            exerciseId = exerciseId,
+                            trainingId = trainingId
+                        )
+                    }
+
+                    composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
+                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
+                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+
+                        topBarTitle = AlternativeRoutes.EditTimeSeries.topBarTitle
+                        topBarPreviewScreen =
+                            AlternativeRoutes.EditTimeSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}"
+                        isNavigationIcon = AlternativeRoutes.EditTimeSeries.isNavigationIcon
+                        addButton = AlternativeRoutes.EditTimeSeries.addButton
+
+                        TimeExerciseEditScreen(
                             navigator = navController,
                             exerciseId = exerciseId,
                             trainingId = trainingId

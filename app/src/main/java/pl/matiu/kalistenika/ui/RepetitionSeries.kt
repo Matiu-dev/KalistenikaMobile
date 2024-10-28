@@ -49,6 +49,7 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.ui.DialogWithImage
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -60,6 +61,7 @@ import pl.matiu.kalistenika.ui.theme.Smola
 fun StartRepetitionSeries(
     context: Context,
     exercise: RepetitionExercise,
+    trainingName: String,
     startStop: Boolean,
     onStarStopChange: (Boolean) -> Unit,
     navController: NavController,
@@ -107,20 +109,20 @@ fun StartRepetitionSeries(
                 },
                 onDoubleClick = {
                     seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
-                    navController.navigate(MainRoutes.Training.destination + "/${exercise.trainingId}")
+                    navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
                 }
             )
 
     ) {
 
         //do testu
-//        Text(
-//            text = exercise.toString(),
-//            color = Smola,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-//
-//        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Text(
+            text = exercise.toString(),
+            color = Smola,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         //do testu
 
