@@ -1,6 +1,8 @@
 package pl.matiu.kalistenika.ui.series
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.ui.LoadingScreen
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -67,7 +71,7 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
                 .fillMaxWidth()
         ) {
 
-            exerciseName?.let {
+            exerciseName.let {
                 RowTextFieldElement(
                     "Nazwa ćwiczenia",
                     element = it,
@@ -90,10 +94,10 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
                 onElementChange = { numberOfReps = it })
 
 
-            stopTimer?.let {
+            stopTimer.let {
                 RowCheckBoxElement(
                     elementName = "Czy zatrzymać czas po serii?",
-                    element = stopTimer!!,
+                    element = stopTimer,
                     onElementChange = { stopTimer = it })
             }
 
@@ -110,22 +114,19 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
             ) {
                 Button(
                     onClick = {
-                        stopTimer?.let {
+                        seriesViewModel.editRepetitionSeries(
                             RepetitionExercise(
                                 repetitionExercise.repetitionExerciseId,
-                                exerciseName.toString(),
+                                exerciseName,
                                 numberOfSeries.toInt(),
-                                numberOfReps.toInt(),
-                                it,
-                                breakBetweenSeries.toInt(),
-                                exercisePositionInTraining - 1,
-                                trainingId
+                                numberOfReps = numberOfReps.toInt(),
+                                stopTimer = stopTimer,
+                                breakBetweenRepetitionSeries = breakBetweenSeries.toInt(),
+                                positionInTraining = exercisePositionInTraining - 1,
+                                trainingId = trainingId
                             )
-                        }?.let {
-                            seriesViewModel.editRepetitionSeries(
-                                it
-                            )
-                        }
+                        )
+
                         navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
                     },
                     modifier = Modifier
@@ -136,7 +137,6 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
                     Text(text = "Modyfikuj", color = Smola)
                 }
             }
-
         }
     }
 }

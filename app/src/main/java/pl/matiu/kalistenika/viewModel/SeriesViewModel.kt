@@ -59,7 +59,7 @@ class SeriesViewModel : ViewModel() {
                 _repetition_exercise.value = ExerciseDatabaseService().getAllRepetitionExercise()
                     .find { it.repetitionExerciseId == exerciseId }!!//implementacja ExerciseDatabaseService - DI
 
-                _isLoading.value = true
+                _isLoading.value = false
             }
         }
     }
@@ -69,14 +69,18 @@ class SeriesViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
-                _exerciseList.value = exerciseDatabaseService.getAllRepetitionExercise() + exerciseDatabaseService.getAllTimeExercise()//implementacja ExerciseDatabaseService - DI
+                _exerciseList.value =
+                    exerciseDatabaseService.getAllRepetitionExercise() + exerciseDatabaseService.getAllTimeExercise()//implementacja ExerciseDatabaseService - DI
                 _isLoading.value = false
             }
         }
     }
 
     fun addTimeSeries(timeExercise: TimeExercise) {
-        ThreadIdLogger(ConsoleLogger()).log("series view model", "adding new training ${timeExercise.timeExerciseName}")
+        ThreadIdLogger(ConsoleLogger()).log(
+            "series view model",
+            "adding new training ${timeExercise.timeExerciseName}"
+        )
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
@@ -88,7 +92,10 @@ class SeriesViewModel : ViewModel() {
     }
 
     fun addRepetitionSeries(repetitionExercise: RepetitionExercise) {
-        ThreadIdLogger(ConsoleLogger()).log("series view model", "adding new training ${repetitionExercise.repetitionExerciseName}")
+        ThreadIdLogger(ConsoleLogger()).log(
+            "series view model",
+            "adding new training ${repetitionExercise.repetitionExerciseName}"
+        )
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
@@ -100,7 +107,10 @@ class SeriesViewModel : ViewModel() {
     }
 
     fun editTimeSeries(timeExercise: TimeExercise) {
-        ThreadIdLogger(ConsoleLogger()).log("series view model", "edit series ${timeExercise.timeExerciseName}")
+        ThreadIdLogger(ConsoleLogger()).log(
+            "series view model",
+            "edit series ${timeExercise.timeExerciseName}"
+        )
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
@@ -112,7 +122,10 @@ class SeriesViewModel : ViewModel() {
     }
 
     fun editRepetitionSeries(repetitionExercise: RepetitionExercise) {
-        ThreadIdLogger(ConsoleLogger()).log("series view model", "edit series ${repetitionExercise.repetitionExerciseName}")
+        ThreadIdLogger(ConsoleLogger()).log(
+            "series view model",
+            "edit series ${repetitionExercise.repetitionExerciseName}"
+        )
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
@@ -124,7 +137,10 @@ class SeriesViewModel : ViewModel() {
     }
 
     fun deleteTimeSeries(timeExercise: TimeExercise) {
-        ThreadIdLogger(ConsoleLogger()).log("series view model", "deleting series ${timeExercise.timeExerciseName}")
+        ThreadIdLogger(ConsoleLogger()).log(
+            "series view model",
+            "deleting series ${timeExercise.timeExerciseName}"
+        )
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
@@ -136,7 +152,10 @@ class SeriesViewModel : ViewModel() {
     }
 
     fun deleteRepetitionSeries(repetitionExercise: RepetitionExercise) {
-        ThreadIdLogger(ConsoleLogger()).log("series view model", "deleting series ${repetitionExercise.repetitionExerciseName}")
+        ThreadIdLogger(ConsoleLogger()).log(
+            "series view model",
+            "deleting series ${repetitionExercise.repetitionExerciseName}"
+        )
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true

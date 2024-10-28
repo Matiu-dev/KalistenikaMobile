@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.ui.LoadingScreen
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -40,19 +42,19 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                            trainingId: Int, navigator: NavController, seriesViewModel: SeriesViewModel
 ) {
     var exerciseName by remember {
-        mutableStateOf(timeExercise?.timeExerciseName)
+        mutableStateOf(timeExercise.timeExerciseName)
     }
 
     var numberOfSeries by remember {
-        mutableStateOf(timeExercise?.numberOfTimeSeries.toString())
+        mutableStateOf(timeExercise.numberOfTimeSeries.toString())
     }
 
     var timeForSeries by remember {
-        mutableStateOf(timeExercise?.timeForTimeSeries.toString())
+        mutableStateOf(timeExercise.timeForTimeSeries.toString())
     }
 
     var breakBetweenSeries by remember {
-        mutableStateOf(timeExercise?.breakBetweenTimeSeries.toString())
+        mutableStateOf(timeExercise.breakBetweenTimeSeries.toString())
     }
 
     var exercisePositionInTraining by rememberSaveable { mutableIntStateOf(numberOfExercise) }
@@ -81,21 +83,19 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                timeExercise?.timeExerciseName?.let {
-                    TextField(
-                        value = exerciseName.toString(),
-                        onValueChange = { exerciseName = it },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent,
-                            cursorColor = Smola,
-                            focusedIndicatorColor = Smola,
-                            unfocusedIndicatorColor = Smola,
-                            focusedTextColor = Smola,
-                            unfocusedTextColor = Smola
-                        ),
-                        modifier = Modifier.padding(horizontal = 5.dp)
-                    )
-                }
+                TextField(
+                    value = exerciseName.toString(),
+                    onValueChange = { exerciseName = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        cursorColor = Smola,
+                        focusedIndicatorColor = Smola,
+                        unfocusedIndicatorColor = Smola,
+                        focusedTextColor = Smola,
+                        unfocusedTextColor = Smola
+                    ),
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
 
             }
 
@@ -109,21 +109,19 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                timeExercise?.numberOfTimeSeries?.let {
-                    TextField(
-                        value = numberOfSeries,
-                        onValueChange = { numberOfSeries = it },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent,
-                            cursorColor = Smola,
-                            focusedIndicatorColor = Smola,
-                            unfocusedIndicatorColor = Smola,
-                            focusedTextColor = Smola,
-                            unfocusedTextColor = Smola
-                        ),
-                        modifier = Modifier.padding(horizontal = 5.dp)
-                    )
-                }
+                TextField(
+                    value = numberOfSeries,
+                    onValueChange = { numberOfSeries = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        cursorColor = Smola,
+                        focusedIndicatorColor = Smola,
+                        unfocusedIndicatorColor = Smola,
+                        focusedTextColor = Smola,
+                        unfocusedTextColor = Smola
+                    ),
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
             }
 
             Row(
@@ -136,21 +134,19 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                timeExercise?.timeForTimeSeries?.let {
-                    TextField(
-                        value = timeForSeries,
-                        onValueChange = { timeForSeries = it },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent,
-                            cursorColor = Smola,
-                            focusedIndicatorColor = Smola,
-                            unfocusedIndicatorColor = Smola,
-                            focusedTextColor = Smola,
-                            unfocusedTextColor = Smola
-                        ),
-                        modifier = Modifier.padding(horizontal = 5.dp)
-                    )
-                }
+                TextField(
+                    value = timeForSeries,
+                    onValueChange = { timeForSeries = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        cursorColor = Smola,
+                        focusedIndicatorColor = Smola,
+                        unfocusedIndicatorColor = Smola,
+                        focusedTextColor = Smola,
+                        unfocusedTextColor = Smola
+                    ),
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
 
             }
 
@@ -164,21 +160,19 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )
 
-                timeExercise?.breakBetweenTimeSeries?.let {
-                    TextField(
-                        value = breakBetweenSeries,
-                        onValueChange = { breakBetweenSeries = it },
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent,
-                            cursorColor = Smola,
-                            focusedIndicatorColor = Smola,
-                            unfocusedIndicatorColor = Smola,
-                            focusedTextColor = Smola,
-                            unfocusedTextColor = Smola
-                        ),
-                        modifier = Modifier.padding(horizontal = 5.dp)
-                    )
-                }
+                TextField(
+                    value = breakBetweenSeries,
+                    onValueChange = { breakBetweenSeries = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent,
+                        cursorColor = Smola,
+                        focusedIndicatorColor = Smola,
+                        unfocusedIndicatorColor = Smola,
+                        focusedTextColor = Smola,
+                        unfocusedTextColor = Smola
+                    ),
+                    modifier = Modifier.padding(horizontal = 5.dp)
+                )
 
             }
 
@@ -195,19 +189,18 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
             ) {
                 Button(
                     onClick = {
-                        if (timeExercise != null) {
-                            seriesViewModel.editTimeSeries(
-                                TimeExercise(
-                                    timeExercise.timeExerciseId,
-                                    exerciseName.toString(),
-                                    numberOfSeries.toInt(),
-                                    timeForSeries.toInt(),
-                                    breakBetweenSeries.toInt(),
-                                    exercisePositionInTraining - 1,
-                                    trainingId
-                                )
+                        seriesViewModel.editTimeSeries(
+                            TimeExercise(
+                                timeExercise.timeExerciseId,
+                                exerciseName.toString(),
+                                numberOfSeries.toInt(),
+                                timeForSeries.toInt(),
+                                breakBetweenSeries.toInt(),
+                                exercisePositionInTraining - 1,
+                                trainingId
                             )
-                        }
+                        )
+
                         navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
                     },
                     modifier = Modifier

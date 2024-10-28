@@ -51,7 +51,6 @@ fun RepetitionExerciseEditScreen(
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val seriesViewModel: SeriesViewModel = viewModel()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
-    //TODO problem jest jak w trenninug repetition i time exercise maja takie samo id
 
     seriesViewModel.getRepetitionSeriesByExerciseId(exerciseId = exerciseId)
     val numberOfExercise = exerciseList.value?.filter { it.trainingId == trainingId }?.size
@@ -79,7 +78,6 @@ fun TimeExerciseEditScreen(
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val seriesViewModel: SeriesViewModel = viewModel()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
-    //TODO problem jest jak w trenninug repetition i time exercise maja takie samo id
 
     seriesViewModel.getTimeSeriesByExerciseId(exerciseId = exerciseId)
     val numberOfExercise = exerciseList.value?.filter { it.trainingId == trainingId }?.size
