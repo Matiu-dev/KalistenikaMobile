@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
@@ -57,7 +58,7 @@ fun CreateSeries(
     trainingName: String
 ) {
     //TODO przy dodawania nie dodaje asynchronicznie - szybciej laduje sie ekran niz aktualizowane sa dane
-    val seriesViewModel: SeriesViewModel = viewModel()
+    val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val listOfSeries = seriesViewModel.exerciseList.collectAsState()
     val numberOfExercise: Int = listOfSeries.value?.filter { it.trainingId == trainingId }?.size ?: 0
 

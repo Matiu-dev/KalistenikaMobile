@@ -11,19 +11,4 @@ import pl.matiu.kalistenika.room.ExerciseDatabase
 import pl.matiu.kalistenika.ui.StartTimeSeries
 
 @HiltAndroidApp
-class MainApplication: Application() {
-
-    companion object {
-        lateinit var exerciseDatabase: ExerciseDatabase
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        exerciseDatabase = Room.databaseBuilder(
-            applicationContext,
-            ExerciseDatabase::class.java,
-            ExerciseDatabase.NAME
-        ).build()
-    }
-}
+class MainApplication: Application()

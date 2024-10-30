@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
@@ -68,11 +69,11 @@ fun SeriesScreen(
     navController: NavController,
     trainingName: String
 ) {
-    val seriesViewModel: SeriesViewModel = viewModel()
+    val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val isLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
-    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val trainingId = trainingList.value?.filter { it.name == trainingName }?.get(0)?.trainingId
     //TODO zrobic unikatoy

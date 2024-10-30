@@ -1,12 +1,13 @@
 package pl.matiu.kalistenika.room
 
+import androidx.room.Transaction
 import pl.matiu.kalistenika.MainApplication
 import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
+import javax.inject.Inject
 
-class TrainingDatabaseService {
-
-    val trainingDao = MainApplication.exerciseDatabase.getTrainingDao()
+class TrainingDatabaseService @Inject constructor(private val trainingDao: TrainingDao,
+    private val exerciseDao: ExerciseDao) {
 
     fun getAllTraining(): List<TrainingModel> {
         return trainingDao.getAllTrainings()
@@ -16,8 +17,10 @@ class TrainingDatabaseService {
         trainingDao.addTraining(trainingModel)
     }
 
+    @Transaction
     fun deleteTraining(trainingModel: TrainingModel) {
-        ExerciseDatabaseService().deleteAllExerciseByTrainingId(trainingModel.trainingId)
+        exerciseDao.deleteTimeExerciseByTrainingId(trainingModel.trainingId)
+        exerciseDao.deleteRepetitionExerciseByTrainingId(trainingModel.trainingId)
         trainingDao.deleteTraining(trainingModel.trainingId)
     }
 }

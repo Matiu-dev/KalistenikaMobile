@@ -5,10 +5,9 @@ import pl.matiu.kalistenika.MainApplication
 import pl.matiu.kalistenika.model.training.RepetitionAndTimeExercise
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
+import javax.inject.Inject
 
-class ExerciseDatabaseService {
-
-    private val exerciseDao = MainApplication.exerciseDatabase.getExerciseDao()
+class ExerciseDatabaseService @Inject constructor(private val exerciseDao: ExerciseDao) {
 
     fun getAllSeries(): List<RepetitionAndTimeExercise> {
         return exerciseDao.getAllExercise()

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,12 +19,12 @@ import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.model.training.SeriesInterface
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.model.training.TrainingModel
+import javax.inject.Inject
 
 //TODO problem jest, bo dane nie zdaza sie zaktualizowac przed wyrenderowaniem ekranu cwiczen,
 //przez co dane sa nieaktualne, ale po odswiezeniu dane sie zgadzaja
-class SeriesViewModel : ViewModel() {
-
-    private val exerciseDatabaseService: ExerciseDatabaseService = ExerciseDatabaseService()
+@HiltViewModel
+class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: ExerciseDatabaseService) : ViewModel() {
 
     private var _exerciseList = MutableStateFlow<List<SeriesInterface>?>(null)
     val exerciseList = _exerciseList.asStateFlow()
@@ -46,7 +47,7 @@ class SeriesViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
-                _time_exercise.value = ExerciseDatabaseService().getAllTimeExercise()
+                _time_exercise.value = exerciseDatabaseService.getAllTimeExercise()
                     .find { it.timeExerciseId == exerciseId }!!//implementacja ExerciseDatabaseService - DI
                 _isLoading.value = false
             }
@@ -58,7 +59,7 @@ class SeriesViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
-                _repetition_exercise.value = ExerciseDatabaseService().getAllRepetitionExercise()
+                _repetition_exercise.value = exerciseDatabaseService.getAllRepetitionExercise()
                     .find { it.repetitionExerciseId == exerciseId }!!//implementacja ExerciseDatabaseService - DI
 
                 _isLoading.value = false

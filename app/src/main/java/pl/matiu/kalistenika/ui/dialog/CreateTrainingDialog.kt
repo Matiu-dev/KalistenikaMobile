@@ -15,6 +15,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.routes.MainRoutes
@@ -34,6 +35,9 @@ fun CreateTrainingDialog(
 ) {
 
     val name = rememberSaveable { mutableStateOf("") }
+
+    val trainingViewModel: TrainingViewModel = viewModel()
+
 
     if (showDialog) {
         AlertDialog(
@@ -61,7 +65,7 @@ fun CreateTrainingDialog(
                     onClick = {
 
                         if (name.value.isNotBlank()) {
-                            TrainingViewModel().addTraining(TrainingModel(name = name.value))
+                            trainingViewModel.addTraining(TrainingModel(name = name.value))
                             navController.navigate(MainRoutes.Training.destination)
                             onShowDialogChange(false)
                         } else {

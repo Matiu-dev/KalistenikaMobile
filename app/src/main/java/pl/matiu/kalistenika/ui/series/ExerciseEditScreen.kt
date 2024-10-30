@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.routes.MainRoutes
@@ -47,10 +48,11 @@ fun RepetitionExerciseEditScreen(
     trainingId: Int,
     exerciseId: Int
 ) {
-    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val isTrainingLoading = trainingViewModel.isTrainingLoading.collectAsState()
-    val seriesViewModel: SeriesViewModel = viewModel()
+
+    val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
 
     seriesViewModel.getRepetitionSeriesByExerciseId(exerciseId = exerciseId)
@@ -77,10 +79,11 @@ fun TimeExerciseEditScreen(
     trainingId: Int,
     exerciseId: Int
 ) {
-    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val isTrainingLoading = trainingViewModel.isTrainingLoading.collectAsState()
-    val seriesViewModel: SeriesViewModel = viewModel()
+
+    val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
 
     seriesViewModel.getTimeSeriesByExerciseId(exerciseId = exerciseId)

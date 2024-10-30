@@ -2,6 +2,7 @@ package pl.matiu.kalistenika.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,11 +12,10 @@ import pl.matiu.kalistenika.logger.ConsoleLogger
 import pl.matiu.kalistenika.logger.ThreadIdLogger
 import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.model.training.TrainingModel
-import pl.matiu.kalistenika.room.ExerciseDatabaseService
+import javax.inject.Inject
 
-class TrainingViewModel : ViewModel() {
-
-    private val trainingDatabaseService: TrainingDatabaseService = TrainingDatabaseService()
+@HiltViewModel
+class TrainingViewModel @Inject constructor(private val trainingDatabaseService: TrainingDatabaseService) : ViewModel() {
 
     private var _trainingList = MutableStateFlow<List<TrainingModel>?>(null)
     val trainingList = _trainingList.asStateFlow()

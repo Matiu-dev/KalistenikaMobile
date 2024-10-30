@@ -28,16 +28,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.model.training.TrainingModel
-import pl.matiu.kalistenika.room.TrainingDatabaseService
-import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -50,7 +46,7 @@ import pl.matiu.testowa.dialog.ShowTrainingDialog
 @ExperimentalFoundationApi
 fun TrainingScreen(navController: NavController) {
 
-    val trainingViewModel: TrainingViewModel = viewModel()
+    val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
     val trainingList2 by trainingViewModel.trainingList.collectAsState()
 
     val clickedTraining = remember { mutableIntStateOf(-1) }
