@@ -20,6 +20,9 @@ class TrainingViewModel : ViewModel() {
     private var _trainingList = MutableStateFlow<List<TrainingModel>?>(null)
     val trainingList = _trainingList.asStateFlow()
 
+    private val _isTrainingLoading = MutableStateFlow(false)
+    val isTrainingLoading = _isTrainingLoading.asStateFlow()
+
     init {
         getAllTraining()
     }
@@ -27,8 +30,10 @@ class TrainingViewModel : ViewModel() {
     fun getAllTraining() {
         viewModelScope.launch {
             ThreadIdLogger(ConsoleLogger()).log("training view model", "data downloading")
-            _trainingList.value = withContext(Dispatchers.IO) {
-                trainingDatabaseService.getAllTraining()
+            withContext(Dispatchers.IO) {
+                _isTrainingLoading.value = true
+                _trainingList.value = trainingDatabaseService.getAllTraining()
+                _isTrainingLoading.value = false
             }
         }
 
@@ -38,8 +43,10 @@ class TrainingViewModel : ViewModel() {
         ThreadIdLogger(ConsoleLogger()).log("training view model", "adding new training ${trainingModel.name}")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                _isTrainingLoading.value = true
                 trainingDatabaseService.addTraining(trainingModel)
                 trainingDatabaseService.getAllTraining()
+                _isTrainingLoading.value = false
             }
         }
     }
@@ -48,8 +55,10 @@ class TrainingViewModel : ViewModel() {
         ThreadIdLogger(ConsoleLogger()).log("training view model", "deleting training ${trainingModel.name}")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                _isTrainingLoading.value = true
                 trainingDatabaseService.deleteTraining(trainingModel)
                 trainingDatabaseService.getAllTraining()
+                _isTrainingLoading.value = false
             }
         }
     }

@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -100,6 +101,17 @@ fun StartRepetitionSeries(
         )
     }
 
+    var isClicked by remember { mutableStateOf(false) }
+    if(isClicked) {
+        val isLodaing = seriesViewModel.isLoading.collectAsState()
+
+        if(!isLodaing.value) {
+            seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
+            isClicked = false
+            navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,8 +120,9 @@ fun StartRepetitionSeries(
                     navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}" + "/${exercise.repetitionExerciseId}")
                 },
                 onDoubleClick = {
-                    seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
-                    navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+//                    seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
+//                    navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+                    isClicked = true
                 }
             )
 
@@ -135,8 +148,6 @@ fun StartRepetitionSeries(
             Button(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 onClick = {
-                    /* TODO dodawanie ćwiczenia do historii */
-
                     RealTimeDatabaseService().writeDataHistory(exercise)
                     Toast.makeText(context, "dodano ćwiczenie do historii", Toast.LENGTH_SHORT)
                         .show()

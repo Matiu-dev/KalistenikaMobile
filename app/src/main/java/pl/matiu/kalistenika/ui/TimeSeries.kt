@@ -36,6 +36,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -105,6 +106,17 @@ fun StartTimeSeries(
         )
     }
 
+    var isClicked by remember { mutableStateOf(false) }
+    if(isClicked) {
+        val isLodaing = seriesViewModel.isLoading.collectAsState()
+
+        if(!isLodaing.value) {
+            seriesViewModel.deleteTimeSeries(timeExercise = exercise)
+            isClicked = false
+            navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+        }
+    }
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .combinedClickable(
@@ -112,8 +124,9 @@ fun StartTimeSeries(
                 navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
             },
             onDoubleClick = {
-                seriesViewModel.deleteTimeSeries(timeExercise = exercise)
-                navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+//                seriesViewModel.deleteTimeSeries(timeExercise = exercise)
+//                navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+                isClicked = true
             }
         )
     ) {

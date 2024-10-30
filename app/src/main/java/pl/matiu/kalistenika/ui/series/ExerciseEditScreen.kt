@@ -49,21 +49,24 @@ fun RepetitionExerciseEditScreen(
 ) {
     val trainingViewModel: TrainingViewModel = viewModel()
     val trainingList = trainingViewModel.trainingList.collectAsState()
+    val isTrainingLoading = trainingViewModel.isTrainingLoading.collectAsState()
     val seriesViewModel: SeriesViewModel = viewModel()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
 
     seriesViewModel.getRepetitionSeriesByExerciseId(exerciseId = exerciseId)
     val numberOfExercise = exerciseList.value?.filter { it.trainingId == trainingId }?.size
 
-    numberOfExercise?.let {
-        seriesViewModel.repetitionExercise.collectAsState().value?.let { it1 ->
-            RepetitionExerciseEditScreen(repetitionExercise = it1,
-                numberOfExercise = it,
-                trainingId = trainingId,
-                navigator = navigator,
-                seriesViewModel = seriesViewModel,
-                trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name
-            )
+    if(!isTrainingLoading.value) {
+        numberOfExercise?.let {
+            seriesViewModel.repetitionExercise.collectAsState().value?.let { it1 ->
+                RepetitionExerciseEditScreen(repetitionExercise = it1,
+                    numberOfExercise = it,
+                    trainingId = trainingId,
+                    navigator = navigator,
+                    seriesViewModel = seriesViewModel,
+                    trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name
+                )
+            }
         }
     }
 }
@@ -76,21 +79,24 @@ fun TimeExerciseEditScreen(
 ) {
     val trainingViewModel: TrainingViewModel = viewModel()
     val trainingList = trainingViewModel.trainingList.collectAsState()
+    val isTrainingLoading = trainingViewModel.isTrainingLoading.collectAsState()
     val seriesViewModel: SeriesViewModel = viewModel()
     val exerciseList = seriesViewModel.exerciseList.collectAsState()
 
     seriesViewModel.getTimeSeriesByExerciseId(exerciseId = exerciseId)
     val numberOfExercise = exerciseList.value?.filter { it.trainingId == trainingId }?.size
 
-    numberOfExercise?.let {
-        seriesViewModel.timeExercise.collectAsState().value?.let { it1 ->
-            TimeExerciseEditScreen(timeExercise = it1,
-                numberOfExercise = it,
-                trainingId = trainingId,
-                navigator = navigator,
-                seriesViewModel = seriesViewModel,
-                trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name
-            )
+    if(!isTrainingLoading.value) {
+        numberOfExercise?.let {
+            seriesViewModel.timeExercise.collectAsState().value?.let { it1 ->
+                TimeExerciseEditScreen(timeExercise = it1,
+                    numberOfExercise = it,
+                    trainingId = trainingId,
+                    navigator = navigator,
+                    seriesViewModel = seriesViewModel,
+                    trainingName = trainingList.value!!.filter { it.trainingId == trainingId }.get(0).name
+                )
+            }
         }
     }
 }

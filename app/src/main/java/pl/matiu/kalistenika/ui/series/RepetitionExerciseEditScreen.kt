@@ -59,6 +59,16 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
 
     var exercisePositionInTraining by rememberSaveable { mutableIntStateOf(numberOfExercise) }
 
+    var isClicked by remember { mutableStateOf(false) }
+    if(isClicked) {
+        val isLodaing = seriesViewModel.isLoading.collectAsState()
+
+        if(!isLodaing.value) {
+            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
+        }
+    }
+
+
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -126,8 +136,8 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
                                 trainingId = trainingId
                             )
                         )
+                        isClicked = true
 
-                        navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
                     },
                     modifier = Modifier
                         .fillMaxWidth()

@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -55,7 +56,7 @@ fun CreateSeries(
     context: Context,
     trainingName: String
 ) {
-
+    //TODO przy dodawania nie dodaje asynchronicznie - szybciej laduje sie ekran niz aktualizowane sa dane
     val seriesViewModel: SeriesViewModel = viewModel()
     val listOfSeries = seriesViewModel.exerciseList.collectAsState()
     val numberOfExercise: Int = listOfSeries.value?.filter { it.trainingId == trainingId }?.size ?: 0
@@ -177,6 +178,15 @@ fun RepetitiveSeriesOptions(
     var breakBetweenSeries by rememberSaveable { mutableStateOf("") }
     var exercisePositionInTraining by rememberSaveable { mutableIntStateOf(numberOfExercise + 1) }
 
+    var isClicked by remember { mutableStateOf(false) }
+    if(isClicked) {
+        val isLodaing = seriesViewModel.isLoading.collectAsState()
+
+        if(!isLodaing.value) {
+            navController.navigate("training/${trainingName}/${trainingId}")
+        }
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -248,8 +258,7 @@ fun RepetitiveSeriesOptions(
                                     trainingId = trainingId
                                 )
                             )
-
-                            navController.navigate("training/${trainingName}/${trainingId}")
+                            isClicked = true
                         } else {
                             Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
                         }
@@ -367,6 +376,15 @@ fun TimeSeriesOptions(
     var timeForSeries by rememberSaveable { mutableStateOf("") }
     var exercisePositionInTraining by rememberSaveable { mutableIntStateOf(numberOfExercise + 1) }
 
+    var isClicked by remember { mutableStateOf(false) }
+    if(isClicked) {
+        val isLodaing = seriesViewModel.isLoading.collectAsState()
+
+        if(!isLodaing.value) {
+            navController.navigate("training/${trainingName}/${trainingId}")
+        }
+    }
+
     Column {
 
         RowTextFieldElement(
@@ -411,7 +429,8 @@ fun TimeSeriesOptions(
                         )
                     )
 
-                    navController.navigate("training/${trainingName}/${trainingId}")
+                    isClicked = true
+//                    navController.navigate("training/${trainingName}/${trainingId}")
                 } else {
                     Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
                 }

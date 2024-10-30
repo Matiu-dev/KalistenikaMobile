@@ -3,10 +3,12 @@ package pl.matiu.kalistenika.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import pl.matiu.kalistenika.logger.ConsoleLogger
@@ -145,7 +147,7 @@ class SeriesViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
                 exerciseDatabaseService.deleteTimeSeries(timeExercise)
-                exerciseDatabaseService.getAllSeries()
+//                exerciseDatabaseService.getAllSeries()
                 _isLoading.value = false
             }
         }
@@ -160,7 +162,7 @@ class SeriesViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
                 exerciseDatabaseService.deleteRepetitionSeries(repetitionExercise)
-                exerciseDatabaseService.getAllSeries()
+//                exerciseDatabaseService.getAllSeries()
                 _isLoading.value = false
             }
         }
