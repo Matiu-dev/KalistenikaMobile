@@ -1,3 +1,4 @@
+import android.R
 import android.content.Context
 import android.media.MediaPlayer
 import android.widget.Toast
@@ -8,7 +9,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,16 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
-import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
-import pl.matiu.kalistenika.ui.DialogWithImage
+import pl.matiu.kalistenika.composable.series.DialogWithImage
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -95,7 +93,7 @@ fun StartRepetitionSeries(
         DialogWithImage(
             onDismissRequest = { showDialog = false },
             onConfirmation = { },
-            painter = painterResource(id = android.R.drawable.ic_dialog_info),
+            painter = painterResource(id = R.drawable.ic_dialog_info),
             imageDescription = "opis",
             exerciseName = exercise.repetitionExerciseName
         )

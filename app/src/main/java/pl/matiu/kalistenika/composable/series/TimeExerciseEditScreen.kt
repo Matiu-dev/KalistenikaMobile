@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui.series
+package pl.matiu.kalistenika.composable.series
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -27,10 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.routes.MainRoutes
-import pl.matiu.kalistenika.ui.LoadingScreen
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola

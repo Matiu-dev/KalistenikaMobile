@@ -15,8 +15,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.TrainingModel
-import pl.matiu.kalistenika.ui.dialog.CreateTrainingDialog
-import pl.matiu.kalistenika.ui.dialog.DeleteTrainingDialog
+import pl.matiu.kalistenika.composable.dialog.CreateTrainingDialog
+import pl.matiu.kalistenika.composable.dialog.DeleteTrainingDialog
 
 class DialogController {
 

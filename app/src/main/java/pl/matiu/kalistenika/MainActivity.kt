@@ -3,8 +3,6 @@ package pl.matiu.kalistenika
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -43,27 +41,20 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.media.StartSong
-import pl.matiu.kalistenika.ui.history.HistoryScreen
-import pl.matiu.kalistenika.ui.SeriesScreen
+import pl.matiu.kalistenika.composable.history.HistoryScreen
+import pl.matiu.kalistenika.composable.series.SeriesScreen
 import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
-import pl.matiu.kalistenika.ui.AddExerciseButton
-import pl.matiu.kalistenika.ui.AddTrainingButton
-import pl.matiu.kalistenika.ui.series.CreateSeries
-import pl.matiu.kalistenika.ui.training.CreateTraining
-import pl.matiu.kalistenika.ui.series.RepetitionExerciseEditScreen
-import pl.matiu.kalistenika.ui.series.TimeExerciseEditScreen
-import pl.matiu.kalistenika.ui.TrainingScreen
+import pl.matiu.kalistenika.composable.series.AddExerciseButton
+import pl.matiu.kalistenika.composable.training.AddTrainingButton
+import pl.matiu.kalistenika.composable.series.CreateSeries
+import pl.matiu.kalistenika.composable.series.RepetitionExerciseEditScreen
+import pl.matiu.kalistenika.composable.series.TimeExerciseEditScreen
+import pl.matiu.kalistenika.composable.training.TrainingScreen
 import pl.matiu.kalistenika.ui.theme.MainScreenColor
-import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.ui.theme.Wheat
-import pl.matiu.kalistenika.room.ExerciseDatabaseService
-import pl.matiu.kalistenika.room.TrainingDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
-import pl.matiu.kalistenika.ui.DrawerItem
-import pl.matiu.kalistenika.ui.history.HistoryDetailsScreen
-import pl.matiu.kalistenika.viewModel.NinjaApiViewModel
-
+import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

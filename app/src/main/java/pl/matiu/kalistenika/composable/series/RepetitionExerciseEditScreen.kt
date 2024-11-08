@@ -1,8 +1,6 @@
-package pl.matiu.kalistenika.ui.series
+package pl.matiu.kalistenika.composable.series
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,10 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.routes.MainRoutes
-import pl.matiu.kalistenika.ui.LoadingScreen
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola

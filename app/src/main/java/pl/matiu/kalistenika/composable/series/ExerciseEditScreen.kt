@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui.series
+package pl.matiu.kalistenika.composable.series
 
 import android.content.Context
 import android.util.Log

@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui
+package pl.matiu.kalistenika.composable.series
 
 import StartRepetitionSeries
 import android.annotation.SuppressLint
@@ -47,7 +47,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R

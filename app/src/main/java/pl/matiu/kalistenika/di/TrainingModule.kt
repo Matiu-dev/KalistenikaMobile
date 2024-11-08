@@ -29,21 +29,25 @@ class TrainingModule {
     }
 
     @Provides
+    @Singleton
     fun provideTrainingDao(database: ExerciseDatabase): TrainingDao {
         return database.getTrainingDao()
     }
 
     @Provides
+    @Singleton
     fun provideExerciseDao(database: ExerciseDatabase): ExerciseDao {
         return database.getExerciseDao()
     }
 
     @Provides
+    @Singleton
     fun provideTrainingDatabaseService(trainingDao: TrainingDao, exerciseDao: ExerciseDao): TrainingDatabaseService {
         return TrainingDatabaseService(trainingDao, exerciseDao)
     }
 
     @Provides
+    @Singleton
     fun provideExerciseDatabaseService(exerciseDao: ExerciseDao): ExerciseDatabaseService {
         return ExerciseDatabaseService(exerciseDao)
     }

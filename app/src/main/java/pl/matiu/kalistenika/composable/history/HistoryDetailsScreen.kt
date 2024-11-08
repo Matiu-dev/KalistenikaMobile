@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui.history
+package pl.matiu.kalistenika.composable.history
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui.training
+package pl.matiu.kalistenika.composable.training
 
 import android.content.Context
 import android.widget.Toast

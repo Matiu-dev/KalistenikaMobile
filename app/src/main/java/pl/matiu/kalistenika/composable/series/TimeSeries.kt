@@ -1,5 +1,6 @@
-package pl.matiu.kalistenika.ui
+package pl.matiu.kalistenika.composable.series
 
+import android.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,7 +34,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -100,7 +99,7 @@ fun StartTimeSeries(
         DialogWithImage(
             onDismissRequest = { showDialog = false },
             onConfirmation = { },
-            painter = painterResource(id = android.R.drawable.ic_dialog_info),
+            painter = painterResource(id = R.drawable.ic_dialog_info),
             imageDescription = "opis",
             exerciseName = exercise.timeExerciseName
         )

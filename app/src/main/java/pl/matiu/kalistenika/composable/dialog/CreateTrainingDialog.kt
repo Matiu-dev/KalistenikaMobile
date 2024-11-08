@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui.dialog
+package pl.matiu.kalistenika.composable.dialog
 
 import android.content.Context
 import android.widget.Toast
@@ -15,13 +15,14 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.Smola
-import pl.matiu.kalistenika.ui.training.CreateTraining
+import pl.matiu.kalistenika.composable.training.CreateTraining
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.testowa.dialog.DialogValues
 
@@ -36,8 +37,7 @@ fun CreateTrainingDialog(
 
     val name = rememberSaveable { mutableStateOf("") }
 
-    val trainingViewModel: TrainingViewModel = viewModel()
-
+    val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
 
     if (showDialog) {
         AlertDialog(

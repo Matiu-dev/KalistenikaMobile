@@ -1,4 +1,4 @@
-package pl.matiu.kalistenika.ui.dialog
+package pl.matiu.kalistenika.composable.dialog
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

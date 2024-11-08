@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import org.junit.Rule
 import org.junit.Test
 import pl.matiu.kalistenika.routes.MainRoutes
-import pl.matiu.kalistenika.ui.dialog.CreateTrainingDialog
+import pl.matiu.kalistenika.composable.dialog.CreateTrainingDialog
 import pl.matiu.testowa.dialog.DialogValues
 
 
