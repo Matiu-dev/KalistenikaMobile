@@ -223,7 +223,7 @@ fun SeriesScreenView(
                         color = Smola,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .width(1.dp)
+                            .padding(vertical = 5.dp)
                     )
                 }
 
@@ -331,7 +331,7 @@ fun StepProgressBar(numberOfSteps: IntRange, pagerState: PagerState) {
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(vertical = 5.dp, horizontal = 5.dp)
+        modifier = Modifier.padding(vertical = 10.dp, horizontal = 5.dp)
     ) {
         for (i in numberOfSteps) {
 

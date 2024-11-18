@@ -9,9 +9,11 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -39,7 +42,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
@@ -51,6 +57,7 @@ import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.composable.series.DialogWithImage
+import pl.matiu.kalistenika.composable.series.getFullTimeForExercise
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -127,13 +134,13 @@ fun StartRepetitionSeries(
     ) {
 
         //do testu
-        Text(
-            text = exercise.toString(),
-            color = Smola,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+//        Text(
+//            text = exercise.toString(),
+//            color = Smola,
+//            modifier = Modifier.align(Alignment.CenterHorizontally)
+//        )
+//
+//        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
 
         //do testu
 
@@ -170,6 +177,8 @@ fun StartRepetitionSeries(
                 Text(
                     text = exercise.repetitionExerciseName,
                     color = Smola,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -188,7 +197,10 @@ fun StartRepetitionSeries(
             }
         }
 
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Divider(
+            thickness = 2.dp, color = Smola, modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
+        )
 
         Text(
             text = "Ilość serii: ${exercise.numberOfRepetitionSeries}",
@@ -196,7 +208,10 @@ fun StartRepetitionSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Divider(
+            thickness = 2.dp, color = Smola, modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
+        )
 
         Text(
             text = "Liczba powtórzeń w serii: ${exercise.numberOfReps}",
@@ -204,7 +219,10 @@ fun StartRepetitionSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Divider(
+            thickness = 2.dp, color = Smola, modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
+        )
 
         Text(
             text = "Zatrzymanie czasu po serii: ${if (exercise.stopTimer) "tak" else "nie"}",
@@ -212,7 +230,10 @@ fun StartRepetitionSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
+        Divider(
+            thickness = 2.dp, color = Smola, modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
+        )
 
         Text(
             text = "Przerwa między seriami: ${exercise.breakBetweenRepetitionSeries}",
@@ -220,52 +241,14 @@ fun StartRepetitionSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
-
-        Text(
-            text = "Aktualny czas: $sekunder",
-            color = Smola,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+        Divider(
+            thickness = 2.dp, color = Smola, modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 10.dp)
         )
 
-        Divider(thickness = 2.dp, color = Smola, modifier = Modifier.padding(5.dp))
-
-        LinearProgressIndicator(
-            progress = currentProgress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-                .height(25.dp)
-                .clip(RoundedCornerShape(50))
-                .border(5.dp, color = Smola, shape = RoundedCornerShape(50))
-                .background(InsideLevel1),
-            color = InsideLevel2
-        )
-
-        Text(
-            text = "Koniec przerwy za ${exercise.breakBetweenRepetitionSeries - sekunder % exercise.breakBetweenRepetitionSeries} sekund",
-            color = Smola,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-//        Text(
-//            text = "Initial break ${initialBreakTime} sekund",
-//            color = Smola,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-
-//        Text(
-//            text = "Aktualnie jest ${isSeriesOrBreak(sekunder, exercise.breakBetweenSeries, exercise.timeForSeries)} przez:" +
-//                    "${seriesOrBreak(sekunder, exercise.breakBetweenSeries, exercise.timeForSeries)} sekund",
-//            color = ZielonyNapis,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
-
-//        Text(
-//            text = "Wykonanych serii: ${floor((sekunder.toDouble()/exercise.breakBetweenSeries.toDouble()) + 1)}",
-//            color = ZielonyNapis,
-//            modifier = Modifier.align(Alignment.CenterHorizontally)
-//        )
+        MyProgressIndicator(currentProgress = currentProgress,
+            sekunder = sekunder,
+            exercise = exercise)
 
         LaunchedEffect(startStop) {
 
@@ -285,12 +268,15 @@ fun StartRepetitionSeries(
                         }
 
                         StartSong.seriesSong.start()
+                        if(exercise.stopTimer) {
+                            onStarStopChange(!startStop)
+                        }
                     }
                 }
 
 
 
-                while (sekunder < exercise.breakBetweenRepetitionSeries * exercise.numberOfRepetitionSeries && startStop) {
+                while (sekunder < exercise.breakBetweenRepetitionSeries * (exercise.numberOfRepetitionSeries-1) && startStop) {
                     delay(1000)
                     sekunder++
 
@@ -307,6 +293,7 @@ fun StartRepetitionSeries(
                     }
                 }
 
+                onStarStopChange(!startStop)
                 onEndOfSeriesChange(!endOfSeries)
             }
         }
@@ -317,8 +304,6 @@ fun isEndOfSeriesOrBreak(
     actualTime: Int,
     breakTime: Int,
     seriesTime: Int,
-    seriesSong: MediaPlayer,
-    breakSong: MediaPlayer
 ) {
     //true - series, false - break
 
@@ -382,4 +367,90 @@ fun isFullTimeForExercise(
     actualTime: Int
 ): Boolean {
     return (numberOfSeries * seriesTime) + ((numberOfSeries - 1) * (breakTime)) <= actualTime
+}
+
+@Composable
+fun MyProgressIndicator(currentProgress: Float, sekunder: Int, exercise: RepetitionExercise) {
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+
+        Box(Modifier.weight(1f)) {
+
+            CircularProgressIndicator(
+                progress = sekunder / (
+                        (exercise.numberOfRepetitionSeries - 1) * exercise.breakBetweenRepetitionSeries
+                ).toFloat(),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .background(InsideLevel1)
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                color = InsideLevel2,
+                trackColor = Color.Gray,
+                strokeWidth = 25.dp
+            )
+
+            Text(
+                text = "${sekunder} / ${
+                    (exercise.numberOfRepetitionSeries - 1) * exercise.breakBetweenRepetitionSeries
+                }",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+                textAlign = TextAlign.Center,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Box(Modifier.weight(1f)) {
+
+            CircularProgressIndicator(
+                progress = currentProgress,
+
+                modifier = Modifier
+                    .padding(5.dp)
+                    .background(InsideLevel1)
+                    .fillMaxWidth()
+                    .aspectRatio(1f),
+                color = InsideLevel2,
+                trackColor = Color.Gray,
+                strokeWidth = 25.dp
+            )
+
+            Text(
+                text = "${exercise.breakBetweenRepetitionSeries - sekunder % exercise.breakBetweenRepetitionSeries}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
+                textAlign = TextAlign.Center,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+    }
+
+    Row(modifier = Modifier.fillMaxWidth()) {
+
+        Text(
+            text = "Czas dla całego ćwiczenia",
+            color = Smola,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1f),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "Czas do końca przerwy",
+            color = Smola,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1f),
+            textAlign = TextAlign.Center
+        )
+    }
 }
