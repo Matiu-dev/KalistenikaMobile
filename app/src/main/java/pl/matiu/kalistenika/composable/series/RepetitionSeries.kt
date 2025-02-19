@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.composable.series.DialogWithImage
 import pl.matiu.kalistenika.composable.series.getFullTimeForExercise
+import pl.matiu.kalistenika.notification.startNotification
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -76,20 +78,10 @@ fun StartRepetitionSeries(
     onEndOfSeriesChange: (Boolean) -> Unit,
 ) {
 
-//    val seriesSong = remember { MediaPlayer.create(context, R.raw.dzwonek) }
-//    val breakSong = remember { MediaPlayer.create(context, R.raw.breaksong) }
-
     val seriesViewModel: SeriesViewModel = viewModel()
 
     var sekunder by rememberSaveable {
         mutableIntStateOf(0)
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-//            seriesSong.release()
-//            breakSong.release()
-        }
     }
 
     var currentProgress by remember { mutableStateOf(0f) }
@@ -267,13 +259,13 @@ fun StartRepetitionSeries(
                             delay(1000)
                         }
 
+                        startNotification(context = context, title = "Rozpoczęto nową serię")
                         StartSong.seriesSong.start()
                         if(exercise.stopTimer) {
                             onStarStopChange(!startStop)
                         }
                     }
                 }
-
 
 
                 while (sekunder < exercise.breakBetweenRepetitionSeries * (exercise.numberOfRepetitionSeries-1) && startStop) {
@@ -289,6 +281,7 @@ fun StartRepetitionSeries(
                     }
 
                     if (sekunder % exercise.breakBetweenRepetitionSeries == 0) {
+                        startNotification(context = context, title = "Rozpoczęto przerwę")
                         StartSong.breakSong.start()
                     }
                 }
@@ -377,17 +370,20 @@ fun MyProgressIndicator(currentProgress: Float, sekunder: Int, exercise: Repetit
         Box(Modifier.weight(1f)) {
 
             CircularProgressIndicator(
-                progress = sekunder / (
-                        (exercise.numberOfRepetitionSeries - 1) * exercise.breakBetweenRepetitionSeries
-                ).toFloat(),
+                progress = {
+                    sekunder / (
+                            (exercise.numberOfRepetitionSeries - 1) * exercise.breakBetweenRepetitionSeries
+                    ).toFloat()
+                },
                 modifier = Modifier
                     .padding(5.dp)
                     .background(InsideLevel1)
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 color = InsideLevel2,
+                strokeCap = StrokeCap.Butt,
+                strokeWidth = 25.dp,
                 trackColor = Color.Gray,
-                strokeWidth = 25.dp
             )
 
             Text(
@@ -407,16 +403,16 @@ fun MyProgressIndicator(currentProgress: Float, sekunder: Int, exercise: Repetit
         Box(Modifier.weight(1f)) {
 
             CircularProgressIndicator(
-                progress = currentProgress,
-
+                progress = { currentProgress },
                 modifier = Modifier
                     .padding(5.dp)
                     .background(InsideLevel1)
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 color = InsideLevel2,
+                strokeCap = StrokeCap.Butt,
+                strokeWidth = 25.dp,
                 trackColor = Color.Gray,
-                strokeWidth = 25.dp
             )
 
             Text(

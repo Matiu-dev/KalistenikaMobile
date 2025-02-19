@@ -55,6 +55,7 @@ import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.SeriesInterface
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.notification.createNotificationChannel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -75,7 +76,6 @@ fun SeriesScreen(
     val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val trainingId = trainingList.value?.filter { it.name == trainingName }?.get(0)?.trainingId
-    //TODO zrobic unikatoy
 
     if (isLoading) {
         LoadingScreen()
@@ -85,7 +85,6 @@ fun SeriesScreen(
             navController = navController,
             trainingId = trainingId,
             trainingName = trainingName,
-            seriesViewModel = seriesViewModel
         )
     }
 }
@@ -114,7 +113,6 @@ fun SeriesScreenView(
     navController: NavController,
     trainingId: Int?,
     trainingName: String,
-    seriesViewModel: SeriesViewModel
 ) {
 
     var addTraining by rememberSaveable { mutableStateOf(false) }
@@ -323,10 +321,8 @@ fun SeriesScreenView(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StepProgressBar(numberOfSteps: IntRange, pagerState: PagerState) {
-
 
     Row(
         verticalAlignment = Alignment.Bottom,

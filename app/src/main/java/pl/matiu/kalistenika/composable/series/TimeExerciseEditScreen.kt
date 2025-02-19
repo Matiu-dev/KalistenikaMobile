@@ -84,24 +84,10 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text(
-                    text = "Nazwa ćwiczenia",
-                    color = Smola,
-                    modifier = Modifier.padding(horizontal = 5.dp)
-                )
-
-                TextField(
-                    value = exerciseName.toString(),
-                    onValueChange = { exerciseName = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        cursorColor = Smola,
-                        focusedIndicatorColor = Smola,
-                        unfocusedIndicatorColor = Smola,
-                        focusedTextColor = Smola,
-                        unfocusedTextColor = Smola
-                    ),
-                    modifier = Modifier.padding(horizontal = 5.dp)
+                RowTextFieldElement(
+                    elementName = "Nazwa ćwiczenia",
+                    element = exerciseName,
+                    onElementChange = { exerciseName = it }
                 )
 
             }
@@ -110,24 +96,10 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 modifier = Modifier.padding(vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Ilość serii(liczba)",
-                    color = Smola,
-                    modifier = Modifier.padding(horizontal = 5.dp)
-                )
-
-                TextField(
-                    value = numberOfSeries,
-                    onValueChange = { numberOfSeries = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        cursorColor = Smola,
-                        focusedIndicatorColor = Smola,
-                        unfocusedIndicatorColor = Smola,
-                        focusedTextColor = Smola,
-                        unfocusedTextColor = Smola
-                    ),
-                    modifier = Modifier.padding(horizontal = 5.dp)
+                RowTextFieldElement(
+                    elementName = "Ilość serii(liczba)",
+                    element = numberOfSeries,
+                    onElementChange = { numberOfSeries = it }
                 )
             }
 
@@ -135,52 +107,22 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 modifier = Modifier.padding(vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Czas dla serii(sekundy)",
-                    color = Smola,
-                    modifier = Modifier.padding(horizontal = 5.dp)
+                RowTextFieldElement(
+                    elementName = "Czas dla serii(sekundy)",
+                    element = timeForSeries,
+                    onElementChange = { timeForSeries = it }
                 )
-
-                TextField(
-                    value = timeForSeries,
-                    onValueChange = { timeForSeries = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        cursorColor = Smola,
-                        focusedIndicatorColor = Smola,
-                        unfocusedIndicatorColor = Smola,
-                        focusedTextColor = Smola,
-                        unfocusedTextColor = Smola
-                    ),
-                    modifier = Modifier.padding(horizontal = 5.dp)
-                )
-
             }
 
             Row(
                 modifier = Modifier.padding(vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Przerwa między seriami(sekundy)",
-                    color = Smola,
-                    modifier = Modifier.padding(horizontal = 5.dp)
+                RowTextFieldElement(
+                    elementName = "Przerwa między seriami(sekundy)",
+                    element = breakBetweenSeries,
+                    onElementChange = { breakBetweenSeries = it }
                 )
-
-                TextField(
-                    value = breakBetweenSeries,
-                    onValueChange = { breakBetweenSeries = it },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        cursorColor = Smola,
-                        focusedIndicatorColor = Smola,
-                        unfocusedIndicatorColor = Smola,
-                        focusedTextColor = Smola,
-                        unfocusedTextColor = Smola
-                    ),
-                    modifier = Modifier.padding(horizontal = 5.dp)
-                )
-
             }
 
             RowExposedDropdownMenuBox(

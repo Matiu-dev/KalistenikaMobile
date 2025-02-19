@@ -1,10 +1,14 @@
 package pl.matiu.kalistenika
 
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.core.content.ContextCompat
+import android.Manifest
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,6 +62,7 @@ import pl.matiu.kalistenika.ui.theme.Wheat
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
+import pl.matiu.kalistenika.notification.createNotificationChannel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -87,10 +95,12 @@ class MainActivity : ComponentActivity() {
 
 //        RealTimeDatabaseService().writeData()
 
+        //notification
+        createNotificationChannel(context = this)
 
         setContent {
             KalistenikaTheme {
-                StartSong.init(LocalContext.current) // Inicjalizuj singletona w odpowiednim miejscu
+                StartSong.init(LocalContext.current)
                 KalistenikaApp()
             }
         }
@@ -101,6 +111,28 @@ class MainActivity : ComponentActivity() {
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun KalistenikaApp() {
+
+    val context = LocalContext.current
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val permissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                Log.d("Notification", "Uprawnienia przyznane")
+            } else {
+                Log.e("Notification", "Brak uprawnień do powiadomień!")
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
 
     KalistenikaTheme {
         val navController = rememberNavController()

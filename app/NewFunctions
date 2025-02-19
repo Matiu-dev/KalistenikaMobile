@@ -1,0 +1,9 @@
+- po zminimalizowaniu aplikacji, pojawi sie powiadomienie z nazwa i aktualnym czasem treningu
+- po kliknieciu w to powaidomienie przeniesie do aktualnie wykonywanego treningu
+- wyłaczenie aplikacji spowoduje zapisanie aktualnie wykonywanego treningu w bazie danych
+jesli wykonywany jest aktualnie trening
+- ponowne właczenie będzie sprawdzało stan bazy danych treningów i będzie uruchamiało ten trening
+z danym czasem
+
+- pobranie wszystkich danych o cwiczeniach z api
+- przy tworzeniu nowego cwiczenia z treningu, beda pojawiac sie podpowiedzi nazwy cwiczenia

@@ -65,13 +65,14 @@ fun CreateTraining(name: String,
                 TextField(
                     value = name,
                     onValueChange = { onNameChange(it) },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Smola,
+                        unfocusedTextColor = Smola,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
                         cursorColor = Smola,
                         focusedIndicatorColor = Smola,
-                        unfocusedIndicatorColor = Smola,
-                        focusedTextColor = Smola,
-                        unfocusedTextColor = Smola
+                        unfocusedIndicatorColor = Smola
                     ),
                     modifier = Modifier.padding(horizontal = 5.dp)
                 )

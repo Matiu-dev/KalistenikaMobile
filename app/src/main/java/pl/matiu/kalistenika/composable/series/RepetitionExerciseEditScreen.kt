@@ -77,12 +77,10 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
                 .fillMaxWidth()
         ) {
 
-            exerciseName.let {
-                RowTextFieldElement(
-                    "Nazwa ćwiczenia",
-                    element = it,
-                    onElementChange = { exerciseName = it })
-            }
+            RowTextFieldElement(
+                "Nazwa ćwiczenia",
+                element = exerciseName,
+                onElementChange = { exerciseName = it })
 
             RowTextFieldElement(
                 "Ilość serii(liczba)",
@@ -99,13 +97,10 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
                 element = numberOfReps,
                 onElementChange = { numberOfReps = it })
 
-
-            stopTimer.let {
-                RowCheckBoxElement(
-                    elementName = "Czy zatrzymać czas po serii?",
-                    element = stopTimer,
-                    onElementChange = { stopTimer = it })
-            }
+            RowCheckBoxElement(
+                elementName = "Czy zatrzymać czas po serii?",
+                element = stopTimer,
+                onElementChange = { stopTimer = it })
 
             RowExposedDropdownMenuBox(
                 elementName = "Pozycja dla ćwiczenia",

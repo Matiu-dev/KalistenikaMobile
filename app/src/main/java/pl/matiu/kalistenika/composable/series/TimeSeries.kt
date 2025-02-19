@@ -1,9 +1,12 @@
 package pl.matiu.kalistenika.composable.series
 
+import android.Manifest
 import android.R
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -37,6 +40,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -54,16 +58,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -79,12 +78,13 @@ import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.notification.startNotification
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StartTimeSeries(
     context: Context,
@@ -100,14 +100,6 @@ fun StartTimeSeries(
     var sekunder by rememberSaveable { mutableStateOf(0) }
 
     val seriesViewModel: SeriesViewModel = viewModel()
-
-//    DisposableEffect(Unit) {
-//        onDispose {
-//            seriesSong.release()
-//            StartSong.seriesSong.release()
-//            breakSong.release()
-//        }
-//    }
 
     var currentProgress by rememberSaveable { mutableStateOf(0f) }
     var initialBreakTime by remember { mutableIntStateOf(0) }
@@ -210,7 +202,7 @@ fun StartTimeSeries(
             }
         }
 
-        Divider(
+        HorizontalDivider(
             thickness = 2.dp, color = Smola, modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 10.dp)
         )
@@ -221,7 +213,7 @@ fun StartTimeSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(
+        HorizontalDivider(
             thickness = 2.dp, color = Smola, modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 10.dp)
         )
@@ -232,7 +224,7 @@ fun StartTimeSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(
+        HorizontalDivider(
             thickness = 2.dp, color = Smola, modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 10.dp)
         )
@@ -243,7 +235,7 @@ fun StartTimeSeries(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
-        Divider(
+        HorizontalDivider(
             thickness = 2.dp, color = Smola, modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 10.dp)
         )
@@ -271,10 +263,12 @@ fun StartTimeSeries(
                             delay(1000)
                         }
 
+                        startNotification(context = context, title = "Rozpoczęto nową serię")
                         StartSong.seriesSong.start()
                     }
                 }
 
+                startNotification(context = context, title = "Rozpoczęto nową serię")
 
                 while (!isFullTimeForExercise(
                         exercise.numberOfTimeSeries,
@@ -283,6 +277,7 @@ fun StartTimeSeries(
                         sekunder
                     )
                 ) {
+
                     delay(1000)
                     sekunder++
 
@@ -306,7 +301,7 @@ fun StartTimeSeries(
 
                     isEndOfSeriesOrBreak(
                         sekunder, exercise.breakBetweenTimeSeries, exercise.timeForTimeSeries,
-                        StartSong.seriesSong, StartSong.breakSong
+                        context = context
                     )
 
                 }
@@ -430,19 +425,22 @@ fun MyProgressIndicator(currentProgress: Float, sekunder: Int, exercise: TimeExe
         Box(Modifier.weight(1f)) {
 
             CircularProgressIndicator(
-                progress = sekunder / getFullTimeForExercise(
-                    exercise.numberOfTimeSeries,
-                    exercise.breakBetweenTimeSeries,
-                    exercise.timeForTimeSeries
-                ).toFloat(),
+                progress = {
+                    sekunder / getFullTimeForExercise(
+                        exercise.numberOfTimeSeries,
+                        exercise.breakBetweenTimeSeries,
+                        exercise.timeForTimeSeries
+                    ).toFloat()
+                },
                 modifier = Modifier
                     .padding(5.dp)
                     .background(InsideLevel1)
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 color = InsideLevel2,
+                strokeWidth = 25.dp,
+                strokeCap = StrokeCap.Butt,
                 trackColor = Color.Gray,
-                strokeWidth = 25.dp
             )
 
             Text(
@@ -466,16 +464,16 @@ fun MyProgressIndicator(currentProgress: Float, sekunder: Int, exercise: TimeExe
         Box(Modifier.weight(1f)) {
 
             CircularProgressIndicator(
-                progress = currentProgress,
-
+                progress = { currentProgress },
                 modifier = Modifier
                     .padding(5.dp)
                     .background(InsideLevel1)
                     .fillMaxWidth()
                     .aspectRatio(1f),
                 color = InsideLevel2,
+                strokeCap = StrokeCap.Butt,
+                strokeWidth = 25.dp,
                 trackColor = Color.Gray,
-                strokeWidth = 25.dp
             )
 
             Text(
@@ -530,8 +528,7 @@ fun isEndOfSeriesOrBreak(
     actualTime: Int,
     breakTime: Int,
     seriesTime: Int,
-    seriesSong: MediaPlayer,
-    breakSong: MediaPlayer
+    context: Context
 ) {
     //true - series, false - break
 
@@ -539,6 +536,7 @@ fun isEndOfSeriesOrBreak(
     if (seriesOrBreak(actualTime, breakTime, seriesTime) == seriesTime &&
         isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("serii")
     ) {
+        startNotification(context = context, title = "Rozpoczęto nową serię")
         StartSong.seriesSong.start()
     }
 
@@ -546,6 +544,7 @@ fun isEndOfSeriesOrBreak(
     if (seriesOrBreak(actualTime, breakTime, seriesTime) == breakTime &&
         isSeriesOrBreak(actualTime, breakTime, seriesTime).equals("przerwy")
     ) {
+        startNotification(context = context, title = "Rozpoczęto przerwę")
         StartSong.breakSong.start()
     }
 }
