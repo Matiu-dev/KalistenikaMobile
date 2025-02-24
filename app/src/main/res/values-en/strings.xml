@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Kalistenika</string>
-    <string name="example">Example</string>
-    <string name="main_page_title">Treningi</string>
+    <string name="example">Przykład</string>
+    <string name="main_page_title">Trainings</string>
 </resources>

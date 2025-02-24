@@ -41,6 +41,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import android.Manifest
+import android.app.Activity
+import android.app.LocaleManager
+import android.content.res.Configuration
+import android.os.LocaleList
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.ui.res.stringResource
+import androidx.core.os.LocaleListCompat
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -63,6 +70,7 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
 import pl.matiu.kalistenika.notification.createNotificationChannel
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -151,6 +159,16 @@ fun KalistenikaApp() {
             drawerContent = {
                 ModalDrawerSheet {
                     DrawerItem("Pobierz treningi")
+
+                    SelectLanguage(
+                        language = "Polski",
+                        context = context
+                    )
+
+                    SelectLanguage(
+                        language = "Angielski",
+                        context = context
+                    )
                 }
             }) {
             Scaffold(
@@ -232,7 +250,7 @@ fun KalistenikaApp() {
                     modifier = Modifier.padding(innerPadding),
                 ) {
                     composable(route = MainRoutes.Training.destination) {
-                        topBarTitle = MainRoutes.Training.topBarTitle
+                        topBarTitle = stringResource(R.string.main_page_title)
                         topBarPreviewScreen = MainRoutes.Training.destination
                         isNavigationIcon = MainRoutes.Training.isNavigationIcon
                         addButton = MainRoutes.Training.addButton

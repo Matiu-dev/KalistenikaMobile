@@ -27,6 +27,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        resourceConfigurations += listOf("en", "pl")
     }
 
     buildTypes {
@@ -61,9 +62,17 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {
+
+    implementation("androidx.appcompat:appcompat:1.6.0")
 
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
