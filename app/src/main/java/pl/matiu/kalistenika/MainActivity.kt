@@ -45,6 +45,7 @@ import android.app.Activity
 import android.app.LocaleManager
 import android.content.res.Configuration
 import android.os.LocaleList
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
@@ -69,11 +70,16 @@ import pl.matiu.kalistenika.ui.theme.Wheat
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
+import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.notification.createNotificationChannel
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var appLanguage: AppLanguage
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +115,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             KalistenikaTheme {
                 StartSong.init(LocalContext.current)
-                KalistenikaApp()
+                KalistenikaApp(appLanguage)
             }
         }
     }
@@ -118,9 +124,11 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-fun KalistenikaApp() {
+fun KalistenikaApp(appLanguage: AppLanguage) {
 
     val context = LocalContext.current
+
+//    (context as ComponentActivity).changeLanguage("pl")
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val permissionLauncher = rememberLauncherForActivityResult(
@@ -162,12 +170,14 @@ fun KalistenikaApp() {
 
                     SelectLanguage(
                         language = "Polski",
-                        context = context
+                        context = context,
+                        appLanguage = appLanguage
                     )
 
                     SelectLanguage(
                         language = "Angielski",
-                        context = context
+                        context = context,
+                        appLanguage = appLanguage
                     )
                 }
             }) {
