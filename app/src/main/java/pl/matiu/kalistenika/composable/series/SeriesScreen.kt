@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -55,7 +54,6 @@ import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.SeriesInterface
 import pl.matiu.kalistenika.model.training.TimeExercise
-import pl.matiu.kalistenika.notification.createNotificationChannel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -70,14 +68,15 @@ fun SeriesScreen(
     trainingName: String
 ) {
     val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
-    val isLoading by seriesViewModel.isLoading.collectAsState()
+    val isSeriesLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
 
     val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
+    val isTrainingLoading by trainingViewModel.isTrainingLoading.collectAsState()
     val trainingList = trainingViewModel.trainingList.collectAsState()
     val trainingId = trainingList.value?.filter { it.name == trainingName }?.get(0)?.trainingId
 
-    if (isLoading) {
+    if (isSeriesLoading || isTrainingLoading) {
         LoadingScreen()
     } else {
         SeriesScreenView(

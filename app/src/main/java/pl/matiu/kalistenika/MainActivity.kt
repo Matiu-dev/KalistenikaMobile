@@ -172,12 +172,6 @@ fun KalistenikaApp(appLanguage: AppLanguage) {
                 ModalDrawerSheet {
                     DrawerItem("Pobierz treningi")
 
-//                    Button(onClick = {
-//                        navController.navigate(route = AlternativeRoutes.ChangeLanguage.destination)
-//                    }) {
-//                        Text("Zmień język aplikacji")
-//                    }
-
                     Card {
                         NavigationDrawerItem(
                             label = { Text(text = "Zmień język aplikacji") },

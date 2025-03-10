@@ -27,7 +27,7 @@ class TrainingViewModel @Inject constructor(private val trainingDatabaseService:
         getAllTraining()
     }
 
-    fun getAllTraining() {
+    private fun getAllTraining() {
         viewModelScope.launch {
             ThreadIdLogger(ConsoleLogger()).log("training view model", "data downloading")
             withContext(Dispatchers.IO) {

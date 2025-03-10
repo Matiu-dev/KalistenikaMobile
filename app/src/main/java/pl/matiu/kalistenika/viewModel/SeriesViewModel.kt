@@ -67,7 +67,7 @@ class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: E
         }
     }
 
-    fun getAllTimeAndRepetitionSeriesById() {
+    private fun getAllTimeAndRepetitionSeriesById() {
         ConsoleLogger().log("series view model", "downloading all data")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {

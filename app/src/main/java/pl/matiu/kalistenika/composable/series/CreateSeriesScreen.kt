@@ -184,6 +184,7 @@ fun RepetitiveSeriesOptions(
         val isLodaing = seriesViewModel.isLoading.collectAsState()
 
         if(!isLodaing.value) {
+            isClicked = false
             navController.navigate("training/${trainingName}/${trainingId}")
         }
     }
@@ -382,6 +383,7 @@ fun TimeSeriesOptions(
         val isLodaing = seriesViewModel.isLoading.collectAsState()
 
         if(!isLodaing.value) {
+            isClicked = false
             navController.navigate("training/${trainingName}/${trainingId}")
         }
     }
