@@ -46,6 +46,14 @@ enum class AlternativeRoutes(
         topBarPreviewScreen = MainRoutes.History.destination,
         isNavigationIcon = true,
         addButton = ""
+    ),
+
+    ChangeLanguage(
+        destination = MainRoutes.Training.destination + "/changeLanguage",
+        topBarTitle = "Wybierz język aplikacji",
+        topBarPreviewScreen = MainRoutes.Training.destination,
+        isNavigationIcon = true,
+        addButton = ""
     )
 
 }

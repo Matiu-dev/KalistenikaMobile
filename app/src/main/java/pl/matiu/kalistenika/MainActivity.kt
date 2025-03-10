@@ -47,6 +47,9 @@ import android.content.res.Configuration
 import android.os.LocaleList
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 
@@ -70,6 +73,7 @@ import pl.matiu.kalistenika.ui.theme.Wheat
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
+import pl.matiu.kalistenika.composable.language.ChangeLanguageScreen
 import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.notification.createNotificationChannel
 import java.util.Locale
@@ -168,17 +172,21 @@ fun KalistenikaApp(appLanguage: AppLanguage) {
                 ModalDrawerSheet {
                     DrawerItem("Pobierz treningi")
 
-                    SelectLanguage(
-                        language = "Polski",
-                        context = context,
-                        appLanguage = appLanguage
-                    )
+//                    Button(onClick = {
+//                        navController.navigate(route = AlternativeRoutes.ChangeLanguage.destination)
+//                    }) {
+//                        Text("Zmień język aplikacji")
+//                    }
 
-                    SelectLanguage(
-                        language = "Angielski",
-                        context = context,
-                        appLanguage = appLanguage
-                    )
+                    Card {
+                        NavigationDrawerItem(
+                            label = { Text(text = "Zmień język aplikacji") },
+                            selected = false,
+                            onClick = {
+                                navController.navigate(route = AlternativeRoutes.ChangeLanguage.destination)
+                            }
+                        )
+                    }
                 }
             }) {
             Scaffold(
@@ -259,6 +267,15 @@ fun KalistenikaApp(appLanguage: AppLanguage) {
                     startDestination = MainRoutes.Training.destination,
                     modifier = Modifier.padding(innerPadding),
                 ) {
+                    composable(route = AlternativeRoutes.ChangeLanguage.destination) {
+                        topBarTitle = stringResource(R.string.language_page_title)
+                        topBarPreviewScreen = AlternativeRoutes.ChangeLanguage.topBarPreviewScreen
+                        isNavigationIcon = AlternativeRoutes.ChangeLanguage.isNavigationIcon
+                        addButton = AlternativeRoutes.ChangeLanguage.addButton
+
+                        ChangeLanguageScreen(context = context, appLanguage = appLanguage, navController = navController)
+                    }
+
                     composable(route = MainRoutes.Training.destination) {
                         topBarTitle = stringResource(R.string.main_page_title)
                         topBarPreviewScreen = MainRoutes.Training.destination

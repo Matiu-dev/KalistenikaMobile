@@ -22,7 +22,7 @@ class AppLanguage @Inject constructor(private val sharedPrefsRepository: SharedP
         (context as ComponentActivity).changeLanguage()
     }
 
-    private fun ComponentActivity.changeLanguage() {
+    fun ComponentActivity.changeLanguage() {
 
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(sharedPrefsRepository.getLocalLanguage(this)))
 

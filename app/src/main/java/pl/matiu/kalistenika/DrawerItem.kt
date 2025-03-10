@@ -8,8 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.NinjaApiViewModel
 
 @Composable
@@ -30,7 +33,7 @@ fun DrawerItem(cardTitle: String) {
 }
 
 @Composable
-fun SelectLanguage(language: String, context: Context?, appLanguage: AppLanguage) {
+fun SelectLanguage(language: String, context: Context?, appLanguage: AppLanguage, navController: NavController) {
 
     Card {
         NavigationDrawerItem(
@@ -41,10 +44,12 @@ fun SelectLanguage(language: String, context: Context?, appLanguage: AppLanguage
                     "Polski" ->  {
                         appLanguage.setLocalLanguage("pl", context = context)
                         appLanguage.changeLanguage(context = context)
+                        navController.navigate(MainRoutes.Training.destination)
                     }
                     "Angielski" -> {
                         appLanguage.setLocalLanguage("en", context = context)
                         appLanguage.changeLanguage(context = context)
+                        navController.navigate(MainRoutes.Training.destination)
                     }
                 }
             }

@@ -3,4 +3,5 @@
     <string name="app_name">Kalistenika</string>
     <string name="example">Example</string>
     <string name="main_page_title">Treningi</string>
+    <string name="language_page_title">Wybierz język aplikacji</string>
 </resources>
