@@ -62,6 +62,7 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
         val isLodaing = seriesViewModel.isLoading.collectAsState()
 
         if(!isLodaing.value) {
+            isClicked = false
             navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
         }
     }

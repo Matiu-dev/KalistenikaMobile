@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Snackbar
@@ -56,23 +57,33 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(navController: NavController) {
+
+    var datePickerState = rememberDatePickerState()
+
+    val isDateSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
+    val myDateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
+
+    Log.d("wybrana data", selectedDate.toString())
+
+    if(selectedDate != null && !isDateSelected.value) {
+        isDateSelected.value = true
+        navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.let { myDateFormat.format(it) }}" )
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1,
     ) {
-
-        var datePickerState = rememberDatePickerState()
-
-        DatePicker(state = datePickerState)
-
-        val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
-        val myDateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
-
-        Log.d("wybrana data", selectedDate.toString())
-
-        if(selectedDate != null) {
-            navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.let { myDateFormat.format(it) }}" )
-        }
+        DatePicker(
+            colors = DatePickerDefaults.colors(
+                containerColor = InsideLevel1
+            ),
+            state = datePickerState
+        )
     }
 }
 
