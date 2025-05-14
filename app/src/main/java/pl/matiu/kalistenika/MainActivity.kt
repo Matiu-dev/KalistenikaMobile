@@ -43,6 +43,7 @@ import androidx.core.content.ContextCompat
 import android.Manifest
 import androidx.compose.material3.Card
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -61,44 +62,16 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var appLanguage: AppLanguage
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //get exercise
-//        NinjaApiService().getExercises()
-
-//        var user = User("email", "password", Anonymous)
-
-//        val loginContext = LoginContext(GoogleLogin())
-//        val registerContext = RegisterContext(GoogleRegister())
-
-        //logowanie
-//        user.state.signIn(user, loginContext)
-//        user.state.logOut(user, loginContext)
-
-        //klikam na przycisk z napisem github i zmieniam strategie
-//        loginContext.setStrategy(GithubLogin())
-        //pojawia sie ekran z polami do uzupelnienia dla tej strategii logowania
-        //po uzupelnieniu klikam na jeden z ponizszych przyciskow
-//        user.state.signIn(user, loginContext)
-//        user.state.signIn(user, loginContext)
-//        user.state.signUp(user, registerContext)
-//        user.state.logOut(user, LoginContext(GithubLogin()))
-        //nastepuje logowanie lub wylogowanie
-
-//        RealTimeDatabaseService().writeData()
-
-        //notification
         createNotificationChannel(context = this)
 
         setContent {
             KalistenikaTheme {
                 StartSong.init(LocalContext.current)
-                KalistenikaApp(appLanguage)
+                KalistenikaApp()
             }
         }
     }
@@ -107,9 +80,10 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-fun KalistenikaApp(appLanguage: AppLanguage) {
+fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
 
     val context = LocalContext.current
+    val appLanguage = viewModel.appLanguage
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val permissionLauncher = rememberLauncherForActivityResult(
@@ -240,3 +214,29 @@ fun KalistenikaApp(appLanguage: AppLanguage) {
         }
     }
 }
+
+//get exercise
+//        NinjaApiService().getExercises()
+
+//        var user = User("email", "password", Anonymous)
+
+//        val loginContext = LoginContext(GoogleLogin())
+//        val registerContext = RegisterContext(GoogleRegister())
+
+//logowanie
+//        user.state.signIn(user, loginContext)
+//        user.state.logOut(user, loginContext)
+
+//klikam na przycisk z napisem github i zmieniam strategie
+//        loginContext.setStrategy(GithubLogin())
+//pojawia sie ekran z polami do uzupelnienia dla tej strategii logowania
+//po uzupelnieniu klikam na jeden z ponizszych przyciskow
+//        user.state.signIn(user, loginContext)
+//        user.state.signIn(user, loginContext)
+//        user.state.signUp(user, registerContext)
+//        user.state.logOut(user, LoginContext(GithubLogin()))
+//nastepuje logowanie lub wylogowanie
+
+//        RealTimeDatabaseService().writeData()
+
+//notification
