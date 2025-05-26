@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -130,7 +131,7 @@ fun RepetitiveSeries(
 
                 OutlinedButton(
                     onClick = { expanded = !expanded },
-                    modifier = Modifier.padding(horizontal = 5.dp)
+                    modifier = Modifier.padding(horizontal = 5.dp).testTag("showRepetitionSeriesContent")
                 ) {
                     Text(text = if (!expanded) "Pokaż" else "Ukryj", color = Smola)
                 }
@@ -197,28 +198,36 @@ fun RepetitiveSeriesOptions(
             RowTextFieldElement(
                 elementName = "Nazwa ćwiczenia",
                 element = exerciseName,
-                onElementChange = { exerciseName = it })
+                onElementChange = { exerciseName = it },
+                modifier = Modifier.testTag("repetitionExerciseNameEditText")
+            )
         }
 
         item {
             RowTextFieldElement(
                 elementName = "Ilość serii(liczba)",
                 element = numberOfSeries,
-                onElementChange = { numberOfSeries = it })
+                onElementChange = { numberOfSeries = it },
+                modifier = Modifier.testTag("repetitionExerciseNumberOfSeriesEditText")
+            )
         }
 
         item {
             RowTextFieldElement(
                 elementName = "Przerwa między seriami(sekundy)",
                 element = breakBetweenSeries,
-                onElementChange = { breakBetweenSeries = it })
+                onElementChange = { breakBetweenSeries = it },
+                modifier = Modifier.testTag("repetitionExerciseBreakBetweenSeriesEditText")
+            )
         }
 
         item {
             RowTextFieldElement(
                 elementName = "Liczba powtórzeń w serii",
                 element = numberOfReps,
-                onElementChange = { numberOfReps = it })
+                onElementChange = { numberOfReps = it },
+                modifier = Modifier.testTag("repetitionExerciseNumberOfRepsEditText")
+            )
         }
 
         item {
@@ -265,7 +274,7 @@ fun RepetitiveSeriesOptions(
                             Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().testTag("createRepetitionExerciseButton"),
                     colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
                 ) {
                     Text(text = "Dodaj serię", color = Smola)
@@ -324,7 +333,7 @@ fun TimeSeries(
 
                 OutlinedButton(
                     onClick = { expanded = !expanded },
-                    modifier = Modifier.padding(horizontal = 5.dp)
+                    modifier = Modifier.padding(horizontal = 5.dp).testTag("showTimeSeriesContent")
                 ) {
                     Text(text = if (!expanded) "Pokaż" else "Ukryj", color = Smola)
                 }
@@ -394,19 +403,26 @@ fun TimeSeriesOptions(
             elementName = "Nazwa ćwiczenia",
             element = exerciseName,
             onElementChange = { exerciseName = it },
+            modifier = Modifier.testTag("timeExerciseNameEditText")
         )
         RowTextFieldElement(
             elementName = "Ilość serii(liczba)",
             element = numberOfSeries,
-            onElementChange = { numberOfSeries = it })
+            onElementChange = { numberOfSeries = it },
+            modifier = Modifier.testTag("timeExerciseNumberOfSeriesEditText")
+        )
         RowTextFieldElement(
             elementName = "Czas dla serii(sekundy)",
             element = timeForSeries,
-            onElementChange = { timeForSeries = it })
+            onElementChange = { timeForSeries = it },
+            modifier = Modifier.testTag("timeExerciseTimeForSeriesEditText")
+        )
         RowTextFieldElement(
             elementName = "Przerwa między seriami(sekundy)",
             element = breakBetweenSeries,
-            onElementChange = { breakBetweenSeries = it })
+            onElementChange = { breakBetweenSeries = it },
+            modifier = Modifier.testTag("timeExerciseBreakBetweenSeriesEditText")
+        )
         RowExposedDropdownMenuBox(
             elementName = "Pozycja dla ćwiczenia",
             element = exercisePositionInTraining,
@@ -438,7 +454,7 @@ fun TimeSeriesOptions(
                     Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().testTag("createTimeExerciseButton"),
             colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
         ) {
             Text(text = "Dodaj serię", color = Smola)
@@ -447,7 +463,7 @@ fun TimeSeriesOptions(
 }
 
 @Composable
-fun RowTextFieldElement(elementName: String, element: String, onElementChange: (String) -> Unit) {
+fun RowTextFieldElement(elementName: String, element: String, onElementChange: (String) -> Unit, modifier: Modifier) {
     Row(
         modifier = Modifier.padding(vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -471,7 +487,7 @@ fun RowTextFieldElement(elementName: String, element: String, onElementChange: (
                 focusedIndicatorColor = Smola,
                 unfocusedIndicatorColor = Smola,
             ),
-            modifier = Modifier.padding(horizontal = 5.dp)
+            modifier = modifier.padding(horizontal = 5.dp)
         )
     }
 }

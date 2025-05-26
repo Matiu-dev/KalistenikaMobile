@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.RepetitionExercise
@@ -81,22 +82,30 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
             RowTextFieldElement(
                 "Nazwa ćwiczenia",
                 element = exerciseName,
-                onElementChange = { exerciseName = it })
+                onElementChange = { exerciseName = it },
+                modifier = Modifier.testTag("repetitionExerciseNameEditText")
+            )
 
             RowTextFieldElement(
                 "Ilość serii(liczba)",
                 element = numberOfSeries,
-                onElementChange = { numberOfSeries = it })
+                onElementChange = { numberOfSeries = it },
+                modifier = Modifier.testTag("repetitionExerciseNumberOfSeriesEditText")
+            )
 
             RowTextFieldElement(
                 "Przerwa między seriami(sekundy)",
                 element = breakBetweenSeries,
-                onElementChange = { breakBetweenSeries = it })
+                onElementChange = { breakBetweenSeries = it },
+                modifier = Modifier.testTag("repetitionExerciseBreakBetweenSeriesEditText")
+            )
 
             RowTextFieldElement(
                 "Liczba powtórzeń w serii",
                 element = numberOfReps,
-                onElementChange = { numberOfReps = it })
+                onElementChange = { numberOfReps = it },
+                modifier = Modifier.testTag("repetitionExerciseNumberOfRepsEditText")
+            )
 
             RowCheckBoxElement(
                 elementName = "Czy zatrzymać czas po serii?",

@@ -8,6 +8,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.TrainingModel
@@ -15,6 +17,7 @@ import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.composable.training.CreateTraining
+import pl.matiu.kalistenika.testTags.ACCEPT_BUTTON_IN_ADD_TRAINING_SCREEN_TEST_TAG
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.testowa.dialog.DialogValues
 
@@ -54,6 +57,7 @@ fun CreateTrainingDialog(
 
             dismissButton = {
                 TextButton(
+                    modifier = Modifier.testTag(ACCEPT_BUTTON_IN_ADD_TRAINING_SCREEN_TEST_TAG),
                     onClick = {
 
                         if (name.value.isNotBlank()) {

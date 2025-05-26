@@ -92,8 +92,6 @@ dependencies {
     implementation("org.danilopianini:gson-extras:1.3.0")
     implementation("com.google.firebase:firebase-database:21.0.0")
 
-    testImplementation("org.mockito:mockito-core:5.12.0")
-
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -143,6 +141,8 @@ dependencies {
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48")
     kapt("com.google.dagger:hilt-compiler:2.48")//to dodałem
     kaptAndroidTest("com.google.dagger:hilt-compiler:2.48")//i to dodałem i zaczelo dzialac
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
 
     //voyager
     val voyagerVersion = "1.1.0-beta02"

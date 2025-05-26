@@ -121,7 +121,7 @@ fun AddTrainingButton(navController: NavController) {
         containerColor = InsideLevel2,
         contentColor = Smola
     ) {
-        Icon(Icons.Filled.Add, "add exercise")
+        Icon(Icons.Filled.Add, "add training")
     }
 
     if(showDialog.value) {

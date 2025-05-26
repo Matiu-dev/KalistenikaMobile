@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import pl.matiu.kalistenika.model.training.TimeExercise
@@ -88,7 +89,8 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 RowTextFieldElement(
                     elementName = "Nazwa ćwiczenia",
                     element = exerciseName,
-                    onElementChange = { exerciseName = it }
+                    onElementChange = { exerciseName = it },
+                    modifier = Modifier.testTag("timeExerciseNameEditText")
                 )
 
             }
@@ -100,7 +102,8 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 RowTextFieldElement(
                     elementName = "Ilość serii(liczba)",
                     element = numberOfSeries,
-                    onElementChange = { numberOfSeries = it }
+                    onElementChange = { numberOfSeries = it },
+                    modifier = Modifier.testTag("timeExerciseNumberOfSeriesEditText")
                 )
             }
 
@@ -111,7 +114,8 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 RowTextFieldElement(
                     elementName = "Czas dla serii(sekundy)",
                     element = timeForSeries,
-                    onElementChange = { timeForSeries = it }
+                    onElementChange = { timeForSeries = it },
+                    modifier = Modifier.testTag("timeExerciseTimeForSeriesEditText")
                 )
             }
 
@@ -122,7 +126,8 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
                 RowTextFieldElement(
                     elementName = "Przerwa między seriami(sekundy)",
                     element = breakBetweenSeries,
-                    onElementChange = { breakBetweenSeries = it }
+                    onElementChange = { breakBetweenSeries = it },
+                    modifier = Modifier.testTag("timeExerciseBreakBetweenSeriesEditText")
                 )
             }
 
