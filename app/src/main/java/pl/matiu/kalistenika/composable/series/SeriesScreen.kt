@@ -2,6 +2,7 @@ package pl.matiu.kalistenika.composable.series
 
 import StartRepetitionSeries
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -32,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +48,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.routes.MainRoutes
@@ -84,6 +91,7 @@ fun SeriesScreen(
             navController = navController,
             trainingId = trainingId,
             trainingName = trainingName,
+            seriesViewModel
         )
     }
 }
@@ -105,18 +113,21 @@ fun LoadingScreen() {
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SeriesScreenView(
     exerciseList: List<SeriesInterface>?,
     navController: NavController,
     trainingId: Int?,
     trainingName: String,
+    seriesViewModel: SeriesViewModel
 ) {
+    val context = LocalContext.current
 
     var addTraining by rememberSaveable { mutableStateOf(false) }
     var startStop by rememberSaveable { mutableStateOf(false) }
     var endOfSeries by rememberSaveable { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     var pagerState = rememberPagerState(
         pageCount = {
@@ -124,7 +135,58 @@ fun SeriesScreenView(
         }
     )
 
-    val coroutineScope = rememberCoroutineScope()
+    coroutineScope.launch {
+        pagerState.animateScrollToPage(pagerState.currentPage +
+                if(seriesViewModel.getIsSeriesActive(context).actualPage != "") seriesViewModel.getIsSeriesActive(context).actualPage.toInt() else 0
+        )
+    }
+
+//    pagerState.currentPage = if(seriesViewModel.getIsSeriesActive(context).actualPage != "") seriesViewModel.getIsSeriesActive(context).actualPage.toInt() else 0
+
+
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val lifecycleEventObserver = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_CREATE -> {
+                    Log.d("DisposableEffect", "Calling onCreate...!")
+                }
+
+                Lifecycle.Event.ON_DESTROY -> {
+                    Log.d("DisposableEffect", "OnDestroy, saving series state")
+                    trainingId?.let {
+                        seriesViewModel.setIsSeriesActive(startStop, trainingName,
+                            it, pagerState.currentPage, context)
+                    }
+                }
+                Lifecycle.Event.ON_START -> {
+                    Log.d("DisposableEffect", "Calling onStart...!")
+                }
+
+                Lifecycle.Event.ON_RESUME -> {
+                    Log.d("DisposableEffect", "Calling onResume...!")
+                }
+
+                Lifecycle.Event.ON_PAUSE -> {
+                    Log.d("DisposableEffect", "Calling onPause...!")
+                }
+
+                Lifecycle.Event.ON_STOP -> {
+                    Log.d("DisposableEffect", "Calling onStop...!")
+                }
+
+                Lifecycle.Event.ON_ANY -> {
+                    Log.d("DisposableEffect", "Calling onAny...!")
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(lifecycleEventObserver)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleEventObserver)
+        }
+    }
 
     //jesli skonczy sie seria to ten fragment kodu powoduje przejscie do kolejnego cwiczenia
     if (endOfSeries) {
@@ -175,7 +237,10 @@ fun SeriesScreenView(
                         }
 
                         Button(
-                            onClick = { startStop = !startStop },
+                            onClick = {
+                                startStop = !startStop
+                                trainingId?.let { seriesViewModel.setIsSeriesActive(startStop, trainingName = trainingName, actualPage = pagerState.currentPage, trainingId = it, context = context) }
+                                      },
                             modifier = Modifier.padding(horizontal = 2.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = InsideLevel2)
                         ) {

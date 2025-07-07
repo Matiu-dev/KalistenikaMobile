@@ -134,11 +134,15 @@ class BottomBarTest {
 
     @Test
     fun test5_editTimeExercise() {
-
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("test").performClick()
+        composeTestRule.waitForIdle()
     }
 
     @Test
     fun test6_editRepetitionExercise() {
-
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("test").performClick()
+        composeTestRule.waitForIdle()
     }
 }

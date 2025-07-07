@@ -1,6 +1,7 @@
 package pl.matiu.kalistenika.composable.navigation
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import pl.matiu.kalistenika.composable.training.TrainingScreen
 import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.sharedPrefs.saveSeries.SaveSeries
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -37,12 +39,19 @@ fun Navigation(navController: NavHostController,
                trainingId: Int,
                onTrainingIdChange: (Int) -> Unit,
                trainingName: String,
-               onTrainingNameChange: (String) -> Unit
+               onTrainingNameChange: (String) -> Unit,
+               isSeriesActive: SaveSeries
 ) {
 
+    val destination = if(isSeriesActive.isActive == "false")
+        MainRoutes.Training.destination
+    else
+        AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+
+    Log.d("DisposableEffect", "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}")
     NavHost(
         navController = navController,
-        startDestination = MainRoutes.Training.destination,
+        startDestination = destination,
         modifier = Modifier.padding(innerPadding),
     ) {
         composable(route = AlternativeRoutes.ChangeLanguage.destination) {

@@ -57,6 +57,7 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.composable.navigation.Navigation
 import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.notification.createNotificationChannel
+import pl.matiu.kalistenika.sharedPrefs.SharedPrefsRepositoryImpl
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -104,6 +105,11 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
             }
         }
     }
+
+    Log.d("DisposableEffect", viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).isActive
+    + " training name: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingName +
+    " training id: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingId +
+    " actual page: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).actualPage)
 
     KalistenikaTheme {
         val navController = rememberNavController()
@@ -208,7 +214,8 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                     trainingId = trainingId,
                     onTrainingIdChange = {trainingId = it},
                     trainingName = trainingName,
-                    onTrainingNameChange = {trainingName = it}
+                    onTrainingNameChange = {trainingName = it},
+                    isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
                 )
             }
         }

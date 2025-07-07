@@ -1,5 +1,6 @@
 package pl.matiu.kalistenika.viewModel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,12 +20,15 @@ import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.model.training.SeriesInterface
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.model.training.TrainingModel
+import pl.matiu.kalistenika.sharedPrefs.SharedPrefsRepository
+import pl.matiu.kalistenika.sharedPrefs.saveSeries.SaveSeries
 import javax.inject.Inject
 
 //TODO problem jest, bo dane nie zdaza sie zaktualizowac przed wyrenderowaniem ekranu cwiczen,
 //przez co dane sa nieaktualne, ale po odswiezeniu dane sie zgadzaja
 @HiltViewModel
-class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: ExerciseDatabaseService) : ViewModel() {
+class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: ExerciseDatabaseService,
+    private val sharedPrefsRepository: SharedPrefsRepository) : ViewModel() {
 
     private var _exerciseList = MutableStateFlow<List<SeriesInterface>?>(null)
     val exerciseList = _exerciseList.asStateFlow()
@@ -40,6 +44,17 @@ class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: E
 
     init {
         getAllTimeAndRepetitionSeriesById()
+    }
+
+    fun setIsSeriesActive(isActive: Boolean, trainingName: String, trainingId: Int, actualPage: Int, context: Context) {
+        if(isActive)
+            sharedPrefsRepository.setIsSeriesActive("true", trainingName, trainingId, actualPage, context = context)
+        else
+            sharedPrefsRepository.setIsSeriesActive("false", trainingName, trainingId, actualPage, context = context)
+    }
+
+    fun getIsSeriesActive(context: Context): SaveSeries {
+        return sharedPrefsRepository.getIsSeriesActive(context)
     }
 
     fun getTimeSeriesByExerciseId(exerciseId: Int) {

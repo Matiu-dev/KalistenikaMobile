@@ -8,9 +8,57 @@ plugins {
     id("kotlin-kapt")
     //dagger
     id("dagger.hilt.android.plugin")
+
+    id("jacoco")
+
+
 }
 
+jacoco {
+    toolVersion = "0.8.8"
+}
 
+tasks.register<JacocoReport>("instrumentationCodeCoverage") {
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
+
+    classDirectories.setFrom(
+        fileTree("${buildDir}/tmp/kotlin-classes/debug") {
+            exclude(
+                "**/R.class",
+//                "**/R$*.class",
+                "**/BuildConfig.*",
+//                "**/*Application.*",
+//                "**/Manifest*.*",
+//                "**/*Test*.*",
+//                "**/android/**/*.*",
+                "**/di/**",
+                "**/Hilt*.*",
+                "**/MainActivity.*"
+//                "**/androidx/**/*.*",
+//                "**/airbnb/**/*.*",
+//                "**/di/**/*.*",
+//                "**/*Dagger*.*",
+//                "**/*Screen*"
+            )
+        }
+    )
+
+    sourceDirectories.setFrom(
+        files(
+            "src/main/java",
+            "src/main/kotlin"
+        )
+    )
+
+    executionData.setFrom(
+        fileTree("${buildDir}/outputs/code_coverage/debugAndroidTest/connected/Medium_Phone_API_35(AVD) - 15") {
+            include("*.ec")
+        }
+    )
+}
 
 android {
     namespace = "pl.matiu.kalistenika"
@@ -38,6 +86,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
         }
     }
 
@@ -152,3 +204,5 @@ dependencies {
     implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
     implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
 }
+
+//./gradlew connectedDebugAndroidTest - uruchamia testy i potem tworze raport z pliku ec ./gradlew instrumentationCodeCoverage
