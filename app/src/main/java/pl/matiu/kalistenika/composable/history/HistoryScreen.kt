@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,9 +23,11 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -33,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,6 +55,7 @@ import java.time.Month
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Duration.Companion.days
 
 //TODO https://m3.material.io/components/date-pickers/overview
 //https://developer.android.com/develop/ui/compose/components/snackbar po dodaniu nowego treningu
@@ -58,32 +63,116 @@ import java.util.Locale
 @Composable
 fun HistoryScreen(navController: NavController) {
 
-    var datePickerState = rememberDatePickerState()
+    // using build in elements
+//    var datePickerState = rememberDatePickerState()
+//
+//    val isDateSelected = remember {
+//        mutableStateOf(false)
+//    }
+//
+//    val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
+//    val myDateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
+//
+//    Log.d("wybrana data", selectedDate.toString())
+//
+//    if(selectedDate != null && !isDateSelected.value) {
+//        isDateSelected.value = true
+//        navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.let { myDateFormat.format(it) }}" )
+//    }
+//
+//    Surface(
+//        modifier = Modifier.fillMaxSize(),
+//        color = InsideLevel1,
+//    ) {
+//        DatePicker(
+//            colors = DatePickerDefaults.colors(
+//                containerColor = InsideLevel1
+//            ),
+//            state = datePickerState
+//        )
+//    }
 
-    val isDateSelected = remember {
-        mutableStateOf(false)
+    //custom
+
+    val localePL = Locale("pl", "PL")
+    val calendar = Calendar.getInstance(localePL)
+    calendar.set(Calendar.DAY_OF_MONTH, 1)
+
+    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val weeksInMonth = calendar.getActualMaximum(Calendar.WEEK_OF_MONTH)
+
+    val daysPerWeek = MutableList(weeksInMonth) { 0 }
+
+    for (day in 1..daysInMonth) {
+        calendar.set(Calendar.DAY_OF_MONTH, day)
+        val weekOfMonth = calendar.get(Calendar.WEEK_OF_MONTH) - 1
+        daysPerWeek[weekOfMonth]++
     }
 
-    val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
-    val myDateFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
-
-    Log.d("wybrana data", selectedDate.toString())
-
-    if(selectedDate != null && !isDateSelected.value) {
-        isDateSelected.value = true
-        navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${selectedDate.let { myDateFormat.format(it) }}" )
-    }
+    calendar.set(Calendar.DAY_OF_MONTH, 1)
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = InsideLevel1,
     ) {
-        DatePicker(
-            colors = DatePickerDefaults.colors(
-                containerColor = InsideLevel1
-            ),
-            state = datePickerState
-        )
+        Column(modifier = Modifier.fillMaxWidth()) {
+            for(j in 0..daysPerWeek.size-1) {//number of weeks
+
+                Row(modifier = Modifier.weight(1f)) {
+
+                    val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2
+
+                    //uzupelnianie pustych miejsc od poczatku
+                    for(k in 0..firstDayOfWeek-1) {
+                        Box(modifier = Modifier.weight(1F))
+                    }
+
+                    //srodek
+                    for(i in 0..daysPerWeek.get(j)-1) {
+                        Box(modifier = Modifier
+                            .weight(1F)
+                            .fillMaxSize(),
+                            contentAlignment = Alignment.Center
+
+                        ) {
+                            TextButton(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    val start = Calendar.getInstance().apply {
+                                        set(Calendar.YEAR, 2025)
+                                        set(Calendar.MONTH, Calendar.OCTOBER)
+                                        set(Calendar.WEEK_OF_MONTH, 1)
+                                        set(Calendar.DAY_OF_WEEK, 2)//29 poniedzialek
+                                    }
+                                    Log.d("test", "kliknieto ${start.time}")
+                                }
+                            ) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = "${calendar.get(Calendar.DAY_OF_MONTH)}",
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+
+
+                            calendar.set(
+                                Calendar.DAY_OF_MONTH,
+                                calendar.get(Calendar.DAY_OF_MONTH) + 1
+                            )
+                        }
+                    }
+
+                    //puste miejsca na koncu
+                    if(firstDayOfWeek == 0) {
+                        for(k in 0..7-daysPerWeek.get(j) - 1) {
+                            Box(modifier = Modifier.weight(1F))
+                        }
+                    }
+                }
+
+            }
+
+        }
     }
 }
 
