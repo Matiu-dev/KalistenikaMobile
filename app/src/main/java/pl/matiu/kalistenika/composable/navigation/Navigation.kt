@@ -26,135 +26,134 @@ import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.sharedPrefs.saveSeries.SaveSeries
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun Navigation(navController: NavHostController,
-               innerPadding: PaddingValues,
-               context: Context,
-               appLanguage: AppLanguage,
-               onTopBarTitleChange: (String) -> Unit,
-               onTopBarPreviewScreenChange: (String) -> Unit,
-               onIsNavigationIconChange: (Boolean) -> Unit,
-               onAddButtonChange: (String) -> Unit,
-               trainingId: Int,
-               onTrainingIdChange: (Int) -> Unit,
-               trainingName: String,
-               onTrainingNameChange: (String) -> Unit,
-               isSeriesActive: SaveSeries
-) {
-
-    val destination = if(isSeriesActive.isActive == "false")
-        MainRoutes.Training.destination
-    else
-        AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
-
-    Log.d("DisposableEffect", "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}")
-    NavHost(
-        navController = navController,
-        startDestination = destination,
-        modifier = Modifier.padding(innerPadding),
-    ) {
-        composable(route = AlternativeRoutes.ChangeLanguage.destination) {
-            onTopBarTitleChange(stringResource(R.string.language_page_title))
-            onTopBarPreviewScreenChange(AlternativeRoutes.ChangeLanguage.topBarPreviewScreen)
-            onIsNavigationIconChange(AlternativeRoutes.ChangeLanguage.isNavigationIcon)
-            onAddButtonChange(AlternativeRoutes.ChangeLanguage.addButton)
-
-            ChangeLanguageScreen(context = context, appLanguage = appLanguage, navController = navController)
-        }
-
-        composable(route = MainRoutes.Training.destination) {
-            onTopBarTitleChange(stringResource(R.string.main_page_title))
-            onTopBarPreviewScreenChange(MainRoutes.Training.destination)
-            onIsNavigationIconChange(MainRoutes.Training.isNavigationIcon)
-            onAddButtonChange(MainRoutes.Training.addButton)
-
-            TrainingScreen(navController = navController)
-        }
-
-        composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingName}" + "/{trainingId}") { backStackEntry ->
-
-            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt() ?: 0)
-            onTrainingNameChange(backStackEntry.arguments?.getString("trainingName") ?: "")
-
-            onTopBarTitleChange(backStackEntry.arguments?.getString("trainingName").toString())
-            onTopBarPreviewScreenChange(AlternativeRoutes.SeriesScreen.topBarPreviewScreen)
-            onIsNavigationIconChange(AlternativeRoutes.SeriesScreen.isNavigationIcon)
-            onAddButtonChange(AlternativeRoutes.SeriesScreen.addButton)
-
-            SeriesScreen(
-                navController = navController,
-                trainingName = backStackEntry.arguments?.getString("trainingName").toString()
-            )
-        }
-
-        composable(route = AlternativeRoutes.CreateSeries.destination + "/{trainingId}") { backStackEntry ->
-            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt()!!)
-
-            onTopBarTitleChange(AlternativeRoutes.CreateSeries.topBarTitle)
-            onTopBarPreviewScreenChange(AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}")
-            onIsNavigationIconChange(AlternativeRoutes.CreateSeries.isNavigationIcon)
-            onAddButtonChange(AlternativeRoutes.CreateSeries.addButton)
-
-            CreateSeries(
-                navController = navController,
-                trainingId = trainingId,
-                context = LocalContext.current,
-                trainingName = trainingName
-            )
-        }
-
-        composable(route = AlternativeRoutes.EditRepetitionSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
-            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt()!!)
-            val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
-
-            onTopBarTitleChange(AlternativeRoutes.EditRepetitionSeries.topBarTitle)
-            onTopBarPreviewScreenChange(AlternativeRoutes.EditRepetitionSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}")
-            onIsNavigationIconChange(AlternativeRoutes.EditRepetitionSeries.isNavigationIcon)
-            onAddButtonChange(AlternativeRoutes.EditRepetitionSeries.addButton)
-
-            RepetitionExerciseEditScreen(
-                navigator = navController,
-                exerciseId = exerciseId,
-                trainingId = trainingId
-            )
-        }
-
-        composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
-            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt()!!)
-            val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
-
-            onTopBarTitleChange(AlternativeRoutes.EditTimeSeries.topBarTitle)
-            onTopBarPreviewScreenChange(AlternativeRoutes.EditTimeSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}")
-            onIsNavigationIconChange(AlternativeRoutes.EditTimeSeries.isNavigationIcon)
-            onAddButtonChange(AlternativeRoutes.EditTimeSeries.addButton)
-
-            TimeExerciseEditScreen(
-                navigator = navController,
-                exerciseId = exerciseId,
-                trainingId = trainingId
-            )
-        }
-
-
-        composable(route = MainRoutes.History.destination) {
-            onTopBarTitleChange(MainRoutes.History.topBarTitle)
-            onIsNavigationIconChange(MainRoutes.History.isNavigationIcon)
-            onAddButtonChange(MainRoutes.History.addButton)
-
-            HistoryScreen(navController = navController)
-        }
-
-        composable(route = AlternativeRoutes.HistoryDateDetails.destination + "/{date}") {
-
-            val date: String = it.arguments?.getString("date").toString()
-
-            onTopBarTitleChange(AlternativeRoutes.HistoryDateDetails.topBarTitle)
-            onTopBarPreviewScreenChange(AlternativeRoutes.HistoryDateDetails.topBarPreviewScreen)
-            onIsNavigationIconChange(AlternativeRoutes.HistoryDateDetails.isNavigationIcon)
-            onAddButtonChange(AlternativeRoutes.HistoryDateDetails.addButton)
-
-            HistoryDetailsScreen(date = date)
-        }
-    }
-}
+//@OptIn(ExperimentalFoundationApi::class)
+//@Composable
+//fun Navigation(navController: NavHostController,
+//               innerPadding: PaddingValues,
+//               context: Context,
+//               appLanguage: AppLanguage,
+//               onTopBarTitleChange: (String) -> Unit,
+//               onTopBarPreviewScreenChange: (String) -> Unit,
+//               onIsNavigationIconChange: (Boolean) -> Unit,
+//               onAddButtonChange: (String) -> Unit,
+//               trainingId: Int,
+//               onTrainingIdChange: (Int) -> Unit,
+//               trainingName: String,
+//               onTrainingNameChange: (String) -> Unit,
+//               isSeriesActive: SaveSeries
+//) {
+//    val destination = if(isSeriesActive.isActive == "false")
+//        MainRoutes.Training.destination
+//    else
+//        AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+//
+//    Log.d("DisposableEffect", "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}")
+//    NavHost(
+//        navController = navController,
+//        startDestination = destination,
+//        modifier = Modifier.padding(innerPadding),
+//    ) {
+//        composable(route = AlternativeRoutes.ChangeLanguage.destination) {
+//            onTopBarTitleChange(stringResource(R.string.language_page_title))
+//            onTopBarPreviewScreenChange(AlternativeRoutes.ChangeLanguage.topBarPreviewScreen)
+//            onIsNavigationIconChange(AlternativeRoutes.ChangeLanguage.isNavigationIcon)
+//            onAddButtonChange(AlternativeRoutes.ChangeLanguage.addButton)
+//
+//            ChangeLanguageScreen(context = context, appLanguage = appLanguage, navController = navController)
+//        }
+//
+//        composable(route = MainRoutes.Training.destination) {
+//            onTopBarTitleChange(stringResource(R.string.main_page_title))
+//            onTopBarPreviewScreenChange(MainRoutes.Training.destination)
+//            onIsNavigationIconChange(MainRoutes.Training.isNavigationIcon)
+//            onAddButtonChange(MainRoutes.Training.addButton)
+//
+//            TrainingScreen(navController = navController)
+//        }
+//
+//        composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingName}" + "/{trainingId}") { backStackEntry ->
+//
+//            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt() ?: 0)
+//            onTrainingNameChange(backStackEntry.arguments?.getString("trainingName") ?: "")
+//
+//            onTopBarTitleChange(backStackEntry.arguments?.getString("trainingName").toString())
+//            onTopBarPreviewScreenChange(AlternativeRoutes.SeriesScreen.topBarPreviewScreen)
+//            onIsNavigationIconChange(AlternativeRoutes.SeriesScreen.isNavigationIcon)
+//            onAddButtonChange(AlternativeRoutes.SeriesScreen.addButton)
+//
+//            SeriesScreen(
+//                navController = navController,
+//                trainingName = backStackEntry.arguments?.getString("trainingName").toString()
+//            )
+//        }
+//
+//        composable(route = AlternativeRoutes.CreateSeries.destination + "/{trainingId}") { backStackEntry ->
+//            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt()!!)
+//
+//            onTopBarTitleChange(AlternativeRoutes.CreateSeries.topBarTitle)
+//            onTopBarPreviewScreenChange(AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}")
+//            onIsNavigationIconChange(AlternativeRoutes.CreateSeries.isNavigationIcon)
+//            onAddButtonChange(AlternativeRoutes.CreateSeries.addButton)
+//
+//            CreateSeries(
+//                navController = navController,
+//                trainingId = trainingId,
+//                context = LocalContext.current,
+//                trainingName = trainingName
+//            )
+//        }
+//
+//        composable(route = AlternativeRoutes.EditRepetitionSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
+//            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt()!!)
+//            val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+//
+//            onTopBarTitleChange(AlternativeRoutes.EditRepetitionSeries.topBarTitle)
+//            onTopBarPreviewScreenChange(AlternativeRoutes.EditRepetitionSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}")
+//            onIsNavigationIconChange(AlternativeRoutes.EditRepetitionSeries.isNavigationIcon)
+//            onAddButtonChange(AlternativeRoutes.EditRepetitionSeries.addButton)
+//
+//            RepetitionExerciseEditScreen(
+//                navigator = navController,
+//                exerciseId = exerciseId,
+//                trainingId = trainingId
+//            )
+//        }
+//
+//        composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
+//            onTrainingIdChange(backStackEntry.arguments?.getString("trainingId")?.toInt()!!)
+//            val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+//
+//            onTopBarTitleChange(AlternativeRoutes.EditTimeSeries.topBarTitle)
+//            onTopBarPreviewScreenChange(AlternativeRoutes.EditTimeSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}")
+//            onIsNavigationIconChange(AlternativeRoutes.EditTimeSeries.isNavigationIcon)
+//            onAddButtonChange(AlternativeRoutes.EditTimeSeries.addButton)
+//
+//            TimeExerciseEditScreen(
+//                navigator = navController,
+//                exerciseId = exerciseId,
+//                trainingId = trainingId
+//            )
+//        }
+//
+//
+//        composable(route = MainRoutes.History.destination) {
+//            onTopBarTitleChange(MainRoutes.History.topBarTitle)
+//            onIsNavigationIconChange(MainRoutes.History.isNavigationIcon)
+//            onAddButtonChange(MainRoutes.History.addButton)
+//
+//            HistoryScreen(navController = navController)
+//        }
+//
+//        composable(route = AlternativeRoutes.HistoryDateDetails.destination + "/{date}") {
+//
+//            val date: String = it.arguments?.getString("date").toString()
+//
+//            onTopBarTitleChange(AlternativeRoutes.HistoryDateDetails.topBarTitle)
+//            onTopBarPreviewScreenChange(AlternativeRoutes.HistoryDateDetails.topBarPreviewScreen)
+//            onIsNavigationIconChange(AlternativeRoutes.HistoryDateDetails.isNavigationIcon)
+//            onAddButtonChange(AlternativeRoutes.HistoryDateDetails.addButton)
+//
+//            HistoryDetailsScreen(date = date)
+//        }
+//    }
+//}

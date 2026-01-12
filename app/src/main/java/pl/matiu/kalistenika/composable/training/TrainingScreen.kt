@@ -1,5 +1,6 @@
 package pl.matiu.kalistenika.composable.training
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -28,10 +30,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.model.training.TrainingModel
+import pl.matiu.kalistenika.routes.AlternativeRoutes
+import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -42,7 +48,22 @@ import pl.matiu.testowa.dialog.ShowTrainingDialog
 
 @Composable
 @ExperimentalFoundationApi
-fun TrainingScreen(navController: NavController) {
+fun TrainingScreen(
+    navController: NavController,
+    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit)
+{
+    Log.d("test", "training screen")
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        onUpdateTopBar(
+            context.getString(R.string.main_page_title),
+            MainRoutes.Training.destination,
+            MainRoutes.Training.isNavigationIcon,
+            MainRoutes.Training.addButton
+        )
+    }
 
     val trainingViewModel: TrainingViewModel = hiltViewModel<TrainingViewModel>()
     val trainingList2 by trainingViewModel.trainingList.collectAsState()

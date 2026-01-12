@@ -1,5 +1,6 @@
 package pl.matiu.kalistenika
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,25 +43,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
-import android.Manifest
-import androidx.compose.material3.Card
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import pl.matiu.kalistenika.media.StartSong
-import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
+import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
+import pl.matiu.kalistenika.composable.history.HistoryScreen
+import pl.matiu.kalistenika.composable.language.ChangeLanguageScreen
 import pl.matiu.kalistenika.composable.series.AddExerciseButton
+import pl.matiu.kalistenika.composable.series.CreateSeries
+import pl.matiu.kalistenika.composable.series.RepetitionExerciseEditScreen
+import pl.matiu.kalistenika.composable.series.SeriesScreen
+import pl.matiu.kalistenika.composable.series.TimeExerciseEditScreen
 import pl.matiu.kalistenika.composable.training.AddTrainingButton
+import pl.matiu.kalistenika.composable.training.TrainingScreen
+import pl.matiu.kalistenika.media.StartSong
+import pl.matiu.kalistenika.notification.createNotificationChannel
+import pl.matiu.kalistenika.routes.AlternativeRoutes
+import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.ui.theme.KalistenikaTheme
 import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Wheat
-import pl.matiu.kalistenika.routes.AlternativeRoutes
-import pl.matiu.kalistenika.composable.navigation.Navigation
-import pl.matiu.kalistenika.language.AppLanguage
-import pl.matiu.kalistenika.notification.createNotificationChannel
-import pl.matiu.kalistenika.sharedPrefs.SharedPrefsRepositoryImpl
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -78,7 +85,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
@@ -106,10 +113,10 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
         }
     }
 
-    Log.d("DisposableEffect", viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).isActive
-    + " training name: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingName +
-    " training id: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingId +
-    " actual page: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).actualPage)
+//    Log.d("DisposableEffect", viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).isActive
+//    + " training name: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingName +
+//    " training id: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingId +
+//    " actual page: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).actualPage)
 
     KalistenikaTheme {
         val navController = rememberNavController()
@@ -161,12 +168,16 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                         navigationIcon = {
                             if (isNavigationIcon) {
                                 IconButton(onClick = {
-//                                    navController.navigate(topBarPreviewScreen)
-                                    if (topBarPreviewScreen == "history") {
-                                        navController.navigate(route = topBarPreviewScreen)
-                                    } else {
-                                        navController.popBackStack(topBarPreviewScreen, false)
-                                        navController.popBackStack()
+                                    when (topBarPreviewScreen) {
+                                        "history" -> {
+                                            navController.navigate(route = topBarPreviewScreen)
+                                        }
+                                        "training" -> {
+                                            navController.navigate(route = topBarPreviewScreen)
+                                        }
+                                        else -> {
+                                            navController.popBackStack()
+                                        }
                                     }
                                 }) {
                                     Icon(
@@ -203,47 +214,145 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                     if (addButton == "AddExercise") { AddExerciseButton { navController.navigate(AlternativeRoutes.CreateSeries.destination + "/$trainingId") } }
                 }
             ) { innerPadding ->
-                Navigation(navController = navController,
-                    innerPadding = innerPadding,
-                    context = context,
-                    appLanguage = appLanguage,
-                    onTopBarTitleChange = {topBarTitle = it},
-                    onTopBarPreviewScreenChange = {topBarPreviewScreen = it},
-                    onIsNavigationIconChange = {isNavigationIcon = it},
-                    onAddButtonChange = {addButton = it},
-                    trainingId = trainingId,
-                    onTrainingIdChange = {trainingId = it},
-                    trainingName = trainingName,
-                    onTrainingNameChange = {trainingName = it},
-                    isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
-                )
+                //ToDo - poprawic, zeby asynchronicznie było
+                val isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
+                val destination = if(isSeriesActive.isActive == "false")
+                    MainRoutes.Training.destination
+                else
+                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+
+//                Log.d("DisposableEffect", "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}")
+
+                NavHost(
+                    navController = navController,
+                    startDestination = destination,
+                    modifier = Modifier.padding(innerPadding),
+                ) {
+                    composable(route = AlternativeRoutes.ChangeLanguage.destination) {
+                        ChangeLanguageScreen(
+                            appLanguage = appLanguage,
+                            navController = navController,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            }
+                        )
+                    }
+
+                    composable(route = MainRoutes.Training.destination) {
+                        TrainingScreen(
+                            navController = navController,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            }
+                        )
+                    }
+
+                    composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingName}" + "/{trainingId}") { backStackEntry ->
+
+                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt() ?: 0
+                        trainingName = backStackEntry.arguments?.getString("trainingName") ?: ""
+
+                        SeriesScreen(
+                            navController = navController,
+                            trainingName = backStackEntry.arguments?.getString("trainingName").toString(),
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            },
+                            backStackEntry = backStackEntry
+                        )
+                    }
+
+                    composable(route = AlternativeRoutes.CreateSeries.destination + "/{trainingId}") { backStackEntry ->
+                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
+
+                        CreateSeries(
+                            navController = navController,
+                            trainingId = trainingId,
+                            trainingName = trainingName,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            },
+                        )
+                    }
+
+                    composable(route = AlternativeRoutes.EditRepetitionSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
+                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
+                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+
+                        RepetitionExerciseEditScreen(
+                            navigator = navController,
+                            exerciseId = exerciseId,
+                            trainingId = trainingId,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            },
+                        )
+                    }
+
+                    composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
+                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
+                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
+
+                        TimeExerciseEditScreen(
+                            navigator = navController,
+                            exerciseId = exerciseId,
+                            trainingId = trainingId,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            },
+                        )
+                    }
+
+
+                    composable(route = MainRoutes.History.destination) {
+
+                        HistoryScreen(
+                            navController = navController,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            },
+                        )
+                    }
+
+                    composable(route = AlternativeRoutes.HistoryDateDetails.destination + "/{date}") {
+
+                        val date: String = it.arguments?.getString("date").toString()
+
+                        HistoryDetailsScreen(
+                            date = date,
+                            onUpdateTopBar = { title, preview, icon, button ->
+                                topBarTitle = title
+                                topBarPreviewScreen = preview
+                                isNavigationIcon = icon
+                                addButton = button
+                            },
+                        )
+                    }
+
+
+                }
             }
         }
     }
 }
-
-//get exercise
-//        NinjaApiService().getExercises()
-
-//        var user = User("email", "password", Anonymous)
-
-//        val loginContext = LoginContext(GoogleLogin())
-//        val registerContext = RegisterContext(GoogleRegister())
-
-//logowanie
-//        user.state.signIn(user, loginContext)
-//        user.state.logOut(user, loginContext)
-
-//klikam na przycisk z napisem github i zmieniam strategie
-//        loginContext.setStrategy(GithubLogin())
-//pojawia sie ekran z polami do uzupelnienia dla tej strategii logowania
-//po uzupelnieniu klikam na jeden z ponizszych przyciskow
-//        user.state.signIn(user, loginContext)
-//        user.state.signIn(user, loginContext)
-//        user.state.signUp(user, registerContext)
-//        user.state.logOut(user, LoginContext(GithubLogin()))
-//nastepuje logowanie lub wylogowanie
-
-//        RealTimeDatabaseService().writeData()
-
-//notification

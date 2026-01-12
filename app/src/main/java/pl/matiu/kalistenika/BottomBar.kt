@@ -24,7 +24,7 @@ import pl.matiu.kalistenika.ui.theme.Wheat
 fun BottomAppBar(navController: NavController) {
 
     var tabIndex by remember { mutableStateOf(0) }
-    val tabsScreen = MainRoutes.values().toList()
+    val tabsScreen = MainRoutes.entries
 
     BottomAppBar(
         containerColor = MainScreenColor,
@@ -51,8 +51,14 @@ fun BottomAppBar(navController: NavController) {
                     text = { Text(dest.title, color = Wheat) },
                     selected = tabIndex == index,
                     onClick = {
-                        tabIndex = index
-                        navController.navigate(dest.destination)
+                        if (navController.currentDestination?.route != dest.destination) {
+                            tabIndex = index
+                            navController.navigate(dest.destination) {
+                                popUpTo(navController.graph.startDestinationId) {saveState = true}
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
                     },
                     icon = {
                         Icon(

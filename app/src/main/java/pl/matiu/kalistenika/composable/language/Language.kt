@@ -10,18 +10,37 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.SelectLanguage
 import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.model.training.RepetitionExercise
+import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 
 @Composable
-fun ChangeLanguageScreen(context: Context, appLanguage: AppLanguage, navController: NavController) {
+fun ChangeLanguageScreen(
+    appLanguage: AppLanguage,
+    navController: NavController,
+    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
+) {
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        onUpdateTopBar(
+            context.getString(R.string.language_page_title),
+            AlternativeRoutes.ChangeLanguage.topBarPreviewScreen,
+            AlternativeRoutes.ChangeLanguage.isNavigationIcon,
+            AlternativeRoutes.ChangeLanguage.addButton
+        )
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),

@@ -29,8 +29,8 @@ class TrainingViewModel @Inject constructor(private val trainingDatabaseService:
 
     private fun getAllTraining() {
         viewModelScope.launch {
-            ThreadIdLogger(ConsoleLogger()).log("training view model", "data downloading")
             withContext(Dispatchers.IO) {
+                ThreadIdLogger(ConsoleLogger()).log("training view model", "data downloading")
                 _isTrainingLoading.value = true
                 _trainingList.value = trainingDatabaseService.getAllTraining()
                 _isTrainingLoading.value = false
@@ -40,9 +40,9 @@ class TrainingViewModel @Inject constructor(private val trainingDatabaseService:
     }
 
     fun addTraining(trainingModel: TrainingModel) {
-        ThreadIdLogger(ConsoleLogger()).log("training view model", "adding new training ${trainingModel.name}")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                ThreadIdLogger(ConsoleLogger()).log("training view model", "adding new training ${trainingModel.name}")
                 _isTrainingLoading.value = true
                 trainingDatabaseService.addTraining(trainingModel)
                 trainingDatabaseService.getAllTraining()
@@ -52,9 +52,9 @@ class TrainingViewModel @Inject constructor(private val trainingDatabaseService:
     }
 
     fun deleteTraining(trainingModel: TrainingModel) {
-        ThreadIdLogger(ConsoleLogger()).log("training view model", "deleting training ${trainingModel.name}")
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
+                ThreadIdLogger(ConsoleLogger()).log("training view model", "deleting training ${trainingModel.name}")
                 _isTrainingLoading.value = true
                 trainingDatabaseService.deleteTraining(trainingModel)
                 trainingDatabaseService.getAllTraining()

@@ -12,18 +12,33 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
+import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.Smola
 
 @Composable
-fun HistoryDetailsScreen(date: String) {
+fun HistoryDetailsScreen(
+    date: String,
+    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
+) {
+
+    LaunchedEffect(Unit) {
+        onUpdateTopBar(
+            AlternativeRoutes.HistoryDateDetails.topBarTitle,
+            AlternativeRoutes.HistoryDateDetails.topBarPreviewScreen,
+            AlternativeRoutes.HistoryDateDetails.isNavigationIcon,
+            AlternativeRoutes.HistoryDateDetails.addButton
+        )
+    }
 
     val timeExercise = remember {
         mutableStateOf<List<TimeExercise>>(emptyList())

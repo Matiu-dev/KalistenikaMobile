@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,15 +36,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
@@ -55,9 +60,20 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 fun CreateSeries(
     navController: NavController,
     trainingId: Int?,
-    context: Context,
-    trainingName: String
+    trainingName: String,
+    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        onUpdateTopBar(
+            AlternativeRoutes.CreateSeries.topBarTitle,
+            AlternativeRoutes.CreateSeries.topBarPreviewScreen + "/${trainingName}" + "/${trainingId}",
+            AlternativeRoutes.CreateSeries.isNavigationIcon,
+            AlternativeRoutes.CreateSeries.addButton
+        )
+    }
+
     //TODO przy dodawania nie dodaje asynchronicznie - szybciej laduje sie ekran niz aktualizowane sa dane
     val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val listOfSeries = seriesViewModel.exerciseList.collectAsState()

@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +53,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -61,6 +63,7 @@ import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.SeriesInterface
 import pl.matiu.kalistenika.model.training.TimeExercise
+import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
@@ -72,8 +75,21 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 @Composable
 fun SeriesScreen(
     navController: NavController,
-    trainingName: String
+    trainingName: String,
+    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
+    backStackEntry: NavBackStackEntry
 ) {
+    Log.d("test", "Series screen")
+
+    LaunchedEffect(Unit) {
+        onUpdateTopBar(
+            backStackEntry.arguments?.getString("trainingName").toString(),
+            AlternativeRoutes.SeriesScreen.topBarPreviewScreen,
+            AlternativeRoutes.SeriesScreen.isNavigationIcon,
+            AlternativeRoutes.SeriesScreen.addButton
+        )
+    }
+
     val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val isSeriesLoading by seriesViewModel.isLoading.collectAsState()
     val exerciseList by seriesViewModel.exerciseList.collectAsState()
