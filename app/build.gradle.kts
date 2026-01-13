@@ -1,16 +1,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.gms.google-services")
-
-//    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
     id("kotlin-kapt")
     //dagger
     id("dagger.hilt.android.plugin")
-
     id("jacoco")
-
 
 }
 
@@ -62,7 +58,7 @@ tasks.register<JacocoReport>("instrumentationCodeCoverage") {
 
 android {
     namespace = "pl.matiu.kalistenika"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "pl.matiu.kalistenika"
@@ -107,9 +103,9 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.7"
-    }
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.15"
+//    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -121,88 +117,83 @@ android {
             enableSplit = false
         }
     }
+
+    hilt {
+        enableAggregatingTask = false
+    }
 }
 
 dependencies {
+    implementation(libs.appcompat)
 
-    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.navigation.compose)
 
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("androidx.activity:activity-compose:1.10.0")
-    implementation(platform("androidx.compose:compose-bom:2025.02.00"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-    implementation("androidx.navigation:navigation-compose:2.8.7")
-
-    implementation("androidx.compose.ui:ui:1.4.3")
-    implementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.1.1")
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
     
-    implementation("com.google.code.gson:gson:2.11.0")
-    implementation("org.danilopianini:gson-extras:1.3.0")
-    implementation("com.google.firebase:firebase-database:21.0.0")
+    implementation(libs.gson)
+    implementation(libs.gson.extras)
+    implementation(libs.firebase.database)
+    implementation(libs.compose.material.icons)
 
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    debugImplementation("androidx.compose.ui:ui-tooling")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom.v20230300))
+    debugImplementation(libs.androidx.ui.tooling)
 
     //tests
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
     //retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     //coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
-    // Import the BoM for the Firebase platform
-    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
-
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth")
+    implementation(libs.kotlinx.coroutines.core)
 
     //room
-    val room_version = "2.6.1"
-
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-
-    // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    kapt(libs.androidx.room.compiler)
 
     //Dagger - Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-//    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
-//    kapt("androidx.hilt:hilt-compiler:1.0.0")
-
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     //Dagger - hilt tests
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
-    testImplementation("com.google.dagger:hilt-android-testing:2.44")
-    kaptTest("com.google.dagger:hilt-android-compiler:2.48")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")//to dodałem
-    kaptAndroidTest("com.google.dagger:hilt-compiler:2.48")//i to dodałem i zaczelo dzialac
-    androidTestImplementation("androidx.test:rules:1.6.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation(libs.hilt.android.testing)
+    testImplementation(libs.dagger.hilt.android.testing)
+    kaptTest(libs.hilt.android.compiler)
+    kaptAndroidTest(libs.hilt.android.compiler)
+    kapt(libs.hilt.compiler)//to dodałem
+    kaptAndroidTest(libs.hilt.compiler)//i to dodałem i zaczelo dzialac
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.runner)
 
     //voyager
-    val voyagerVersion = "1.1.0-beta02"
-    implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
-    implementation("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
+    implementation(libs.voyager.navigator)
+    implementation(libs.voyager.screenmodel)
+    implementation(libs.voyager.bottom.sheet)
+    implementation(libs.voyager.tab.navigator)
+    implementation(libs.voyager.transitions)
+
+    //navigation 3
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
 }
 
 //./gradlew connectedDebugAndroidTest - uruchamia testy i potem tworze raport z pliku ec ./gradlew instrumentationCodeCoverage
