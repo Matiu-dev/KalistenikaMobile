@@ -32,8 +32,11 @@ import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 
 @Composable
-fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberOfExercise: Int, trainingName: String,
-                                 trainingId: Int, navigator: NavController, seriesViewModel: SeriesViewModel) {
+fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise,
+                                 numberOfExercise: Int,
+                                 trainingName: String,
+                                 trainingId: Int,
+                                 seriesViewModel: SeriesViewModel) {
     var exerciseName by remember {
         mutableStateOf(repetitionExercise.repetitionExerciseName)
     }
@@ -62,7 +65,7 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
 
         if(!isLodaing.value) {
             isClicked = false
-            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
+//            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
         }
     }
 

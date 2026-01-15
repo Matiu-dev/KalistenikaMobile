@@ -15,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
@@ -28,7 +28,8 @@ import pl.matiu.kalistenika.ui.theme.Smola
 @Composable
 fun HistoryDetailsScreen(
     date: String,
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
+    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
+    backStack: SnapshotStateList<Any>
 ) {
 
     LaunchedEffect(Unit) {

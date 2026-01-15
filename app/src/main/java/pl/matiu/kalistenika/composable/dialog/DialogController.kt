@@ -10,6 +10,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -34,14 +35,14 @@ fun ShowTrainingDialog(
     dialogResponse: DialogResponse,
     showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
-    navController: NavController
+    backStack: SnapshotStateList<Any>
 ) {
     when (dialogResponse) {
         is DialogResponse.CreateTrainingDialog -> CreateTrainingDialog(
+            backStack = backStack,
             showDialog = showDialog,
             onShowDialogChange = { onShowDialogChange(!showDialog) },
             DialogValues(title = "Create Dialog"),
-            navController = navController,
             context = LocalContext.current
         )
 
@@ -56,7 +57,6 @@ fun ShowTrainingDialog(
             showDialog,
             { onShowDialogChange(!showDialog) },
             DialogValues(title = "Delete dialog"),
-            navController = navController,
             training = dialogResponse.training
         )
     }

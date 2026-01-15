@@ -13,7 +13,6 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 @Composable
 fun RepetitionExerciseEditScreen(
-    navigator: NavController,
     trainingId: Int,
     exerciseId: Int,
     onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
@@ -47,10 +46,10 @@ fun RepetitionExerciseEditScreen(
 
     if(!isTrainingLoading.value) {
             seriesViewModel.repetitionExercise.collectAsState().value?.let { it1 ->
-                RepetitionExerciseEditScreen(repetitionExercise = it1,
+                RepetitionExerciseEditScreen(
+                    repetitionExercise = it1,
                     numberOfExercise = numberOfExercise,
                     trainingId = trainingId,
-                    navigator = navigator,
                     seriesViewModel = seriesViewModel,
                     trainingName = trainingName
                 )
@@ -60,7 +59,6 @@ fun RepetitionExerciseEditScreen(
 
 @Composable
 fun TimeExerciseEditScreen(
-    navigator: NavController,
     trainingId: Int,
     exerciseId: Int,
     onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
@@ -96,7 +94,6 @@ fun TimeExerciseEditScreen(
                 TimeExerciseEditScreen(timeExercise = it1,
                     numberOfExercise = numberOfExercise,
                     trainingId = trainingId,
-                    navigator = navigator,
                     seriesViewModel = seriesViewModel,
                     trainingName = trainingName
                 )

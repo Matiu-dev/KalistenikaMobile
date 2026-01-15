@@ -1,5 +1,6 @@
 package pl.matiu.kalistenika
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.BottomAppBar
@@ -14,14 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
+import pl.matiu.kalistenika.composable.navigation.HistoryScreen
+import pl.matiu.kalistenika.composable.navigation.Home
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Wheat
 
 @Composable
-fun BottomAppBar(navController: NavController) {
+fun BottomAppBar(backStack: SnapshotStateList<Any>) {
 
     var tabIndex by remember { mutableStateOf(0) }
     val tabsScreen = MainRoutes.entries
@@ -51,13 +54,14 @@ fun BottomAppBar(navController: NavController) {
                     text = { Text(dest.title, color = Wheat) },
                     selected = tabIndex == index,
                     onClick = {
-                        if (navController.currentDestination?.route != dest.destination) {
-                            tabIndex = index
-                            navController.navigate(dest.destination) {
-                                popUpTo(navController.graph.startDestinationId) {saveState = true}
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                        Log.d("log", backStack.get(0).toString())
+                        tabIndex = index
+                        if(backStack.get(0) == Home && index != 0) {
+                            backStack.clear()
+                            backStack.add(HistoryScreen)
+                        } else if(backStack.get(0) == HistoryScreen && index != 1) {
+                            backStack.clear()
+                            backStack.add(Home)
                         }
                     },
                     icon = {

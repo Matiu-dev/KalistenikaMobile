@@ -18,7 +18,6 @@ fun DeleteTrainingDialog(
     showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
     dialogValues: DialogValues,
-    navController: NavController,
     training: TrainingModel
 ) {
 
@@ -40,7 +39,7 @@ fun DeleteTrainingDialog(
                     onClick = {
                         onShowDialogChange(false)
                         trainingViewModel.deleteTraining(training)
-                        navController.navigate(MainRoutes.Training.destination)
+//                        navController.navigate(MainRoutes.Training.destination)
                     }
                 ) {
                     Text(text = "Potwierdż", color = Smola)

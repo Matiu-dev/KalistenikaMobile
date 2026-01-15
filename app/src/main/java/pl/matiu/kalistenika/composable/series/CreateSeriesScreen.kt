@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,27 +42,20 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.room.ExerciseDatabaseService
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.routes.AlternativeRoutes
-import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.InsideLevel2
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
-import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 @Composable
 fun CreateSeries(
-    navController: NavController,
     trainingId: Int?,
     trainingName: String,
     onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
+    backStack: SnapshotStateList<Any>,
 ) {
     val context = LocalContext.current
 
@@ -87,23 +81,23 @@ fun CreateSeries(
 
             Row(modifier = Modifier.padding(vertical = 5.dp)) {
                 TimeSeries(
-                    navController = navController,
                     trainingId = trainingId,
                     context = context,
                     numberOfExercise = numberOfExercise,
                     seriesViewModel = seriesViewModel,
-                    trainingName = trainingName
+                    trainingName = trainingName,
+                    backStack = backStack
                 )
             }
 
             Row(modifier = Modifier.padding(vertical = 5.dp)) {
                 RepetitiveSeries(
-                    navController = navController,
                     trainingId = trainingId,
                     trainingName = trainingName,
                     context = context,
                     numberOfExercise = numberOfExercise,
-                    seriesViewModel = seriesViewModel
+                    seriesViewModel = seriesViewModel,
+                    backStack = backStack
                 )
             }
         }
@@ -112,7 +106,7 @@ fun CreateSeries(
 
 @Composable
 fun RepetitiveSeries(
-    navController: NavController,
+    backStack: SnapshotStateList<Any>,
     trainingId: Int?,
     trainingName: String,
     context: Context,
@@ -167,10 +161,10 @@ fun RepetitiveSeries(
                             RepetitiveSeriesOptions(
                                 numberOfExercise = numberOfExercise,
                                 context = context,
-                                navController = navController,
                                 trainingId = trainingId,
                                 trainingName = trainingName,
-                                seriesViewModel = seriesViewModel
+                                seriesViewModel = seriesViewModel,
+                                backStack = backStack
                             )
                         }
                     }
@@ -184,10 +178,10 @@ fun RepetitiveSeries(
 fun RepetitiveSeriesOptions(
     numberOfExercise: Int,
     context: Context,
-    navController: NavController,
     trainingId: Int?,
     trainingName: String,
-    seriesViewModel: SeriesViewModel
+    seriesViewModel: SeriesViewModel,
+    backStack: SnapshotStateList<Any>
 ) {
     var exerciseName by rememberSaveable { mutableStateOf("") }
     var numberOfSeries by rememberSaveable { mutableStateOf("") }
@@ -202,7 +196,7 @@ fun RepetitiveSeriesOptions(
 
         if(!isLodaing.value) {
             isClicked = false
-            navController.navigate("training/${trainingName}/${trainingId}")
+//            navController.navigate("training/${trainingName}/${trainingId}")
         }
     }
 
@@ -302,7 +296,7 @@ fun RepetitiveSeriesOptions(
 
 @Composable
 fun TimeSeries(
-    navController: NavController,
+    backStack: SnapshotStateList<Any>,
     trainingId: Int?,
     trainingName: String,
     context: Context,
@@ -372,7 +366,6 @@ fun TimeSeries(
                         Column {
                             TimeSeriesOptions(
                                 numberOfExercise = numberOfExercise,
-                                navController = navController,
                                 trainingId = trainingId,
                                 trainingName = trainingName,
                                 context = context,
@@ -391,7 +384,6 @@ fun TimeSeries(
 @Composable
 fun TimeSeriesOptions(
     numberOfExercise: Int,
-    navController: NavController,
     trainingId: Int?,
     trainingName: String,
     context: Context,
@@ -409,7 +401,7 @@ fun TimeSeriesOptions(
 
         if(!isLodaing.value) {
             isClicked = false
-            navController.navigate("training/${trainingName}/${trainingId}")
+//            navController.navigate("training/${trainingName}/${trainingId}")
         }
     }
 

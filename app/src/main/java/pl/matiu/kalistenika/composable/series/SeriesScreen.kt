@@ -4,7 +4,6 @@ import StartRepetitionSeries
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,13 +52,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.SeriesInterface
@@ -74,16 +69,15 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SeriesScreen(
-    navController: NavController,
+    backStack: SnapshotStateList<Any>,
     trainingName: String,
     onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
-    backStackEntry: NavBackStackEntry
 ) {
     Log.d("test", "Series screen")
 
     LaunchedEffect(Unit) {
         onUpdateTopBar(
-            backStackEntry.arguments?.getString("trainingName").toString(),
+            trainingName,
             AlternativeRoutes.SeriesScreen.topBarPreviewScreen,
             AlternativeRoutes.SeriesScreen.isNavigationIcon,
             AlternativeRoutes.SeriesScreen.addButton
@@ -103,11 +97,11 @@ fun SeriesScreen(
         LoadingScreen()
     } else {
         SeriesScreenView(
+            backStack = backStack,
             exerciseList = exerciseList?.filter { it.trainingId == trainingId }?.sortedBy { it.positionInTraining },
-            navController = navController,
             trainingId = trainingId,
             trainingName = trainingName,
-            seriesViewModel
+            seriesViewModel = seriesViewModel
         )
     }
 }
@@ -131,11 +125,12 @@ fun LoadingScreen() {
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SeriesScreenView(
+
     exerciseList: List<SeriesInterface>?,
-    navController: NavController,
     trainingId: Int?,
     trainingName: String,
-    seriesViewModel: SeriesViewModel
+    seriesViewModel: SeriesViewModel,
+    backStack: SnapshotStateList<Any>
 ) {
     val context = LocalContext.current
 
@@ -327,12 +322,12 @@ fun SeriesScreenView(
                                 when (exerciseList?.get(index)) {
 
                                     is RepetitionExercise -> StartRepetitionSeries(
+                                        backStack = backStack,
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
                                         trainingName = trainingName,
                                         startStop = startStop,
                                         onStarStopChange = { startStop = it },
-                                        navController = navController,
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
@@ -340,11 +335,11 @@ fun SeriesScreenView(
 
 
                                     is TimeExercise -> StartTimeSeries(
+                                        backStack = backStack,
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as TimeExercise,
                                         startStop = startStop,
                                         onStarStopChange = { startStop = it },
-                                        navController = navController,
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
@@ -355,28 +350,28 @@ fun SeriesScreenView(
                                 when (exerciseList?.get(index)) {
                                     //TODO zamienic te obiekty na Cardy https://developer.android.com/develop/ui/compose/components/card
                                     is RepetitionExercise -> StartRepetitionSeries(
+                                        backStack = backStack,
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
+                                        trainingName = trainingName,
                                         startStop = false,
                                         onStarStopChange = { false },
-                                        navController = navController,
                                         pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
-                                        trainingName = trainingName
                                     )
 
 
                                     is TimeExercise -> StartTimeSeries(
+                                        backStack = backStack,
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as TimeExercise,
+                                        trainingName = trainingName,
                                         startStop = false,
                                         onStarStopChange = { false },
-                                        navController = navController,
-                                        pagerState = pagerState,
                                         endOfSeries = endOfSeries,
                                         onEndOfSeriesChange = { endOfSeries = it },
-                                        trainingName = trainingName
+                                        pagerState = pagerState,
                                     )
                                 }
                             }
@@ -395,7 +390,7 @@ fun SeriesScreenView(
 
 
             } else {
-                navController.navigate(MainRoutes.Training.destination + "/${trainingId}" + "/createSeries")
+//                navController.navigate(MainRoutes.Training.destination + "/${trainingId}" + "/createSeries")
             }
         }
     }

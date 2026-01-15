@@ -81,12 +81,9 @@ voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitio
 
 compose-material-icons = { group = "androidx.compose.material", name = "material-icons-core" }
 
-
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
-
-
 
 [plugins]
 

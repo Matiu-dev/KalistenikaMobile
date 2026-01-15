@@ -37,8 +37,11 @@ import pl.matiu.kalistenika.viewModel.SeriesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, trainingName: String,
-                           trainingId: Int, navigator: NavController, seriesViewModel: SeriesViewModel
+fun TimeExerciseEditScreen(timeExercise: TimeExercise,
+                           numberOfExercise: Int,
+                           trainingName: String,
+                           trainingId: Int,
+                           seriesViewModel: SeriesViewModel
 ) {
     var exerciseName by remember {
         mutableStateOf(timeExercise.timeExerciseName)
@@ -64,7 +67,7 @@ fun TimeExerciseEditScreen(timeExercise: TimeExercise, numberOfExercise: Int, tr
 
         if(!isLodaing.value) {
             isClicked = false
-            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
+//            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
         }
     }
 
