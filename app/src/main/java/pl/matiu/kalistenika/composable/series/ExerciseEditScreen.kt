@@ -6,6 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
@@ -13,6 +15,7 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 
 @Composable
 fun RepetitionExerciseEditScreen(
+    backStack: NavBackStack<NavKey>,
     trainingId: Int,
     exerciseId: Int,
     onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
@@ -47,11 +50,11 @@ fun RepetitionExerciseEditScreen(
     if(!isTrainingLoading.value) {
             seriesViewModel.repetitionExercise.collectAsState().value?.let { it1 ->
                 RepetitionExerciseEditScreen(
+                    backStack = backStack,
                     repetitionExercise = it1,
                     numberOfExercise = numberOfExercise,
                     trainingId = trainingId,
                     seriesViewModel = seriesViewModel,
-                    trainingName = trainingName
                 )
             }
     }
@@ -59,6 +62,7 @@ fun RepetitionExerciseEditScreen(
 
 @Composable
 fun TimeExerciseEditScreen(
+    backStack: NavBackStack<NavKey>,
     trainingId: Int,
     exerciseId: Int,
     onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
@@ -91,7 +95,9 @@ fun TimeExerciseEditScreen(
 
     if(!isTrainingLoading.value) {
             seriesViewModel.timeExercise.collectAsState().value?.let { it1 ->
-                TimeExerciseEditScreen(timeExercise = it1,
+                TimeExerciseEditScreen(
+                    backStack = backStack,
+                    timeExercise = it1,
                     numberOfExercise = numberOfExercise,
                     trainingId = trainingId,
                     seriesViewModel = seriesViewModel,

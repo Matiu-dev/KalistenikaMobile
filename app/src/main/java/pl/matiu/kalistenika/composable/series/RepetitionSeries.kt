@@ -30,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,8 +42,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.delay
-import pl.matiu.kalistenika.composable.navigation.EditRepetitionSeries
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.model.training.RepetitionExercise
@@ -61,13 +62,12 @@ import pl.matiu.kalistenika.ui.theme.Smola
 fun StartRepetitionSeries(
     context: Context,
     exercise: RepetitionExercise,
-    trainingName: String,
     startStop: Boolean,
     onStarStopChange: (Boolean) -> Unit,
     pagerState: PagerState,
     endOfSeries: Boolean,
     onEndOfSeriesChange: (Boolean) -> Unit,
-    backStack: SnapshotStateList<Any>,
+    backStack: NavBackStack<NavKey>,
 ) {
 
     val seriesViewModel: SeriesViewModel = viewModel()
@@ -98,6 +98,7 @@ fun StartRepetitionSeries(
             seriesViewModel.deleteRepetitionSeries(repetitionExercise = exercise)
             isClicked = false
 //            navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+            backStack.removeAt(backStack.size - 1)
         }
     }
 
@@ -108,7 +109,7 @@ fun StartRepetitionSeries(
                 onClick = {
 //                    navController.navigate(AlternativeRoutes.EditRepetitionSeries.destination + "/${exercise.trainingId}" + "/${exercise.repetitionExerciseId}")
                     exercise.trainingId?.let {
-                        backStack.add(EditRepetitionSeries(trainingId = exercise.trainingId, exerciseId = exercise.repetitionExerciseId))
+                        backStack.add(Route.EditRepetitionSeries(trainingId = exercise.trainingId, exerciseId = exercise.repetitionExerciseId))
                     }
                 },
                 onDoubleClick = {

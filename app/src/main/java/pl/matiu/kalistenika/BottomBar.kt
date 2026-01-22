@@ -15,16 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import pl.matiu.kalistenika.composable.navigation.HistoryScreen
-import pl.matiu.kalistenika.composable.navigation.Home
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.MainScreenColor
 import pl.matiu.kalistenika.ui.theme.Wheat
 
 @Composable
-fun BottomAppBar(backStack: SnapshotStateList<Any>) {
+fun BottomAppBar(backStack: NavBackStack<NavKey>) {
 
     var tabIndex by remember { mutableStateOf(0) }
     val tabsScreen = MainRoutes.entries
@@ -56,12 +56,12 @@ fun BottomAppBar(backStack: SnapshotStateList<Any>) {
                     onClick = {
                         Log.d("log", backStack.get(0).toString())
                         tabIndex = index
-                        if(backStack.get(0) == Home && index != 0) {
+                        if(backStack.get(0) == Route.TrainingScreen && index != 0) {
                             backStack.clear()
-                            backStack.add(HistoryScreen)
-                        } else if(backStack.get(0) == HistoryScreen && index != 1) {
+                            backStack.add(Route.HistoryScreen)
+                        } else if(backStack.get(0) == Route.HistoryScreen && index != 1) {
                             backStack.clear()
-                            backStack.add(Home)
+                            backStack.add(Route.TrainingScreen)
                         }
                     },
                     icon = {

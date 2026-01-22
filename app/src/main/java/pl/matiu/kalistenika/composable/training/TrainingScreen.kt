@@ -28,14 +28,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.composable.navigation.SeriesScreen
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
@@ -49,11 +50,10 @@ import pl.matiu.testowa.dialog.ShowTrainingDialog
 @Composable
 @ExperimentalFoundationApi
 fun TrainingScreen(
-    backStack: SnapshotStateList<Any>,
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit)
+    backStack: NavBackStack<NavKey>,
+    onUpdateTopBar: (String, String, Boolean, String) -> Unit
+)
 {
-    Log.d("test", "training screen")
-
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -99,9 +99,9 @@ fun TrainingScreen(
                                         onClick = {
 //                                            navController.navigate("training/${training.name}/${training.trainingId}")
                                             backStack.add(
-                                                SeriesScreen(
+                                                Route.SeriesScreen(
                                                     trainingName = training.name,
-                                                    trainingId = training.trainingId
+                                                    trainingId = training.trainingId.toString()
                                                 )
                                             )
                                         },
@@ -137,7 +137,7 @@ fun TrainingScreen(
 }
 
 @Composable
-fun AddTrainingButton(backStack: SnapshotStateList<Any>) {
+fun AddTrainingButton(backStack: NavBackStack<NavKey>) {
 
     val showDialog = remember { mutableStateOf(false) }
 

@@ -14,14 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.matiu.kalistenika.composable.navigation.HistoryDetailsScreen
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import java.util.Calendar
@@ -32,8 +33,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
-    backStack: SnapshotStateList<Any>
+    onUpdateTopBar: (String, String, Boolean, String) -> Unit,
+    backStack: NavBackStack<NavKey>
 ) {
 
     LaunchedEffect(Unit) {
@@ -116,7 +117,7 @@ fun HistoryScreen(
                                         Log.d("calendarDate", "${calendar.time}")
                                         Log.d("calendarDate", "${calendar.get(Calendar.MONTH)}")
 //                                        navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${calendar.time.let { CalendarHelper.myDateFormat.format(it) }}" )
-                                        backStack.add(HistoryDetailsScreen(date = calendar.time.let { CalendarHelper.myDateFormat.format(it) }))
+                                        backStack.add(Route.HistoryDetailsScreen(date = calendar.time.let { CalendarHelper.myDateFormat.format(it) }))
                                     }
                                 ) {
                                     if(actualMonth == calendar.get(Calendar.MONTH)) {

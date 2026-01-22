@@ -33,9 +33,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -45,21 +43,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
 import pl.matiu.kalistenika.composable.history.HistoryScreen
 import pl.matiu.kalistenika.composable.language.ChangeLanguageScreen
-import pl.matiu.kalistenika.composable.navigation.ChangeLanguage
-import pl.matiu.kalistenika.composable.navigation.CreateSeries
-import pl.matiu.kalistenika.composable.navigation.EditRepetitionSeries
-import pl.matiu.kalistenika.composable.navigation.EditTimeSeries
-import pl.matiu.kalistenika.composable.navigation.HistoryDetailsScreen
-import pl.matiu.kalistenika.composable.navigation.HistoryScreen
-import pl.matiu.kalistenika.composable.navigation.Home
-import pl.matiu.kalistenika.composable.navigation.SeriesScreen
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.composable.series.AddExerciseButton
 import pl.matiu.kalistenika.composable.series.RepetitionExerciseEditScreen
 import pl.matiu.kalistenika.composable.series.SeriesScreen
@@ -126,7 +120,7 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
 //    " actual page: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).actualPage)
 
     KalistenikaTheme {
-        val backStack = remember { mutableStateListOf<Any>(Home) }
+        val backStack = rememberNavBackStack(Route.TrainingScreen)
 
         var topBarTitle by rememberSaveable { mutableStateOf("test") }
         var topBarPreviewScreen by rememberSaveable { mutableStateOf("") }
@@ -135,6 +129,9 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
 
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
+
+        var trainingName by rememberSaveable { mutableStateOf("") }
+        var trainingId by rememberSaveable { mutableStateOf("") }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -148,8 +145,7 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                             label = { Text(text = "Zmień język aplikacji") },
                             selected = false,
                             onClick = {
-//                                navController.navigate(route = AlternativeRoutes.ChangeLanguage.destination)
-                                backStack.add(ChangeLanguage)
+                                backStack.add(Route.ChangeLanguage)
                             }
                         )
                     }
@@ -179,15 +175,11 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                     when (topBarPreviewScreen) {
                                         "history" -> {
                                             backStack.removeAt(backStack.size - 1)
-//                                            navController.navigate(route = topBarPreviewScreen)
                                         }
                                         "training" -> {
-                                            Log.d("training test", backStack.size.toString())
                                             backStack.removeAt(backStack.size - 1)
-//                                            navController.navigate(route = topBarPreviewScreen)
                                         }
                                         else -> {
-//                                            navController.popBackStack()
                                             backStack.removeAt(backStack.size - 1)
                                         }
                                     }
@@ -227,17 +219,19 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                     }
                     if (addButton == "AddExercise") {
                         AddExerciseButton {
-//                            navController.navigate(AlternativeRoutes.CreateSeries.destination + "/$trainingId")
-                            backStack.add(CreateSeries(trainingName = "", trainingId = 1))//poprawic
+                            backStack.add(Route.CreateSeries(trainingName = trainingName, trainingId = Integer.valueOf(trainingId)))
                         }
                     }
                 }
             ) { innerPadding ->
                 val isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
-                val destination = if(isSeriesActive.isActive == "false")
-                    MainRoutes.Training.destination
-                else
-                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+                if(isSeriesActive.isActive == "false") {
+//                    MainRoutes.Training.destination
+//                    backStack.add(Route.TrainingScreen)
+                } else {
+//                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+//                    backStack.add(Route.SeriesScreen(trainingName = isSeriesActive.trainingName, trainingId = isSeriesActive.trainingId) )
+                }
 
                 NavDisplay(
                     backStack = backStack,
@@ -245,7 +239,10 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                     modifier = Modifier.padding(innerPadding),
                     entryProvider = { key ->
                         when (key) {
-                            is Home -> NavEntry(key) {
+                            is Route.TrainingScreen -> NavEntry(key) {
+
+                                Log.d("test", "training screen")
+
                                 TrainingScreen(
                                     backStack = backStack,
                                     onUpdateTopBar = { title, preview, icon, button ->
@@ -257,7 +254,12 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is SeriesScreen -> NavEntry(key) {
+                            is Route.SeriesScreen -> NavEntry(key) {
+
+                                Log.d("test", "Series screen")
+
+                                trainingId = key.trainingId
+                                trainingName = key.trainingName
 
                                 SeriesScreen(
                                     trainingName = key.trainingName,
@@ -271,7 +273,10 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is CreateSeries -> NavEntry(key) {
+                            is Route.CreateSeries -> NavEntry(key) {
+
+                                Log.d("test", "create training screen")
+
                                 pl.matiu.kalistenika.composable.series.CreateSeries(
                                     trainingId = key.trainingId,
                                     trainingName = key.trainingName,
@@ -285,8 +290,12 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is EditTimeSeries -> NavEntry(key) {
+                            is Route.EditTimeSeries -> NavEntry(key) {
+
+                                Log.d("test", "time exercise edit screen")
+
                                 TimeExerciseEditScreen(
+                                    backStack = backStack,
                                     exerciseId = key.exerciseId,
                                     trainingId = key.trainingId,
                                     onUpdateTopBar = { title, preview, icon, button ->
@@ -298,8 +307,12 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is EditRepetitionSeries -> NavEntry(key) {
+                            is Route.EditRepetitionSeries -> NavEntry(key) {
+
+                                Log.d("test", "repetition exercise edit screen")
+
                                 RepetitionExerciseEditScreen(
+                                    backStack = backStack,
                                     exerciseId = key.exerciseId,
                                     trainingId = key.trainingId,
                                     onUpdateTopBar = { title, preview, icon, button ->
@@ -311,7 +324,9 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is ChangeLanguage -> NavEntry(key) {
+                            is Route.ChangeLanguage -> NavEntry(key) {
+
+                                Log.d("test", "change language screen")
 
                                 ChangeLanguageScreen(
                                     appLanguage = appLanguage,
@@ -324,7 +339,9 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is HistoryScreen -> NavEntry(key) {
+                            is Route.HistoryScreen -> NavEntry(key) {
+
+                                Log.d("test", "history screen")
 
                                 HistoryScreen(
                                     backStack = backStack,
@@ -337,7 +354,10 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            is HistoryDetailsScreen -> NavEntry(key) {
+                            is Route.HistoryDetailsScreen -> NavEntry(key) {
+
+                                Log.d("test", "history details screen")
+
                                HistoryDetailsScreen(
                                     backStack = backStack,
                                     date = key.date,
@@ -350,7 +370,7 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 )
                             }
 
-                            else -> NavEntry(Unit) { Text("Unknown route") }
+                            else -> error("Unknown route")
                         }
                     }
                 )

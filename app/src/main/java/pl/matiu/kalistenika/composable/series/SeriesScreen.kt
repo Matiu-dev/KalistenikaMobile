@@ -40,7 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +51,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
@@ -69,11 +70,10 @@ import pl.matiu.kalistenika.viewModel.TrainingViewModel
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun SeriesScreen(
-    backStack: SnapshotStateList<Any>,
+    backStack: NavBackStack<NavKey>,
     trainingName: String,
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
+    onUpdateTopBar: (String, String, Boolean, String) -> Unit,
 ) {
-    Log.d("test", "Series screen")
 
     LaunchedEffect(Unit) {
         onUpdateTopBar(
@@ -130,7 +130,7 @@ fun SeriesScreenView(
     trainingId: Int?,
     trainingName: String,
     seriesViewModel: SeriesViewModel,
-    backStack: SnapshotStateList<Any>
+    backStack: NavBackStack<NavKey>
 ) {
     val context = LocalContext.current
 
@@ -325,7 +325,6 @@ fun SeriesScreenView(
                                         backStack = backStack,
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
-                                        trainingName = trainingName,
                                         startStop = startStop,
                                         onStarStopChange = { startStop = it },
                                         pagerState = pagerState,
@@ -353,7 +352,6 @@ fun SeriesScreenView(
                                         backStack = backStack,
                                         context = LocalContext.current,
                                         exercise = exerciseList[index] as RepetitionExercise,
-                                        trainingName = trainingName,
                                         startStop = false,
                                         onStarStopChange = { false },
                                         pagerState = pagerState,

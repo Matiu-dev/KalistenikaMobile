@@ -1,6 +1,7 @@
 package pl.matiu.kalistenika.composable.series
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,7 +34,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +42,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.routes.AlternativeRoutes
@@ -54,8 +56,8 @@ import pl.matiu.kalistenika.viewModel.SeriesViewModel
 fun CreateSeries(
     trainingId: Int?,
     trainingName: String,
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit,
-    backStack: SnapshotStateList<Any>,
+    onUpdateTopBar: (String, String, Boolean, String) -> Unit,
+    backStack: NavBackStack<NavKey>,
 ) {
     val context = LocalContext.current
 
@@ -68,7 +70,6 @@ fun CreateSeries(
         )
     }
 
-    //TODO przy dodawania nie dodaje asynchronicznie - szybciej laduje sie ekran niz aktualizowane sa dane
     val seriesViewModel: SeriesViewModel = hiltViewModel<SeriesViewModel>()
     val listOfSeries = seriesViewModel.exerciseList.collectAsState()
     val numberOfExercise: Int = listOfSeries.value?.filter { it.trainingId == trainingId }?.size ?: 0
@@ -106,7 +107,7 @@ fun CreateSeries(
 
 @Composable
 fun RepetitiveSeries(
-    backStack: SnapshotStateList<Any>,
+    backStack: NavBackStack<NavKey>,
     trainingId: Int?,
     trainingName: String,
     context: Context,
@@ -181,7 +182,7 @@ fun RepetitiveSeriesOptions(
     trainingId: Int?,
     trainingName: String,
     seriesViewModel: SeriesViewModel,
-    backStack: SnapshotStateList<Any>
+    backStack: NavBackStack<NavKey>
 ) {
     var exerciseName by rememberSaveable { mutableStateOf("") }
     var numberOfSeries by rememberSaveable { mutableStateOf("") }
@@ -197,6 +198,7 @@ fun RepetitiveSeriesOptions(
         if(!isLodaing.value) {
             isClicked = false
 //            navController.navigate("training/${trainingName}/${trainingId}")
+            backStack.removeAt(backStack.size-1)
         }
     }
 
@@ -296,7 +298,7 @@ fun RepetitiveSeriesOptions(
 
 @Composable
 fun TimeSeries(
-    backStack: SnapshotStateList<Any>,
+    backStack: NavBackStack<NavKey>,
     trainingId: Int?,
     trainingName: String,
     context: Context,
@@ -365,6 +367,7 @@ fun TimeSeries(
                     Surface(color = Color.Transparent) {
                         Column {
                             TimeSeriesOptions(
+                                backStack = backStack,
                                 numberOfExercise = numberOfExercise,
                                 trainingId = trainingId,
                                 trainingName = trainingName,
@@ -387,7 +390,8 @@ fun TimeSeriesOptions(
     trainingId: Int?,
     trainingName: String,
     context: Context,
-    seriesViewModel: SeriesViewModel
+    seriesViewModel: SeriesViewModel,
+    backStack: NavBackStack<NavKey>
 ) {
     var exerciseName by rememberSaveable { mutableStateOf("") }
     var numberOfSeries by rememberSaveable { mutableStateOf("") }
@@ -402,6 +406,7 @@ fun TimeSeriesOptions(
         if(!isLodaing.value) {
             isClicked = false
 //            navController.navigate("training/${trainingName}/${trainingId}")
+            backStack.removeAt(backStack.size-1)
         }
     }
 

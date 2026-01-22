@@ -1,20 +1,12 @@
 package pl.matiu.testowa.dialog
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import pl.matiu.kalistenika.model.training.TrainingModel
 import pl.matiu.kalistenika.composable.dialog.CreateTrainingDialog
 import pl.matiu.kalistenika.composable.dialog.DeleteTrainingDialog
@@ -35,11 +27,10 @@ fun ShowTrainingDialog(
     dialogResponse: DialogResponse,
     showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
-    backStack: SnapshotStateList<Any>
+    backStack: NavBackStack<NavKey>
 ) {
     when (dialogResponse) {
         is DialogResponse.CreateTrainingDialog -> CreateTrainingDialog(
-            backStack = backStack,
             showDialog = showDialog,
             onShowDialogChange = { onShowDialogChange(!showDialog) },
             DialogValues(title = "Create Dialog"),

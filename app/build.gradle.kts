@@ -8,6 +8,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("jacoco")
 
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 jacoco {
@@ -90,14 +91,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = rootProject.extra["sourceCompatibility"] as JavaVersion
-        targetCompatibility = rootProject.extra["targetCompatibility"] as JavaVersion
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+//        jvmTarget = "17"
 
-        allWarningsAsErrors = false
+//        allWarningsAsErrors = false
 
     }
     buildFeatures {
@@ -194,6 +195,9 @@ dependencies {
     //navigation 3
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.androidx.material3.adaptive.navigation3)
+    implementation(libs.kotlinx.serialization.core)
 }
 
 //./gradlew connectedDebugAndroidTest - uruchamia testy i potem tworze raport z pliku ec ./gradlew instrumentationCodeCoverage

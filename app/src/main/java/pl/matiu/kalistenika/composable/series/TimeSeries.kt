@@ -41,7 +41,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,8 +55,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.delay
-import pl.matiu.kalistenika.composable.navigation.EditTimeSeries
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
 import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
@@ -80,7 +81,7 @@ fun StartTimeSeries(
     endOfSeries: Boolean,
     onEndOfSeriesChange: (Boolean) -> Unit,
     pagerState: PagerState,
-    backStack: SnapshotStateList<Any>,
+    backStack: NavBackStack<NavKey>,
 ) {
     var sekunder by rememberSaveable { mutableStateOf(0) }
 
@@ -117,7 +118,7 @@ fun StartTimeSeries(
             onClick = {
 //                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
                 exercise.trainingId?.let {
-                    backStack.add(EditTimeSeries(trainingId = exercise.trainingId, exerciseId = exercise.timeExerciseId))
+                    backStack.add(Route.EditTimeSeries(trainingId = exercise.trainingId, exerciseId = exercise.timeExerciseId))
                 }
             },
             onDoubleClick = {
