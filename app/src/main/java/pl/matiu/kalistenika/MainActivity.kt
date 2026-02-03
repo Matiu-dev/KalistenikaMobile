@@ -114,11 +114,6 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
         }
     }
 
-//    Log.d("DisposableEffect", viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).isActive
-//    + " training name: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingName +
-//    " training id: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingId +
-//    " actual page: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).actualPage)
-
     KalistenikaTheme {
         val backStack = rememberNavBackStack(Route.TrainingScreen)
 
@@ -132,6 +127,15 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
 
         var trainingName by rememberSaveable { mutableStateOf("") }
         var trainingId by rememberSaveable { mutableStateOf("") }
+
+        val isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
+        if(isSeriesActive.isActive == "false") {
+//                    MainRoutes.Training.destination
+//                    backStack.add(Route.TrainingScreen)
+        } else {
+//                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+//                    backStack.add(Route.SeriesScreen(trainingName = isSeriesActive.trainingName, trainingId = isSeriesActive.trainingId) )
+        }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -224,15 +228,6 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                     }
                 }
             ) { innerPadding ->
-                val isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
-                if(isSeriesActive.isActive == "false") {
-//                    MainRoutes.Training.destination
-//                    backStack.add(Route.TrainingScreen)
-                } else {
-//                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
-//                    backStack.add(Route.SeriesScreen(trainingName = isSeriesActive.trainingName, trainingId = isSeriesActive.trainingId) )
-                }
-
                 NavDisplay(
                     backStack = backStack,
                     onBack = { backStack.removeLastOrNull() },

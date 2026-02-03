@@ -8,7 +8,7 @@ sealed interface Route: NavKey {
     @Serializable
     data object TrainingScreen: NavKey, Route
     @Serializable
-    data object CreateTraining: NavKey, Route
+    data class SeriesScreen(val trainingName: String, val trainingId: String): NavKey, Route
     @Serializable
     data class CreateSeries(val trainingId: Int, val trainingName: String): NavKey, Route
     @Serializable
@@ -21,6 +21,4 @@ sealed interface Route: NavKey {
     data object HistoryScreen: NavKey, Route
     @Serializable
     data class HistoryDetailsScreen(val date: String): NavKey, Route
-    @Serializable
-    data class SeriesScreen(val trainingName: String, val trainingId: String): NavKey, Route
 }
