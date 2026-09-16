@@ -20,9 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import pl.matiu.kalistenika.R
-import pl.matiu.kalistenika.routes.AlternativeRoutes
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import java.util.Calendar
@@ -33,8 +33,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
-    navController: NavController,
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit
+    onUpdateTopBar: (String, String, Boolean, String) -> Unit,
+    backStack: NavBackStack<NavKey>
 ) {
 
     LaunchedEffect(Unit) {
@@ -116,7 +116,8 @@ fun HistoryScreen(
                                         calendar.set(Calendar.DAY_OF_WEEK, i)
                                         Log.d("calendarDate", "${calendar.time}")
                                         Log.d("calendarDate", "${calendar.get(Calendar.MONTH)}")
-                                        navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${calendar.time.let { CalendarHelper.myDateFormat.format(it) }}" )
+//                                        navController.navigate(AlternativeRoutes.HistoryDateDetails.destination + "/${calendar.time.let { CalendarHelper.myDateFormat.format(it) }}" )
+                                        backStack.add(Route.HistoryDetailsScreen(date = calendar.time.let { CalendarHelper.myDateFormat.format(it) }))
                                     }
                                 ) {
                                     if(actualMonth == calendar.get(Calendar.MONTH)) {

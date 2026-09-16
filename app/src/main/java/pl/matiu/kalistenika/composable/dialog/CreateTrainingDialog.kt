@@ -11,9 +11,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.model.training.TrainingModel
-import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
 import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.composable.training.CreateTraining
@@ -26,7 +27,6 @@ fun CreateTrainingDialog(
     showDialog: Boolean,
     onShowDialogChange: (Boolean) -> Unit,
     dialogValues: DialogValues,
-    navController: NavController,
     context: Context
 ) {
 
@@ -62,7 +62,7 @@ fun CreateTrainingDialog(
 
                         if (name.value.isNotBlank()) {
                             trainingViewModel.addTraining(TrainingModel(name = name.value))
-                            navController.navigate(MainRoutes.Training.destination)
+//                            navController.navigate(MainRoutes.Training.destination)
                             onShowDialogChange(false)
                         } else {
                             Toast.makeText(context, "Popraw dane", Toast.LENGTH_SHORT).show()

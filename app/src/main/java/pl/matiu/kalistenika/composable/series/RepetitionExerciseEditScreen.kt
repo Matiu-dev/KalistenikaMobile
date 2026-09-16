@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import pl.matiu.kalistenika.model.training.RepetitionExercise
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -32,8 +34,13 @@ import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 
 @Composable
-fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberOfExercise: Int, trainingName: String,
-                                 trainingId: Int, navigator: NavController, seriesViewModel: SeriesViewModel) {
+fun RepetitionExerciseEditScreen(
+    backStack: NavBackStack<NavKey>,
+    repetitionExercise: RepetitionExercise,
+    numberOfExercise: Int,
+    trainingId: Int,
+    seriesViewModel: SeriesViewModel)
+{
     var exerciseName by remember {
         mutableStateOf(repetitionExercise.repetitionExerciseName)
     }
@@ -62,7 +69,8 @@ fun RepetitionExerciseEditScreen(repetitionExercise: RepetitionExercise, numberO
 
         if(!isLodaing.value) {
             isClicked = false
-            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
+//            navigator.navigate(route = MainRoutes.Training.destination + "/${trainingName}" + "/${trainingId}")
+            backStack.removeAt(backStack.size - 1)
         }
     }
 

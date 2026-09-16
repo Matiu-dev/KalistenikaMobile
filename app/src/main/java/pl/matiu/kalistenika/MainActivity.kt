@@ -33,7 +33,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,16 +43,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import pl.matiu.kalistenika.composable.history.HistoryDetailsScreen
 import pl.matiu.kalistenika.composable.history.HistoryScreen
 import pl.matiu.kalistenika.composable.language.ChangeLanguageScreen
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.composable.series.AddExerciseButton
-import pl.matiu.kalistenika.composable.series.CreateSeries
 import pl.matiu.kalistenika.composable.series.RepetitionExerciseEditScreen
 import pl.matiu.kalistenika.composable.series.SeriesScreen
 import pl.matiu.kalistenika.composable.series.TimeExerciseEditScreen
@@ -113,21 +114,28 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
         }
     }
 
-//    Log.d("DisposableEffect", viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).isActive
-//    + " training name: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingName +
-//    " training id: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).trainingId +
-//    " actual page: " + viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current).actualPage)
-
     KalistenikaTheme {
-        val navController = rememberNavController()
+        val backStack = rememberNavBackStack(Route.TrainingScreen)
+
         var topBarTitle by rememberSaveable { mutableStateOf("test") }
         var topBarPreviewScreen by rememberSaveable { mutableStateOf("") }
         var isNavigationIcon by rememberSaveable { mutableStateOf(false) }
         var addButton by rememberSaveable { mutableStateOf("") } //dodawanie ćwiczenia/treningu
-        var trainingId by rememberSaveable { mutableIntStateOf(0) }
-        var trainingName by rememberSaveable { mutableStateOf("") }
+
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
+
+        var trainingName by rememberSaveable { mutableStateOf("") }
+        var trainingId by rememberSaveable { mutableStateOf("") }
+
+        val isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
+        if(isSeriesActive.isActive == "false") {
+//                    MainRoutes.Training.destination
+//                    backStack.add(Route.TrainingScreen)
+        } else {
+//                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
+//                    backStack.add(Route.SeriesScreen(trainingName = isSeriesActive.trainingName, trainingId = isSeriesActive.trainingId) )
+        }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -141,7 +149,7 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                             label = { Text(text = "Zmień język aplikacji") },
                             selected = false,
                             onClick = {
-                                navController.navigate(route = AlternativeRoutes.ChangeLanguage.destination)
+                                backStack.add(Route.ChangeLanguage)
                             }
                         )
                     }
@@ -170,13 +178,13 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                                 IconButton(onClick = {
                                     when (topBarPreviewScreen) {
                                         "history" -> {
-                                            navController.navigate(route = topBarPreviewScreen)
+                                            backStack.removeAt(backStack.size - 1)
                                         }
                                         "training" -> {
-                                            navController.navigate(route = topBarPreviewScreen)
+                                            backStack.removeAt(backStack.size - 1)
                                         }
                                         else -> {
-                                            navController.popBackStack()
+                                            backStack.removeAt(backStack.size - 1)
                                         }
                                     }
                                 }) {
@@ -207,151 +215,160 @@ fun KalistenikaApp(viewModel: MainViewModel = hiltViewModel()) {
                     )
                 },
                 bottomBar = {
-                    BottomAppBar(navController = navController)
+                    BottomAppBar(backStack = backStack)
                 },
                 floatingActionButton = {
-                    if (addButton == "AddTraining") { AddTrainingButton(navController = navController) }
-                    if (addButton == "AddExercise") { AddExerciseButton { navController.navigate(AlternativeRoutes.CreateSeries.destination + "/$trainingId") } }
+                    if (addButton == "AddTraining") {
+                        AddTrainingButton(backStack)
+                    }
+                    if (addButton == "AddExercise") {
+                        AddExerciseButton {
+                            backStack.add(Route.CreateSeries(trainingName = trainingName, trainingId = Integer.valueOf(trainingId)))
+                        }
+                    }
                 }
             ) { innerPadding ->
-                //ToDo - poprawic, zeby asynchronicznie było
-                val isSeriesActive = viewModel.sharedPrefsRepository.getIsSeriesActive(LocalContext.current)
-                val destination = if(isSeriesActive.isActive == "false")
-                    MainRoutes.Training.destination
-                else
-                    AlternativeRoutes.SeriesScreen.destination + "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}"
-
-//                Log.d("DisposableEffect", "/${isSeriesActive.trainingName}" + "/${isSeriesActive.trainingId}")
-
-                NavHost(
-                    navController = navController,
-                    startDestination = destination,
+                NavDisplay(
+                    backStack = backStack,
+                    onBack = { backStack.removeLastOrNull() },
                     modifier = Modifier.padding(innerPadding),
-                ) {
-                    composable(route = AlternativeRoutes.ChangeLanguage.destination) {
-                        ChangeLanguageScreen(
-                            appLanguage = appLanguage,
-                            navController = navController,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
+                    entryProvider = { key ->
+                        when (key) {
+                            is Route.TrainingScreen -> NavEntry(key) {
+
+                                Log.d("test", "training screen")
+
+                                TrainingScreen(
+                                    backStack = backStack,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    }
+                                )
                             }
-                        )
-                    }
 
-                    composable(route = MainRoutes.Training.destination) {
-                        TrainingScreen(
-                            navController = navController,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
+                            is Route.SeriesScreen -> NavEntry(key) {
+
+                                Log.d("test", "Series screen")
+
+                                trainingId = key.trainingId
+                                trainingName = key.trainingName
+
+                                SeriesScreen(
+                                    trainingName = key.trainingName,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    },
+                                    backStack = backStack
+                                )
                             }
-                        )
+
+                            is Route.CreateSeries -> NavEntry(key) {
+
+                                Log.d("test", "create training screen")
+
+                                pl.matiu.kalistenika.composable.series.CreateSeries(
+                                    trainingId = key.trainingId,
+                                    trainingName = key.trainingName,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    },
+                                    backStack = backStack
+                                )
+                            }
+
+                            is Route.EditTimeSeries -> NavEntry(key) {
+
+                                Log.d("test", "time exercise edit screen")
+
+                                TimeExerciseEditScreen(
+                                    backStack = backStack,
+                                    exerciseId = key.exerciseId,
+                                    trainingId = key.trainingId,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    },
+                                )
+                            }
+
+                            is Route.EditRepetitionSeries -> NavEntry(key) {
+
+                                Log.d("test", "repetition exercise edit screen")
+
+                                RepetitionExerciseEditScreen(
+                                    backStack = backStack,
+                                    exerciseId = key.exerciseId,
+                                    trainingId = key.trainingId,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    },
+                                )
+                            }
+
+                            is Route.ChangeLanguage -> NavEntry(key) {
+
+                                Log.d("test", "change language screen")
+
+                                ChangeLanguageScreen(
+                                    appLanguage = appLanguage,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    }
+                                )
+                            }
+
+                            is Route.HistoryScreen -> NavEntry(key) {
+
+                                Log.d("test", "history screen")
+
+                                HistoryScreen(
+                                    backStack = backStack,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    }
+                                )
+                            }
+
+                            is Route.HistoryDetailsScreen -> NavEntry(key) {
+
+                                Log.d("test", "history details screen")
+
+                               HistoryDetailsScreen(
+                                    backStack = backStack,
+                                    date = key.date,
+                                    onUpdateTopBar = { title, preview, icon, button ->
+                                        topBarTitle = title
+                                        topBarPreviewScreen = preview
+                                        isNavigationIcon = icon
+                                        addButton = button
+                                    },
+                                )
+                            }
+
+                            else -> error("Unknown route")
+                        }
                     }
-
-                    composable(route = AlternativeRoutes.SeriesScreen.destination + "/{trainingName}" + "/{trainingId}") { backStackEntry ->
-
-                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt() ?: 0
-                        trainingName = backStackEntry.arguments?.getString("trainingName") ?: ""
-
-                        SeriesScreen(
-                            navController = navController,
-                            trainingName = backStackEntry.arguments?.getString("trainingName").toString(),
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
-                            },
-                            backStackEntry = backStackEntry
-                        )
-                    }
-
-                    composable(route = AlternativeRoutes.CreateSeries.destination + "/{trainingId}") { backStackEntry ->
-                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-
-                        CreateSeries(
-                            navController = navController,
-                            trainingId = trainingId,
-                            trainingName = trainingName,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
-                            },
-                        )
-                    }
-
-                    composable(route = AlternativeRoutes.EditRepetitionSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
-                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
-
-                        RepetitionExerciseEditScreen(
-                            navigator = navController,
-                            exerciseId = exerciseId,
-                            trainingId = trainingId,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
-                            },
-                        )
-                    }
-
-                    composable(route = AlternativeRoutes.EditTimeSeries.destination + "/{trainingId}" + "/{exerciseId}") { backStackEntry ->
-                        trainingId = backStackEntry.arguments?.getString("trainingId")?.toInt()!!
-                        val exerciseId = backStackEntry.arguments?.getString("exerciseId")?.toInt()!!
-
-                        TimeExerciseEditScreen(
-                            navigator = navController,
-                            exerciseId = exerciseId,
-                            trainingId = trainingId,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
-                            },
-                        )
-                    }
-
-
-                    composable(route = MainRoutes.History.destination) {
-
-                        HistoryScreen(
-                            navController = navController,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
-                            },
-                        )
-                    }
-
-                    composable(route = AlternativeRoutes.HistoryDateDetails.destination + "/{date}") {
-
-                        val date: String = it.arguments?.getString("date").toString()
-
-                        HistoryDetailsScreen(
-                            date = date,
-                            onUpdateTopBar = { title, preview, icon, button ->
-                                topBarTitle = title
-                                topBarPreviewScreen = preview
-                                isNavigationIcon = icon
-                                addButton = button
-                            },
-                        )
-                    }
-
-
-                }
+                )
             }
         }
     }

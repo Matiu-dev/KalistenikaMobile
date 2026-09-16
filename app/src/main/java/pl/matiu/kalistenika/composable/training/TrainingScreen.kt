@@ -33,10 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import pl.matiu.kalistenika.R
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.model.training.TrainingModel
-import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.routes.MainRoutes
 import pl.matiu.kalistenika.viewModel.TrainingViewModel
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -49,11 +50,10 @@ import pl.matiu.testowa.dialog.ShowTrainingDialog
 @Composable
 @ExperimentalFoundationApi
 fun TrainingScreen(
-    navController: NavController,
-    onUpdateTopBar: (title: String, preview: String, icon: Boolean, button: String) -> Unit)
+    backStack: NavBackStack<NavKey>,
+    onUpdateTopBar: (String, String, Boolean, String) -> Unit
+)
 {
-    Log.d("test", "training screen")
-
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -97,7 +97,13 @@ fun TrainingScreen(
                                     .border(1.dp, Smola, RoundedCornerShape(8.dp))
                                     .combinedClickable(
                                         onClick = {
-                                            navController.navigate("training/${training.name}/${training.trainingId}")
+//                                            navController.navigate("training/${training.name}/${training.trainingId}")
+                                            backStack.add(
+                                                Route.SeriesScreen(
+                                                    trainingName = training.name,
+                                                    trainingId = training.trainingId.toString()
+                                                )
+                                            )
                                         },
                                         onLongClick = {
                                             showDialog.value = true
@@ -124,14 +130,14 @@ fun TrainingScreen(
                     trainingList2!!.filter { it.trainingId ==  clickedTraining.intValue}[0]),
                 showDialog = showDialog.value,
                 onShowDialogChange = { showDialog.value = it },
-                navController = navController
+                backStack = backStack
             )
         }
     }
 }
 
 @Composable
-fun AddTrainingButton(navController: NavController) {
+fun AddTrainingButton(backStack: NavBackStack<NavKey>) {
 
     val showDialog = remember { mutableStateOf(false) }
 
@@ -152,7 +158,7 @@ fun AddTrainingButton(navController: NavController) {
             ),
             showDialog = showDialog.value,
             onShowDialogChange = { showDialog.value = it },
-            navController = navController
+            backStack = backStack
         )
     }
 }

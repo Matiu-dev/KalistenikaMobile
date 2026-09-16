@@ -1,35 +1,25 @@
 package pl.matiu.kalistenika.composable.series
 
-import android.Manifest
 import android.R
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.media.MediaPlayer
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
@@ -38,15 +28,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,14 +55,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import kotlinx.coroutines.delay
-import pl.matiu.kalistenika.routes.MainRoutes
+import pl.matiu.kalistenika.composable.navigation.Route
 import pl.matiu.kalistenika.exerciseApi.ExerciseApi
 import pl.matiu.kalistenika.media.StartSong
 import pl.matiu.kalistenika.viewModel.SeriesViewModel
 import pl.matiu.kalistenika.realtimeDatabase.RealTimeDatabaseService
-import pl.matiu.kalistenika.routes.AlternativeRoutes
 import pl.matiu.kalistenika.model.training.TimeExercise
 import pl.matiu.kalistenika.notification.startNotification
 import pl.matiu.kalistenika.ui.theme.InsideLevel1
@@ -93,10 +78,10 @@ fun StartTimeSeries(
     trainingName: String,
     startStop: Boolean,
     onStarStopChange: (Boolean) -> Unit,
-    navController: NavController,
     endOfSeries: Boolean,
     onEndOfSeriesChange: (Boolean) -> Unit,
     pagerState: PagerState,
+    backStack: NavBackStack<NavKey>,
 ) {
     var sekunder by rememberSaveable { mutableStateOf(0) }
 
@@ -123,7 +108,7 @@ fun StartTimeSeries(
         if (!isLodaing.value) {
             seriesViewModel.deleteTimeSeries(timeExercise = exercise)
             isClicked = false
-            navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
+//            navController.navigate(MainRoutes.Training.destination + "/${trainingName}" + "/${exercise.trainingId}")
         }
     }
 
@@ -131,7 +116,10 @@ fun StartTimeSeries(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
+//                navController.navigate(AlternativeRoutes.EditTimeSeries.destination + "/${exercise.trainingId}" + "/${exercise.timeExerciseId}")
+                exercise.trainingId?.let {
+                    backStack.add(Route.EditTimeSeries(trainingId = exercise.trainingId, exerciseId = exercise.timeExerciseId))
+                }
             },
             onDoubleClick = {
 //                seriesViewModel.deleteTimeSeries(timeExercise = exercise)

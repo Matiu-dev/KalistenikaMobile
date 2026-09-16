@@ -45,7 +45,7 @@ class TrainingViewModel @Inject constructor(private val trainingDatabaseService:
                 ThreadIdLogger(ConsoleLogger()).log("training view model", "adding new training ${trainingModel.name}")
                 _isTrainingLoading.value = true
                 trainingDatabaseService.addTraining(trainingModel)
-                trainingDatabaseService.getAllTraining()
+                _trainingList.value = trainingDatabaseService.getAllTraining()
                 _isTrainingLoading.value = false
             }
         }
@@ -57,7 +57,7 @@ class TrainingViewModel @Inject constructor(private val trainingDatabaseService:
                 ThreadIdLogger(ConsoleLogger()).log("training view model", "deleting training ${trainingModel.name}")
                 _isTrainingLoading.value = true
                 trainingDatabaseService.deleteTraining(trainingModel)
-                trainingDatabaseService.getAllTraining()
+                _trainingList.value = trainingDatabaseService.getAllTraining()
                 _isTrainingLoading.value = false
             }
         }

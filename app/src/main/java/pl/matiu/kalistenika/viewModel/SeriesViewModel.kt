@@ -103,7 +103,7 @@ class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: E
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
                 exerciseDatabaseService.addTimeSeries(timeExercise)
-                exerciseDatabaseService.getAllSeries()
+                _exerciseList.value = exerciseDatabaseService.getAllRepetitionExercise() + exerciseDatabaseService.getAllTimeExercise()
                 _isLoading.value = false
             }
         }
@@ -118,7 +118,7 @@ class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: E
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
                 exerciseDatabaseService.addRepetitionSeries(repetitionExercise)
-                exerciseDatabaseService.getAllSeries()
+                _exerciseList.value = exerciseDatabaseService.getAllRepetitionExercise() + exerciseDatabaseService.getAllTimeExercise()
                 _isLoading.value = false
             }
         }
@@ -133,7 +133,8 @@ class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: E
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
                 exerciseDatabaseService.updateTimeSeries(timeExercise)
-                exerciseDatabaseService.getAllSeries()
+//                exerciseDatabaseService.getAllSeries()//tutaj
+                _exerciseList.value = exerciseDatabaseService.getAllRepetitionExercise() + exerciseDatabaseService.getAllTimeExercise()
                 _isLoading.value = false
             }
         }
@@ -148,7 +149,8 @@ class SeriesViewModel @Inject constructor(private val exerciseDatabaseService: E
             withContext(Dispatchers.IO) {
                 _isLoading.value = true
                 exerciseDatabaseService.updateRepetitionSeries(repetitionExercise)
-                exerciseDatabaseService.getAllSeries()
+//                exerciseDatabaseService.getAllSeries()
+                _exerciseList.value = exerciseDatabaseService.getAllRepetitionExercise() + exerciseDatabaseService.getAllTimeExercise()
                 _isLoading.value = false
             }
         }
