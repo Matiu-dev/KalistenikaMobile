@@ -76,6 +76,24 @@ android {
         resourceConfigurations += listOf("en", "pl")
     }
 
+    flavorDimensions += "firebase"
+
+    productFlavors {
+        create("withFirebase") {
+            dimension = "firebase"
+            applicationIdSuffix = ""
+
+            buildConfigField("Boolean", "WITH_FIREBASE", "true")
+        }
+
+        create("withoutFirebase") {
+            dimension = "firebase"
+            applicationIdSuffix = ""
+
+            buildConfigField("Boolean", "WITH_FIREBASE", "false")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -88,6 +106,8 @@ android {
             enableAndroidTestCoverage = true
             enableUnitTestCoverage = true
         }
+
+
     }
 
     compileOptions {
@@ -103,6 +123,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 //    composeOptions {
 //        kotlinCompilerExtensionVersion = "1.5.15"
@@ -142,7 +163,6 @@ dependencies {
     
     implementation(libs.gson)
     implementation(libs.gson.extras)
-    implementation(libs.firebase.database)
     implementation(libs.compose.material.icons)
 
 
@@ -157,9 +177,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     //firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.auth)
+    "withFirebaseImplementation"(platform(libs.firebase.bom))
+    "withFirebaseImplementation"(libs.firebase.database)
+    "withFirebaseImplementation"(libs.firebase.analytics)
+    "withFirebaseImplementation"(libs.firebase.auth)
     //retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
