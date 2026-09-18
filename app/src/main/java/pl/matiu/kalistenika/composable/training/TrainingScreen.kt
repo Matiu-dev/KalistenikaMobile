@@ -46,19 +46,21 @@ import pl.matiu.kalistenika.ui.theme.Smola
 import pl.matiu.testowa.dialog.DialogController
 import pl.matiu.testowa.dialog.DialogEnum
 import pl.matiu.testowa.dialog.ShowTrainingDialog
+import androidx.compose.ui.res.stringResource
 
 @Composable
 @ExperimentalFoundationApi
 fun TrainingScreen(
     backStack: NavBackStack<NavKey>,
     onUpdateTopBar: (String, String, Boolean, String) -> Unit
-)
-{
+) {
+
     val context = LocalContext.current
+    val getMainPageTitle = stringResource(R.string.main_page_title)
 
     LaunchedEffect(Unit) {
         onUpdateTopBar(
-            context.getString(R.string.main_page_title),
+            getMainPageTitle,
             MainRoutes.Training.destination,
             MainRoutes.Training.isNavigationIcon,
             MainRoutes.Training.addButton

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import pl.matiu.kalistenika.R
 import pl.matiu.kalistenika.language.AppLanguage
 import pl.matiu.kalistenika.routes.AlternativeRoutes
@@ -27,9 +28,11 @@ fun ChangeLanguageScreen(
 
     val context = LocalContext.current
 
+    val languagePageTitle = stringResource(R.string.language_page_title)
+
     LaunchedEffect(Unit) {
         onUpdateTopBar(
-            context.getString(R.string.language_page_title),
+            languagePageTitle,
             AlternativeRoutes.ChangeLanguage.topBarPreviewScreen,
             AlternativeRoutes.ChangeLanguage.isNavigationIcon,
             AlternativeRoutes.ChangeLanguage.addButton
