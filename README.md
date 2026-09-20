@@ -1,5 +1,14 @@
 # KalistenikaMobile
 
+## Requirements
+- JDK 21
+
+## Build
+- Open project in Android Studio
+- View -> Tool Windows -> Build Variants
+- Select "withoutFirebaseDebug"
+- Run project
+
 ## Technologies
 
 Kotlin, Jetpack Compose, Coroutines, Retrofit, Firebase, Room Database, Hilt, JUnit, Navigation 3
