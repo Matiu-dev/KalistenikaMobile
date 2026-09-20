@@ -64,7 +64,7 @@ class RealTimeDatabaseService {
         }
     }
 
-    fun writeDataHistory(exercise: SeriesInterface) {
+    fun writeDataHistory(exercise: SeriesInterface): Boolean {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 when (exercise) {
@@ -82,6 +82,8 @@ class RealTimeDatabaseService {
                 logger.log("failed saving exercise to history", "$e")
             }
         }
+
+        return true
     }
 
     fun loadDataHistoryRepetitionExercise(date: String, onDataLoaded: (List<RepetitionExercise>) -> Unit) {

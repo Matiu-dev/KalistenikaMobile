@@ -29,10 +29,12 @@ class RealTimeDatabaseService {
         }
     }
 
-    fun writeDataHistory(exercise: SeriesInterface) {
+    fun writeDataHistory(exercise: SeriesInterface): Boolean {
         CoroutineScope(Dispatchers.IO).launch {
 
         }
+
+        return false
     }
 
     fun loadDataHistoryRepetitionExercise(date: String, onDataLoaded: (List<RepetitionExercise>) -> Unit) {

@@ -94,6 +94,16 @@ android {
         }
     }
 
+    androidComponents {
+        onVariants(selector().withFlavor("firebase" to "withoutFirebase")) { variant ->
+            afterEvaluate {
+                val name = variant.name.replaceFirstChar { it.uppercase() }
+                println("DEBUG name = $name")
+                tasks.findByName("process${name}GoogleServices")?.enabled = false
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
