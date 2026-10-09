@@ -186,6 +186,12 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    //mocks
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+
+
     //firebase
     "withFirebaseImplementation"(platform(libs.firebase.bom))
     "withFirebaseImplementation"(libs.firebase.database)
